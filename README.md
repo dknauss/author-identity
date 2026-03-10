@@ -16,7 +16,7 @@ Structured author identity that travels with the work — across feeds, search, 
 - [byline-spec-plan.md](byline-spec-plan.md) — Byline RSS spec plan
 - [byline-adoption-strategy.md](byline-adoption-strategy.md) — Byline spec adoption strategy
 - [authorship-architecture.mermaid](authorship-architecture.mermaid) — Architecture diagram
-- [Implementation Strategy/](Implementation%20Strategy/) — Work package specs (WP-01 through WP-06)
+- [Implementation Strategy/](Implementation%20Strategy/) — Work package specs (WP-01 through WP-06), [gap analysis](Implementation%20Strategy/gap-analysis.md), and [delivery schedule](Implementation%20Strategy/implementation-spec.md#delivery-schedule)
 - [Byline RSS Spec Adoption/](Byline%20RSS%20Spec%20Adoption/) — Byline RSS spec adoption documents
 
 ### Plugin

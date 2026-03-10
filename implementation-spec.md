@@ -246,3 +246,15 @@ The following concerns span multiple work packages. They are not separate delive
 ### 5. Consumer documentation — output reference
 
 **Applies to:** Adoption strategy. The plugin needs a consumer-facing output reference (`byline-feed/docs/output-reference.md`) with annotated RSS2, Atom, JSON-LD, and HTML head examples showing every element the plugin produces and how to customize each via filters. This is separate from contributor docs (`CONTRIBUTING.md` with dev environment setup, test commands, and adapter development guide).
+
+---
+
+## Delivery schedule
+
+For full ETA table, milestone timeline, and caveats, see [Implementation Strategy/implementation-spec.md § Delivery schedule](Implementation%20Strategy/implementation-spec.md#delivery-schedule).
+
+Summary: ~3.5 weeks to wp.org submission (Gate A), ~7–8 weeks total for all work packages through Gate B'.
+
+## Gap analysis
+
+For a point-in-time audit of what exists vs. what the specs require, see [Implementation Strategy/gap-analysis.md](Implementation%20Strategy/gap-analysis.md). Key findings: 11 gaps identified (3 critical, 5 spec divergences, 3 structural), with resolution priorities mapped to work packages.

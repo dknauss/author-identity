@@ -438,3 +438,46 @@ A shorter document covering:
 - CI expectations: what the GitHub Actions workflow checks.
 
 **File:** `byline-feed/CONTRIBUTING.md`
+
+---
+
+## Delivery schedule
+
+Based on the [gap analysis](gap-analysis.md) — what exists, what's missing, and what the gaps require. Estimates assume one developer working on this as a focused project.
+
+### ETA by deliverable
+
+| Deliverable | Status | Remaining work | Estimate | Depends on |
+| --- | --- | --- | --- | --- |
+| **CI pipeline** | 0% | GitHub Actions workflow, phpunit.xml.dist, test bootstrap, bin/install-wp-tests.sh | 1–2 days | — |
+| **WP-01 completion** | ~75% | Missing test files (CAP, PPA), role mapping alignment, adapter contract validation function | 3–4 days | CI |
+| **WP-02 completion** | ~80% | Add profile/now/uses output, Atom filter parity, Atom tests, round-trip feed validation, additional RSS2 test scenarios | 2–3 days | WP-01 |
+| **WP-03 completion** | ~90% | Deduplicate allowed-values list, update panel labels, run npm build, verify block editor panel loads | 1 day | WP-01, WP-02 |
+| **Gate A: MVP quality** | — | All of the above, plus PHPCS pass, manual QA on WP 6.0+ with CAP and PPA | 1–2 days | WP-01/02/03 |
+| **Output reference doc** | 0% | Annotated RSS2/Atom examples, element reference table, filter reference | 2–3 days | Gate A |
+| **CONTRIBUTING.md** | 0% | Dev setup, test commands, adapter template | 1 day | CI |
+| **wp.org submission** | — | Readme review, plugin check, screenshots, initial release | 1–2 days | Gate A |
+| | | | | |
+| **WP-04: fediverse:creator** | ~0% | Meta registration, user profile field, wp_head output, handle normalization, tests | 3–4 days | WP-01 |
+| **WP-05: JSON-LD schema** | 0% | Article+Person schema, sameAs from profiles, Yoast/Rank Math detection, tests | 4–5 days | WP-01 |
+| **WP-06: AI consent** | 0% | Per-author/per-post consent, resolution logic, HTML/header output, ai.txt, user/post UI, audit logging, tests | 6–8 days | WP-01 |
+| **Gate B': adapter-proven expansion** | — | WP-04 + WP-05 + WP-06 HTML/header signals shipped | After Gate A | WP-04/05/06 |
+| **Gate D: feed-level rights** | — | WP-06 feed integration (cc:license in items) | After Gate C | WP-06 |
+
+### Milestone timeline
+
+| Milestone | Cumulative estimate |
+| --- | --- |
+| **CI green + WP-01 complete** | ~1 week |
+| **MVP code complete** (WP-01/02/03 + tests passing) | ~2.5 weeks |
+| **wp.org submission ready** (Gate A + docs + submission prep) | ~3.5 weeks |
+| **Post-MVP expansion** (WP-04/05/06) | +3–4 weeks after Gate A |
+| **Full plugin** (all work packages, all gates through B') | ~7–8 weeks total |
+
+### Caveats
+
+- **Integration testing against real CAP/PPA installations** could surface adapter bugs that take unpredictable time to fix. The adapters were written against API contracts, not tested against real plugin behavior. Budget an extra 2–3 days for this.
+- **WP-06 is the riskiest work package.** The consent resolution logic (most-restrictive-wins across co-authors, post-level override, retroactive consent changes, audit logging) has the most complex state management. The 6–8 day estimate assumes no scope surprises.
+- **Gate C (reader-side signal)** is externally dependent and has no ETA. Feed-level rights metadata (Gate D) ships only after at least one feed reader indicates Byline parsing interest. This could be weeks or months.
+- **Estimates do not include time for Byline spec validation tooling.** If bylinespec.org publishes an XSD or RelaxNG schema during development, integrating schema validation into the test suite would add 1–2 days.
+- **Estimates assume the adapters work correctly against current CAP/PPA versions.** If either plugin has changed its return shapes since the adapters were written, debugging and updating could add 2–3 days per adapter.
