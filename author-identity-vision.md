@@ -126,6 +126,125 @@ Concrete steps:
 4. **Coordinate with the ActivityPub plugin team.** The post_author/object_actor sync issue (#2353, closed) identified the problem but didn't resolve it. The actor management proposal (Discussion #547) suggests architectural changes are planned. If the ActivityPub plugin exposes filters for customizing `attributedTo`, the Byline identity plugin could use those filters to inject multi-author data without protocol changes.
 5. **Map Byline `role` values to fediverse metadata.** A `guest` author vs. a `staff` author carries editorial meaning that could inform how platforms display the attribution. This is forward-looking — no current platform uses this — but establishing the convention early influences the spec.
 
+## Untangling attribution, control, provenance, and rights
+
+The SocialHub discussion of the pre-FEP proposal surfaced trwnh's observation that `attributedTo` bundles too many concerns. But even that critique uses "ownership" as if it's a single thing, and it isn't. What's actually tangled up in `attributedTo` is at least four distinct relationships, and the word "ownership" obscures the differences between them.
+
+### Attribution
+
+Who created this, in the credit and citation sense. This is what a byline is. It answers "whose intellectual work is this?" and it can be multiple people, it can be pseudonymous, and it doesn't inherently carry any control rights. A CC-BY license requires preserving attribution but specifically does not preserve ownership — the whole point is that the work can be copied, modified, and redistributed. Attribution survives relicensing. It is the most durable relationship between a person and a work.
+
+Attribution also doesn't require authentication. You can credit a pseudonym or "Anonymous" and the attribution is perfectly valid. A pseudonymous blog post attributed to "Satoshi Nakamoto" is correctly attributed even though nobody can authenticate who that is.
+
+### Control
+
+Who can modify or delete this object in the technical system. In ActivityPub, this is enforced by the "same actor" policy: only the actor in `attributedTo` can send Update or Delete activities for the object. This is an access control concern, not an authorship concern. On a WordPress site, an editor can modify a post they didn't write. In a CMS, control is role-based, not authorship-based. The fediverse conflates these because most fediverse software is single-user-per-account, where the person who writes a post is always the person who controls it.
+
+Control requires authentication. You need to prove you are who you claim to be before the system lets you modify or delete something.
+
+### Provenance
+
+Where did this object come from, whose server delivered it, whose cryptographic keys signed it. This is what FEP-fe34 is really about with "origin-based security." It's a server trust question, not an authorship question. When Mastodon receives a federated Article, it trusts it because the delivering server's signature matches the `attributedTo` actor's public key. That's infrastructure, not editorial metadata.
+
+### Intellectual property
+
+Who holds legal rights to the work, and under what terms. This is where "ownership" as a concept gets slippery, because the answer depends entirely on the license model, the cultural framework, and the specific relationships between co-authors.
+
+Under default copyright law (in most jurisdictions), the creator holds copyright. But work-for-hire doctrine means the employer often holds copyright for work created in the scope of employment — a staff reporter at a newsroom doesn't own their articles; the publication does. A guest contributor might retain copyright while granting a license to publish. A CC-BY-SA work has been released such that "ownership" in the proprietary sense is deliberately relinquished while attribution is preserved. An anonymous or pseudonymous author has full copyright protection under the Berne Convention — anonymity doesn't waive rights, it just makes enforcement harder.
+
+**The co-author ownership question.** When multiple authors co-create a work, who "owns" it? The answer varies by jurisdiction and agreement. In the US, a "joint work" under copyright law gives each co-author an undivided interest in the whole — any co-author can license it non-exclusively without the others' consent, but must share proceeds. In the EU, the rules differ by member state. In academic publishing, the "principal investigator" model establishes a hierarchy of contribution that doesn't exist in copyright law but carries enormous professional weight. In journalism, the publication typically holds copyright regardless of how many reporters contributed.
+
+Creative Commons licenses make this tension explicit and deliberate. A CC-BY license requires preserving *attribution* — every co-author must be credited — but does not preserve *ownership* of subsequent derivatives. The license specifically severs the link between "who created this" and "who controls what happens to it next." CC-BY-SA adds the requirement that derivatives carry the same license, but still doesn't give the original authors control over derivative works — only the right to be named. This is attribution surviving the death of ownership, by design.
+
+So the fediverse discussion's casual use of "ownership" to describe what `attributedTo` does is misleading. `attributedTo` in the CC-licensed web is often pointing to someone who has *no ownership rights over the object at all* — only the right to be credited as its creator. The property name itself — "attributed to" — is more accurate than the community's interpretation of it.
+
+**Organizations as authors.** Can a blog, newsroom, or group be cited as an author? In practice, yes — "Staff Report," "AP News," "The Editorial Board" are all common bylines. Plume's model puts the blog itself into `attributedTo` alongside the person authors, treating the blog as a Group actor and the authors as Person actors. In Lemmy's group federation model, `attributedTo` on a Group points to the group's moderators. In journalism, wire service articles are routinely attributed to the organization, not individual reporters.
+
+The Byline spec handles this through `byline:org` (organizational metadata) alongside `byline:person` (individual authors). The plugin should support: individual attribution only ("Jane Doe"), organizational attribution only ("Staff Report"), and mixed attribution ("Jane Doe, The Daily Example") — matching how newsrooms actually use bylines in practice.
+
+**"Ownership" is culturally contingent.** Indigenous knowledge systems, collective authorship traditions, and oral cultures have concepts of intellectual stewardship that don't map cleanly to Western IP law's individual-ownership model. The word "ownership" smuggles in assumptions about commodifiable intellectual property that don't apply universally. A traditional story "belongs to" a community in a sense that has nothing to do with copyright or access control and everything to do with responsibility and relationship. The fediverse discussion, rooted in Western tech culture, doesn't grapple with this — but a plugin that serves diverse WordPress publishers should at least not foreclose on non-Western authorship models by hard-coding assumptions about individual ownership.
+
+**Authentication and enforcement are symmetrical.** IP enforcement requires legal identity — you can't file a DMCA takedown as a pseudonym (in practice), and you can't be sued for defamation if you can't be identified. But IP *existence* doesn't require identification. Copyright attaches to the work at the moment of creation regardless of whether the author is identified. The key insight is that authentication serves *both sides* of enforcement: it's needed to assert your rights (takedown notices, licensing claims) *and* to have your rights curtailed (court orders, liability for harmful content). The anonymity spectrum isn't just about protecting authors from consequences — it's also about authors choosing how much enforcement power they want to wield.
+
+### What `attributedTo` actually conflates
+
+So when trwnh says `attributedTo` conflates authorship and ownership, it's actually worse than stated. In a CMS context, `attributedTo` simultaneously means:
+
+- "Who created this" (attribution) — the staff reporter
+- "Who controls this" (access control) — the CMS admin or any user with `edit_others_posts` capability
+- "Whose server delivered this" (provenance) — the publication's server
+- "Who holds legal rights" (IP) — the media corporation, or the author, depending on the employment relationship and license
+
+These are four different actors in a newsroom. They happen to be the same person on a single-user Mastodon account, which is why the conflation went unnoticed for so long.
+
+### The newsroom workflow problem
+
+This connects directly to a practical question raised by @django in the broader fediverse CMS discussion: do authors want to be tagged and have to manage replies, or does that fall to the media organization, with the author simply sharing, boosting, or announcing their recent post created under the organization's account?
+
+The answer in most newsroom contexts is clear: the organization manages replies, not the individual author. When a publication posts an article on the fediverse, replies go to the publication's account, not to the reporter's personal account. The reporter might boost the article from their personal account, but they don't want their personal mentions flooded with responses to institutional reporting.
+
+This maps to a clean separation that the plugin should express:
+
+**Attribution (Byline layer).** "This article was written by Jane Doe, staff reporter." This is the `byline:author` and `fediverse:creator` output — it credits Jane and lets readers discover her identity, her other work, her credentials. It is a read-only discoverability signal, not a federation-level mention.
+
+**Control and interaction (ActivityPub layer).** The federated Article object's `actor` is the publication's account (@thenewsroom@example.com), which receives replies, manages threads, and handles moderation. The publication decides editorial policy about responses.
+
+**Amplification (social layer).** Jane boosts or announces the article from her personal fediverse account (@janedoe@mastodon.social), driving her followers to the institutional post. This is a social action, not an editorial one.
+
+The Byline identity plugin can express all three layers cleanly: Byline elements for attribution, `fediverse:creator` for linking to the author's discoverable identity, and the existing ActivityPub plugin handling the control/interaction layer through the publication's account. The plugin doesn't need to solve the "who gets replies" question — it just needs to make sure its author identity output doesn't *create* the reply problem by tagging authors in ways that flood their mentions.
+
+### Implications for the identity spectrum
+
+The plugin architecture should accommodate a full spectrum of identity without forcing a single model:
+
+**Fully identified named authors** with verified profile links, real-name JSON-LD schema, and `fediverse:creator` tags pointing to authenticated accounts. This is the E-E-A-T optimized case, suitable for journalists and public-facing professionals.
+
+**Pseudonymous authors** with a consistent pen name, a fediverse handle that may not map to a legal identity, and Byline elements that carry the pseudonym's reputation. A pseudonymous author's `noai` declaration has the same legal standing as a named author's — copyright attaches to the work regardless.
+
+**Anonymous contributors** where attribution is "Anonymous," "Staff Report," or a collective byline. Byline elements still function — a feed reader can display "Staff Report, The Daily Example, reporting" — and control is handled entirely by the organization.
+
+**Bots and AI** where the Byline spec's `role: bot` flag is the relevant signal, and the identity question shifts from "who is this person" to "what system generated this."
+
+For each of these, attribution (Byline), control (ActivityPub actor), provenance (server signatures), and IP rights (TDM/consent metadata) can point to different entities. The normalized author object in the adapter should carry enough information to populate all four output channels without assuming they converge on a single identity.
+
+### The deeper point: attribution vs. authentication
+
+The loose, consensual, mutual-link method of identifying authorship (`rel="me"`, `fediverse:creator`, Byline profile links) serves a fundamentally different purpose than authenticated identity. Attribution is about credit and discoverability — it answers "who should be named when this work is cited?" Authentication is about enforcement — it answers "who has the authority to act on or against this work?"
+
+These purposes require different identity infrastructure. Attribution works with pseudonyms, collective names, and unverifiable claims. Authentication requires cryptographic keys, institutional credentials, or legal identity documents. The Byline spec and `fediverse:creator` operate in the attribution space. ActivityPub signatures and OAuth tokens operate in the authentication space. Confusing the two leads to either over-requiring identity for simple credit (demanding legal names for blog bylines) or under-requiring identity for consequential actions (allowing anonymous actors to delete federated objects).
+
+**Anonymity and pseudonymity sit differently in each layer.** A pseudonymous author can be fully attributed (their pen name appears in Byline elements, their pseudonymous fediverse account is in `fediverse:creator`, their JSON-LD schema uses the pseudonym). They can have full technical control (their server's keys sign the ActivityPub objects). They can express AI consent preferences (a `noai` declaration from a pseudonym is as legally valid as one from a named person — copyright attaches to the work, not the identity). What they cannot easily do is *enforce* those preferences through legal mechanisms, because legal enforcement generally requires identification. The reverse is also true: a pseudonymous author is harder to hold legally accountable for defamatory or infringing content.
+
+This isn't a problem for the plugin to solve — it's a constraint to design around. The normalized author object should carry whatever identity information the author has chosen to provide, without requiring more. The output channels should function correctly whether the author is "Jane Doe, staff reporter at The Daily Example" or "ghostwriter42" or "Anonymous" or "The Editorial Board." The identity spectrum is not a hierarchy from worse to better — it's a set of tradeoffs between discoverability, privacy, enforcement power, and accountability that each author navigates for themselves.
+
+The Byline identity plugin operates in the attribution layer. It should not pretend to solve authentication, and it should not require authentication to function. But it should be designed so that when stronger identity mechanisms exist (ActivityPub cryptographic signatures, IndieWeb `rel="me"` mutual verification, institutional email domain verification), they can be layered on top of the attribution data without architectural changes.
+
+### The permanence problem: right to be forgotten in a federated attribution system
+
+The better a system is at attributing work to an author — which is exactly what this plugin is designed to do — the harder it becomes for that author to exercise a right to be forgotten. Rich structured identity metadata in feeds, JSON-LD schema, and fediverse tags creates exactly the kind of permanent, machine-readable, cross-platform chain from work to person that makes deletion or disassociation difficult. This is a political problem as much as a technical one.
+
+**Why permanence is a power question.** The right to be forgotten (GDPR Article 17 and analogues elsewhere) exists because a public record permanently tied to an identifiable individual is a tool of power — it can be wielded by the individual (to build reputation, claim credit, enforce IP) or against them (surveillance, harassment, legal liability, political persecution). The same structured metadata chain that lets a reporter get proper credit for investigative journalism also lets an authoritarian government identify, locate, and target the author of dissident writing. The authentication that would be needed to exercise deletion rights is the same authentication that would confirm identity to an adversary.
+
+And it's not just about deleting the work. An author might want to keep published work accessible but sever it from their identity. A journalist who covered organized crime might need to become unfindable. A political dissident who published under their real name might need that name disconnected after a regime change. A person who transitions might want pre-transition bylines updated or unlinked. A whistleblower might need to retroactively anonymize their contributions. These aren't edge cases — they're the conditions under which the right to be forgotten was designed to operate.
+
+**What federation does to deletion.** In a centralized system (a WordPress site you control), identity severance is straightforward: change the byline, update the metadata, done. But the moment structured identity enters a syndication feed or a federated protocol, it escapes your control. Feed readers cache Byline elements locally. Search engines index JSON-LD schema into knowledge graphs. AI training pipelines ingest feed content at crawl time and never re-check. Mastodon instances replicate `fediverse:creator` link previews across every server that fetched them. The attribution chain is now distributed across systems you have no relationship with and no ability to contact.
+
+ActivityPub has a `Delete` activity, but it's advisory — receiving servers can honor it or ignore it. Mastodon generally respects `Delete` for posts, but federated copies on other instances are handled inconsistently. There is no mechanism for "delete my identity from this work but leave the work published." You can delete the object or leave it, but you can't selectively sever the attribution chain. The fediverse does not have a `Disattribute` activity, and the pre-FEP discussion (#2358) was rejected before it could even get to questions of identity severability.
+
+**Implications for the plugin.**
+
+**Make identity removable from the origin.** If an author is removed from a post's attribution in WordPress, the next feed generation should reflect that — Byline elements, `fediverse:creator` tags, and JSON-LD schema should all update. This is the minimum viable right-to-be-forgotten implementation: control what your server says going forward, even knowing that federated and cached copies will persist. An `Update` activity sent via ActivityPub *may* propagate the change to instances that honor it, but this cannot be guaranteed.
+
+**Support disassociation as distinct from deletion.** An author might want to remove their identity from past work without deleting the work itself. The normalized author object needs a state beyond present/absent — something like "was attributed, now withdrawn" — so that feeds can stop emitting the attribution without creating a data integrity hole where the post appears unattributed. The `byline:author` element for a withdrawn author could be replaced with a generic "Author Removed" or the organizational byline, preserving the fact that the post had a specific authorship structure without identifying who.
+
+**Make AI consent retroactively assertable.** The per-author AI consent mechanism (WP-06) intersects here directly. An author exercising a right to be forgotten from AI training datasets needs a machine-readable signal that can be applied *after* initial publication, not just at publication time. The TDM-Reservation header and `robots` meta tag should be updateable per-author, and the update should propagate through feeds so that any system re-crawling the feed picks up the changed consent. This won't reach systems that already ingested the content, but it establishes a dated, machine-readable record of when consent was withdrawn — which has evidentiary value if enforcement becomes possible.
+
+**Be honest about the limits.** The plugin's documentation should be transparent that structured identity in federated and syndicated contexts creates persistence that cannot be fully reversed. This isn't a reason not to build it — attribution is genuinely valuable and most authors want it — but authors should understand the tradeoff they're making when they opt into rich identity metadata across multiple output channels. The plugin should surface this tradeoff in its UI, not bury it.
+
+**Pseudonymity as partial mitigation.** An author who publishes under a pen name and links it to a pseudonymous fediverse account has substantially more room to exercise a de facto right to be forgotten. They can abandon the pseudonym without the structured metadata chain leading back to their legal identity. The plugin's identity spectrum (fully identified → pseudonymous → anonymous) is also an exposure spectrum, and the plugin should support authors moving along it over time — not just choosing a fixed point at the moment of first publication. Practically, this means the plugin should handle byline changes gracefully: if Jane Doe's posts are re-attributed to "J.D." or to the organizational byline, the feed output should reflect the new attribution without leaving traces of the old one in the XML or JSON-LD.
+
+**The design principle.** Every piece of identity metadata the plugin emits should be reversible from the origin server, even if downstream persistence is beyond the plugin's control. The plugin should never emit identity data that the author cannot later ask to have removed from the origin. And the plugin should never make it harder to remove identity than the underlying WordPress system already does — if WordPress lets you change a post's author, the plugin should let that change flow cleanly to every output channel.
+
 ## LLM discoverability and credit
 
 ### The problem
@@ -333,3 +452,9 @@ For the IndieWeb community: "own your identity across every channel your writing
 For the technical SEO community: "E-E-A-T compliance from the same author data that powers your feeds."
 
 For the AI-concerned community: "structured rights expression so your consent preferences are machine-readable, not just implied."
+
+For authors concerned about privacy and safety: "your identity metadata is always reversible from your site — if you need to change a byline, withdraw attribution, or move from named to pseudonymous, the plugin respects that change across every output channel it controls."
+
+### Design principle: reversible identity
+
+Every piece of identity metadata the plugin emits should be reversible from the origin server, even if downstream persistence is beyond the plugin's control. The plugin should never emit identity data that the author cannot later ask to have removed from the origin. And the plugin should never make it harder to remove identity than the underlying WordPress system already does — if WordPress lets you change a post's author, the plugin should let that change flow cleanly to every output channel. This principle applies across all components, from Byline feed elements to JSON-LD schema to `fediverse:creator` tags to AI consent metadata. See "The permanence problem" in the attribution/control/provenance/rights analysis for the full rationale.
