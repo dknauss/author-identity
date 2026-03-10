@@ -2,12 +2,24 @@
 
 ## Plugin identity
 
-- **Working name:** `byline-feed` (final name TBD, see `author-identity-vision.md` naming section)
+- **Working name:** `byline-feed` (see naming decision below)
 - **Type:** WordPress plugin, distributed via wp.org
 - **License:** GPLv2 or later
 - **PHP floor:** 7.4
 - **WP floor:** 6.0
 - **Dependencies:** None (all multi-author plugin integrations are optional adapters)
+
+### Naming decision (pre-MVP)
+
+The working name "Byline Feed" accurately describes WP-01 through WP-03 (feed output), but scopes too narrowly once WP-04 (fediverse:creator), WP-05 (JSON-LD schema), and WP-06 (AI consent) ship. The [vision document's naming section](../author-identity-vision.md#naming-and-positioning) frames the eventual positioning as "structured author identity and content provenance for WordPress" — but launching on wp.org under a name that broad invites scope confusion.
+
+**Resolve before wp.org submission.** Options:
+
+1. **Ship as "Byline Feed"**, rebrand later if post-MVP components justify it. Low risk, easy to change. The wp.org slug (`byline-feed`) is permanent, but the display name is not.
+2. **Ship as "Byline"** (broader scope implied, still grounded in the spec name). Risk: namespace collision with the abandoned "Byline" plugin on wp.org.
+3. **Ship as "Byline Identity"** or **"Author Identity"** — names the vision, but overpromises at MVP.
+
+Recommendation: option 1. Ship the MVP under "Byline Feed," earn the broader name through delivered scope.
 
 ## Architectural overview
 
@@ -146,6 +158,17 @@ Gate D ─── Feed-level rights metadata (after C) ────────�
 - **WP-06 (feed-level rights):** Feed-level rights metadata (`cc:license` for explicit license declarations and any dedicated deny-policy extension) is the piece that genuinely depends on readers parsing Byline data. It gates on C.
 
 Waiting for reader-side signal before shipping fediverse:creator tags and JSON-LD schema would mean sitting on proven infrastructure to protect against a risk (Byline spec adoption) that those features don't share. The split gates let the plugin grow its value proposition as the adapter layer proves out, while feed-level features still wait for their specific dependency.
+
+## Explicitly not in scope
+
+The [vision document](../author-identity-vision.md) discusses capabilities that the plugin deliberately does not attempt. This list prevents scope creep by naming the boundaries:
+
+- **ActivityPub C2S publishing.** The vision explores Client-to-Server ActivityPub as a future publication protocol. The plugin does not implement C2S. The adapter pattern is designed so a C2S output channel could be added, but no work package targets it.
+- **C2PA content provenance.** The protocol coverage map lists C2PA (Coalition for Content Provenance and Authenticity) as a content-authenticity standard. The plugin does not generate or verify C2PA manifests. C2PA operates at the media-asset level (images, video), not at the article-metadata level where this plugin works.
+- **XFN blogroll harvesting.** The vision's Relationships section discusses XFN-annotated blogrolls as a machine-readable social graph. The plugin does not read or import XFN data from WordPress links. It emits `rel="me"` semantics on profile links it already outputs, but does not become an XFN management tool.
+- **Cross-plugin normalized author API as a standalone library.** The adapter layer normalizes author data for this plugin's output channels. It is not a general-purpose multi-author abstraction layer for the WordPress ecosystem. Third-party plugins can use the `byline_feed_get_authors()` function and filters, but the API is designed for this plugin's consumers, not as a universal author resolution standard.
+- **Guest author management.** The plugin does not create, edit, authenticate, or manage guest authors. It reads them from whatever multi-author system is active. Security concerns about guest author login, password reset, and capability mapping belong to the upstream multi-author plugins (CAP, PPA, HM Authorship), not to this plugin.
+- **Full social graph / relationship management.** The plugin emits relationship metadata (co-authorship, organizational affiliation, profile links) in its output channels. It does not maintain a relationship database, import social graph data, or replicate IndieWeb social reader functionality.
 
 ## Filter and hook API
 

@@ -2,7 +2,7 @@
 
 ## Plugin identity
 
-- **Working name:** `byline-feed` (final name TBD, see `author-identity-vision.md` naming section)
+- **Working name:** `byline-feed` — ship MVP under this name, earn a broader name through delivered scope (see [naming decision](Implementation%20Strategy/implementation-spec.md#naming-decision-pre-mvp))
 - **Type:** WordPress plugin, distributed via wp.org
 - **License:** GPLv2 or later
 - **PHP floor:** 7.4
@@ -10,6 +10,7 @@
 - **Dependencies:** None (all multi-author plugin integrations are optional adapters)
 - **Multi-author landscape:** See [multi-author-matrix.md](multi-author-matrix.md) for a comparison of the systems this plugin adapts
 - **Protocol landscape:** See [protocol-coverage-map.md](protocol-coverage-map.md) for how the output protocols (Byline, JSON-LD, fediverse:creator, TDM-Rep) relate to each other
+- **Scope boundaries:** See [explicitly not in scope](Implementation%20Strategy/implementation-spec.md#explicitly-not-in-scope) for what the vision discusses but the plugin deliberately defers
 
 ## Architectural overview
 
