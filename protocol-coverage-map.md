@@ -35,8 +35,11 @@ Which protocols carry which identity signals. This is the core of the coverage m
 | **Profile URL** | ✅ `byline:url` | ✅ `Person.url` | ✅ `actor.url` | ❌ | ❌ | ✅ `u-url` | ❌ | ✅ `author/uri` | ✅ `author.url` |
 | **Avatar** | ✅ `byline:avatar` | ✅ `Person.image` | ✅ `actor.icon` | ❌ | ❌ | ✅ `u-photo` | ❌ | ❌ | ✅ `author.avatar` |
 | **Social profiles** | ✅ `byline:profile` | ✅ `Person.sameAs` | ❌ | ❌ | ❌ | ✅ `rel="me"` links | ❌ | ❌ | ❌ |
+| **Interpersonal relationships** | ❌ | ✅ `Person.knows` | ✅ Follow/follower graph | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
 | **Fediverse handle** | ❌ | ❌ | ✅ (actor URI) | ✅ `@user@instance` | ❌ | ❌ | ❌ | ❌ | ❌ |
 | **Multiple authors** | ✅ Multiple `byline:person` | ✅ `author` array | ⚠️ Single `attributedTo` | ⚠️ Multiple tags, first displayed | ❌ | ✅ Multiple `h-card` | ❌ | ✅ Multiple `author` | ✅ `authors` array |
+
+> **Note on XFN:** Interpersonal relationships are uniquely covered by [XFN 1.1](#xfn-xhtml-friends-network) via `rel` attribute values on HTML links (friend, colleague, met, etc.). XFN is the origin of `rel="me"` and has been in WordPress core since 2.2 (2007). See the [XFN entry](#xfn-xhtml-friends-network) below and the [convergences section](#where-xfn-fits) for how it relates to Byline profile links.
 
 ### Content context signals
 
@@ -60,9 +63,10 @@ Which protocols carry which identity signals. This is the core of the coverage m
 
 ### Verification and trust
 
-| Signal | rel="me" (HTML) | ActivityPub (federation) | HTTP Signatures | WebFinger | fediverse:creator | Byline (feeds) | JSON-LD (HTML) |
+| Signal | XFN/rel="me" (HTML) | ActivityPub (federation) | HTTP Signatures | WebFinger | fediverse:creator | Byline (feeds) | JSON-LD (HTML) |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| **Identity verification** | ✅ Mutual linking | ✅ Cryptographic | ✅ Cryptographic | ✅ Domain-based | ✅ Domain allowlist | ❌ Declared only | ❌ Declared only |
+| **Identity verification** | ✅ Mutual linking (`me`) | ✅ Cryptographic | ✅ Cryptographic | ✅ Domain-based | ✅ Domain allowlist | ❌ Declared only | ❌ Declared only |
+| **Relationship graph** | ✅ Full XFN vocabulary | ✅ Follow/follower | ❌ | ❌ | ❌ | ❌ | ⚠️ `Person.knows` |
 | **Tamper detection** | ❌ | ✅ Signed objects | ✅ Signed requests | ❌ | ❌ | ❌ | ❌ |
 | **Trust model** | Social proof | Cryptographic | Cryptographic | Domain control | Domain allowlist | Publisher trust | Publisher trust |
 
@@ -200,11 +204,21 @@ Which protocols carry which identity signals. This is the core of the coverage m
 - **Purpose:** Server-level metadata (software, user counts, features). Not author-level identity, but part of the federation discovery stack.
 - **WordPress status:** WordPress ActivityPub plugin may provide.
 
-### Identity verification
+### Identity verification and social graph
+
+#### XFN (XHTML Friends Network)
+- **Standard:** XFN 1.1 (gmpg.org/xfn/11, 2004, CC-BY-SA)
+- **Channel:** HTML `rel` attribute on `<a>` and `<link>` elements
+- **Purpose:** Declares interpersonal relationships via hyperlinks. The only protocol in this inventory that describes *how people relate to each other* rather than who they are or what they created.
+- **Relationship vocabulary:** Friendship (contact, acquaintance, friend), physical (met), professional (co-worker, colleague), geographical (co-resident, neighbor), family (child, parent, sibling, spouse, kin), romantic (muse, crush, date, sweetheart), identity (me). Categories have mutual-exclusivity rules.
+- **Trust model:** Declared metadata on links. No verification mechanism for most values. The `me` value is the exception — it enables bidirectional mutual-linking verification (see `rel="me"` below).
+- **WordPress lineage:** XFN has been part of WordPress core since version 2.2 (2007). The original Links Manager stored XFN values in `wp_links.link_rel`. The Links Manager was hidden in WP 3.5 (2012) but never removed. The [Link Extension for XFN](https://wordpress.org/plugins/link-extension-for-xfn/) plugin (Courtney Robertson, 2025) restores the full XFN 1.1 vocabulary to the block editor link UI, adding relationship metadata to any block that supports links.
+- **Relevance to this project:** XFN is the origin of `rel="me"`, which is foundational to IndieWeb identity verification and fediverse profile linking. The Byline spec's `byline:profile` element carries `rel` attributes — these could include XFN values, giving feed readers a richer graph of author relationships. See [convergences § Where XFN fits](#where-xfn-fits).
 
 #### rel="me"
-- **Standard:** HTML link relation (microformats.org, HTML spec)
+- **Standard:** XFN 1.1 value, adopted as HTML standard link relation (microformats.org, HTML spec)
 - **Channel:** HTML `<link rel="me">` or `<a rel="me">` elements
+- **Origin:** The `me` value in XFN 1.1 (see above). Exclusive of all other XFN values — it means "this link points to another representation of me."
 - **Purpose:** Bidirectional identity verification. If your WordPress site links to your Mastodon profile with `rel="me"`, and your Mastodon profile links back to your WordPress site, both sides have verified the connection.
 - **Trust model:** Mutual linking — stronger than declared metadata, weaker than cryptographic. Requires checking both directions.
 - **WordPress status:** Themes can output. Byline Feed will enable via profile link output. The Byline spec's `byline:profile` elements can carry `rel` attributes for this purpose.
@@ -258,6 +272,20 @@ These are not incompatible. A sophisticated implementation uses cryptographic id
 **Content perspective.** Only the Byline spec carries it. No other protocol has a concept of editorial intent (reporting vs. opinion vs. satire). This is Byline's most distinctive contribution — it addresses a problem (content collapse in feeds) that no other standard even recognizes.
 
 **Rights and consent.** Fragmented across four mechanisms (robots meta, TDM-Rep, ai.txt, CC license) with no coordination between them. None support per-author granularity — they're all per-page or per-site. The Byline Feed plugin's [WP-06](Implementation%20Strategy/wp-06.md) routes per-author consent preferences to these per-page outputs using a most-restrictive-wins rule: if any author on a multi-author post denies AI training, the page-level signal is deny.
+
+### Where XFN fits
+
+XFN occupies a unique position in this landscape. Every other protocol answers "who is this author?" or "what did they create?" XFN answers **"how does this person relate to other people?"** — friend, colleague, co-worker, met in person, family. It's a social graph protocol, not an identity or attribution protocol.
+
+This matters for the Byline Feed project in three ways:
+
+1. **`rel="me"` is an XFN value.** The identity verification mechanism that underpins IndieWeb linking, Mastodon profile verification, and Byline profile links originated in XFN 1.1 (2004). WordPress has carried XFN support since version 2.2 (2007), making it one of the oldest web standards in WordPress core.
+
+2. **Byline profile links can carry XFN values.** The Byline spec's `byline:profile` element has `href` and `rel` attributes. A feed entry could declare `<byline:profile href="https://example.com/editor" rel="colleague" />`, telling feed readers not just that the author links to this person, but *how* they relate. This is richer than `sameAs` (which only says "same person, different URL") and could surface meaningful editorial context — "this reporter's colleague reviewed this piece."
+
+3. **WordPress already has the infrastructure.** The [Link Extension for XFN](https://wordpress.org/plugins/link-extension-for-xfn/) plugin (2025) restores the full XFN 1.1 vocabulary to the block editor. If authors are already annotating their links with XFN relationships, the Byline Feed plugin could harvest those `rel` values and carry them into feed output — no new data entry required. This is the same pattern as the adapter layer: normalize existing data into structured output.
+
+XFN is not on the Byline Feed MVP roadmap, but it's a natural extension point for the IndieWeb integration planned as Component 5 in the [vision document](author-identity-vision.md).
 
 ---
 
