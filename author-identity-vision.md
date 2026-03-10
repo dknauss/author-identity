@@ -14,7 +14,7 @@ Forty thousand multi-author WordPress sites. Zero structured identity in their f
 
 This document extends the Byline feed adoption strategy into broader territory: how structured author identity in WordPress intersects with ActivityPub federation, LLM discoverability, technical SEO, and intellectual property protection. It is a vision document, not an implementation spec. It identifies convergences, tensions, and practical components that could be built incrementally on top of the Byline feed plugin described in `byline-adoption-strategy.md`.
 
-For a side-by-side comparison of existing multi-author plugin implementations — the systems this vision builds on — see [multi-author-matrix.md](multi-author-matrix.md).
+For a side-by-side comparison of existing multi-author plugin implementations — the systems this vision builds on — see [multi-author-matrix.md](multi-author-matrix.md). For how the protocols referenced throughout this document cover (or fail to cover) each identity signal across output channels, see [protocol-coverage-map.md](protocol-coverage-map.md).
 
 ## Target communities
 

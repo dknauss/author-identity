@@ -9,6 +9,7 @@
 - **WP floor:** 6.0
 - **Dependencies:** None (all multi-author plugin integrations are optional adapters)
 - **Multi-author landscape:** See [multi-author-matrix.md](multi-author-matrix.md) for a comparison of the systems this plugin adapts
+- **Protocol landscape:** See [protocol-coverage-map.md](protocol-coverage-map.md) for how the output protocols (Byline, JSON-LD, fediverse:creator, TDM-Rep) relate to each other
 
 ## Architectural overview
 

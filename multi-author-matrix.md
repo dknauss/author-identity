@@ -4,6 +4,8 @@ A side-by-side comparison of WordPress multi-author systems — their data model
 
 This matrix synthesizes findings from the [landscape analysis](landscape.md), [HM Authorship architecture review](architecture.md), [known gaps audit](known-gaps.md), and [implementation spec](implementation-spec.md). For the vision of what structured author identity should look like across all output channels, see [author-identity-vision.md](author-identity-vision.md).
 
+**Companion document:** [protocol-coverage-map.md](protocol-coverage-map.md) — covers the *output side*: which protocols carry which identity signals across feeds, HTML, HTTP headers, and federation.
+
 ---
 
 ## Systems compared
