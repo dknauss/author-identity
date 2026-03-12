@@ -12,9 +12,9 @@
 		"dealerdirect/phpcodesniffer-composer-installer": "^1.0"
 	},
 	"scripts": {
-		"test": "phpunit",
-		"lint": "phpcs --standard=WordPress .",
-		"lint:fix": "phpcbf --standard=WordPress ."
+		"test": "phpunit --configuration=phpunit.xml.dist",
+		"lint": "phpcs --standard=WordPress --extensions=php --ignore=vendor,node_modules,build,tests .",
+		"lint:fix": "phpcbf --standard=WordPress --extensions=php --ignore=vendor,node_modules,build,tests ."
 	},
 	"config": {
 		"allow-plugins": {

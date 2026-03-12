@@ -1,0 +1,140 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'byline-feed/**'
+      - '.github/workflows/ci.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'byline-feed/**'
+      - '.github/workflows/ci.yml'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  phpunit:
+    name: PHPUnit — PHP ${{ matrix.php }} / WP ${{ matrix.wp }}
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: byline-feed
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # PHP 7.4
+          - php: '7.4'
+            wp: '6.0'
+          - php: '7.4'
+            wp: 'latest'
+          # PHP 8.0
+          - php: '8.0'
+            wp: '6.0'
+          - php: '8.0'
+            wp: 'latest'
+          # PHP 8.1
+          - php: '8.1'
+            wp: '6.4'
+          - php: '8.1'
+            wp: 'latest'
+          # PHP 8.2
+          - php: '8.2'
+            wp: '6.4'
+          - php: '8.2'
+            wp: 'latest'
+          # PHP 8.3
+          - php: '8.3'
+            wp: 'latest'
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: wordpress_test
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up PHP ${{ matrix.php }}
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, mysql, mysqli, pdo_mysql, bcmath, soap, intl, gd, exif, iconv
+          coverage: none
+
+      - name: Install Composer dependencies
+        run: composer install --prefer-dist --no-progress --no-suggest
+
+      - name: Install WordPress test suite
+        run: bash bin/install-wp-tests.sh wordpress_test root root 127.0.0.1 ${{ matrix.wp }} true
+        env:
+          WP_TESTS_DIR: /tmp/wordpress-tests-lib
+          WP_CORE_DIR: /tmp/wordpress
+
+      - name: Run PHPUnit
+        run: vendor/bin/phpunit
+        env:
+          WP_TESTS_DIR: /tmp/wordpress-tests-lib
+
+  phpcs:
+    name: PHPCS
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: byline-feed
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          tools: cs2pr
+          coverage: none
+
+      - name: Install Composer dependencies
+        run: composer install --prefer-dist --no-progress --no-suggest
+
+      - name: Run PHPCS
+        run: vendor/bin/phpcs --standard=WordPress --extensions=php --ignore=vendor,node_modules,build,tests --report=checkstyle . | cs2pr
+
+  build:
+    name: Node build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: byline-feed
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: byline-feed/package-lock.json
+
+      - name: Install Node dependencies
+        run: npm ci || npm install
+
+      - name: Build assets
+        run: npm run build

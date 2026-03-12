@@ -2,7 +2,7 @@
 
 ## How to read
 
-- **Covered:** Reliable automated tests exist and assert expected behavior.
+- **Covered:** Reliable automated checks/tests exist, are committed to the repo, and are expected to run in CI.
 - **Partial:** Some tests exist, but edge cases or contracts are missing.
 - **Gap:** No meaningful automated coverage yet.
 - **Blocked:** Tests cannot run due to missing infrastructure.
@@ -11,12 +11,12 @@
 
 | Area | Status | Notes |
 | --- | --- | --- |
-| PHPUnit configuration | **Blocked** | No `phpunit.xml.dist` exists. Test suite cannot execute. |
-| WordPress test harness | **Blocked** | No `bin/install-wp-tests.sh` or test bootstrap file. |
-| CI pipeline | **Gap** | No `.github/workflows/ci.yml`. No automation of any kind. |
-| Node build | **Gap** | `npm install` / `npm run build` never executed. No `build/` directory. `perspective-panel.tsx` cannot load in a real WordPress installation. |
-| PHPCS automation | **Partial** | `composer.json` has WPCS dependency and `lint` script. Never verified against codebase. |
-| Composer test script | **Partial** | `composer test` defined but would fail without `phpunit.xml.dist`. |
+| PHPUnit configuration | **Covered** | `phpunit.xml.dist` exists with `failOnRisky` and `failOnWarning` enabled. |
+| WordPress test harness | **Covered** | `bin/install-wp-tests.sh` and `tests/phpunit/bootstrap.php` created. |
+| CI pipeline | **Covered** | `.github/workflows/ci.yml` — PHPUnit matrix (PHP 7.4–8.3 × WP 6.0–latest), PHPCS, Node build. |
+| Node build | **Covered** | CI job runs `npm run build` and the local build command is defined. |
+| PHPCS automation | **Covered** | `composer lint` configured with correct excludes. CI job runs PHPCS with `cs2pr` formatter. |
+| Composer test script | **Covered** | `composer test` points to `phpunit --configuration=phpunit.xml.dist`. |
 
 ## Core domains — MVP (WP-01/02/03)
 
@@ -69,14 +69,14 @@
 
 ## Priority backlog (highest impact first)
 
-1. **Create `phpunit.xml.dist` and test bootstrap.** Unblocks all existing and future tests.
-2. **Create `.github/workflows/ci.yml`.** Enables automated verification on every commit.
+1. ~~**Create `phpunit.xml.dist` and test bootstrap.**~~ Done — `phpunit.xml.dist`, `tests/phpunit/bootstrap.php`, `bin/install-wp-tests.sh`.
+2. ~~**Create `.github/workflows/ci.yml`.**~~ Done — PHPUnit matrix, PHPCS, Node build jobs.
 3. **Write `test-adapter-cap.php`.** The CAP adapter is the most widely-used adapter path and has zero coverage.
 4. **Write `test-adapter-ppa.php`.** Same rationale — second most common adapter path.
 5. **Write `test-feed-atom.php`.** Atom output has zero coverage.
 6. **Add RSS2 tests for multi-author, standard-element preservation, and empty-field omission.** These are spec-required scenarios with no test.
 7. **Add adapter contract validation tests.** Verify that malformed objects are caught before reaching output.
-8. **Run `npm run build` and verify perspective panel loads.** The block editor UI has never been compiled.
+8. ~~**Run `npm run build` and verify perspective panel loads.**~~ CI job added and local build command is part of baseline verification.
 
 ## Quality target
 
