@@ -57,6 +57,7 @@ function byline_feed_get_adapter(): Adapter {
 		$adapter = new Adapter_CAP();
 	} elseif (
 		function_exists( 'publishpress_authors_get_post_authors' )
+		|| function_exists( 'get_post_authors' )
 		|| class_exists( 'MultipleAuthors\\Classes\\Objects\\Author' )
 	) {
 		$adapter = new Adapter_PPA();

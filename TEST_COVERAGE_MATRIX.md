@@ -25,12 +25,12 @@
 | Core adapter — single author resolution | **Covered** | `test-adapter-core.php` | Happy path, role mapping, zero-value fields. |
 | Core adapter — invalid/missing author | **Covered** | `test-adapter-core.php` | Returns empty array for user ID 0. |
 | Core adapter — role mapping | **Covered** | `test-adapter-core.php` | Editor → staff, Author → contributor. |
-| CAP adapter — mixed user/guest authors | **Gap** | Missing file | `test-adapter-cap.php` does not exist. |
-| CAP adapter — guest author detection | **Gap** | Missing file | No coverage. |
-| CAP adapter — author ordering | **Gap** | Missing file | No coverage. |
-| PPA adapter — term meta resolution | **Gap** | Missing file | `test-adapter-ppa.php` does not exist. |
-| PPA adapter — linked user fallback | **Gap** | Missing file | No coverage. |
-| PPA adapter — guest author handling | **Gap** | Missing file | No coverage. |
+| CAP adapter — mixed user/guest authors | **Covered** | `test-adapter-cap.php` | Normalization covered for both WP user and guest author objects. |
+| CAP adapter — guest author detection | **Covered** | `test-adapter-cap.php` | Guest objects map to `role=guest`, `is_guest=true`, and `user_id=0`. |
+| CAP adapter — author ordering | **Partial** | `test-adapter-cap.php` | Normalization covered; `get_coauthors()` ordering path still needs a function-level integration test. |
+| PPA adapter — term meta resolution | **Covered** | `test-adapter-ppa.php` | Term meta description/avatar mapping verified. |
+| PPA adapter — linked user fallback | **Covered** | `test-adapter-ppa.php` | Fallback to linked user profile when term meta is missing is verified. |
+| PPA adapter — guest author handling | **Covered** | `test-adapter-ppa.php` | Guest object mapping (`role=guest`, no user-linked fields) is verified. |
 | Adapter contract validation | **Gap** | No file | No enforcement of normalized object shape. |
 | RSS2 namespace declaration | **Covered** | `test-feed-rss2.php` | Verifies `xmlns:byline` present. |
 | RSS2 contributors block | **Covered** | `test-feed-rss2.php` | Verifies `<byline:person>` in channel head. |
@@ -71,8 +71,8 @@
 
 1. ~~**Create `phpunit.xml.dist` and test bootstrap.**~~ Done — `phpunit.xml.dist`, `tests/phpunit/bootstrap.php`, `bin/install-wp-tests.sh`.
 2. ~~**Create `.github/workflows/ci.yml`.**~~ Done — PHPUnit matrix, PHPCS, Node build jobs.
-3. **Write `test-adapter-cap.php`.** The CAP adapter is the most widely-used adapter path and has zero coverage.
-4. **Write `test-adapter-ppa.php`.** Same rationale — second most common adapter path.
+3. ~~**Write `test-adapter-cap.php`.**~~ Done — normalization coverage added for user+guest CAP objects.
+4. ~~**Write `test-adapter-ppa.php`.**~~ Done — normalization coverage added for term-meta, user-fallback, and guest paths.
 5. **Write `test-feed-atom.php`.** Atom output has zero coverage.
 6. **Add RSS2 tests for multi-author, standard-element preservation, and empty-field omission.** These are spec-required scenarios with no test.
 7. **Add adapter contract validation tests.** Verify that malformed objects are caught before reaching output.
