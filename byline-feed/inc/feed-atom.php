@@ -64,31 +64,51 @@ function output_contributors(): void {
 	echo "\t\t<byline:contributors>\n";
 
 	foreach ( $persons as $author ) {
-		$id = esc_attr( $author->id );
-
-		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Value is escaped via esc_attr().
-		echo "\t\t\t<byline:person id=\"{$id}\">\n";
-		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- esc_xml_value() handles XML escaping.
-		echo "\t\t\t\t<byline:name>" . esc_xml_value( $author->display_name ) . "</byline:name>\n";
-
-		if ( ! empty( $author->description ) ) {
-			$context = mb_substr( wp_strip_all_tags( $author->description ), 0, 280 );
-			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- esc_xml_value() handles XML escaping.
-			echo "\t\t\t\t<byline:context>" . esc_xml_value( $context ) . "</byline:context>\n";
-		}
-
-		if ( ! empty( $author->url ) ) {
-			echo "\t\t\t\t<byline:url>" . esc_url( $author->url ) . "</byline:url>\n";
-		}
-
-		if ( ! empty( $author->avatar_url ) ) {
-			echo "\t\t\t\t<byline:avatar>" . esc_url( $author->avatar_url ) . "</byline:avatar>\n";
-		}
-
-		echo "\t\t\t</byline:person>\n";
+		output_person( $author );
 	}
 
 	echo "\t\t</byline:contributors>\n";
+
+	/**
+	 * Fires after the <byline:contributors> block is output in the Atom feed head.
+	 */
+	do_action( 'byline_feed_after_atom_contributors' );
+}
+
+/**
+ * Output a single <byline:person> element.
+ *
+ * @param object $author Normalized author object.
+ */
+function output_person( object $author ): void {
+	$id = esc_attr( $author->id );
+
+	$xml  = "\t\t\t<byline:person id=\"{$id}\">\n";
+	$xml .= "\t\t\t\t<byline:name>" . esc_xml_value( $author->display_name ) . "</byline:name>\n";
+
+	if ( ! empty( $author->description ) ) {
+		$context = mb_substr( wp_strip_all_tags( $author->description ), 0, 280 );
+		$xml    .= "\t\t\t\t<byline:context>" . esc_xml_value( $context ) . "</byline:context>\n";
+	}
+
+	if ( ! empty( $author->url ) ) {
+		$xml .= "\t\t\t\t<byline:url>" . esc_url( $author->url ) . "</byline:url>\n";
+	}
+
+	if ( ! empty( $author->avatar_url ) ) {
+		$xml .= "\t\t\t\t<byline:avatar>" . esc_url( $author->avatar_url ) . "</byline:avatar>\n";
+	}
+
+	$xml .= "\t\t\t</byline:person>\n";
+
+	/**
+	 * Filters the XML for a <byline:person> element.
+	 *
+	 * @param string $xml    The person XML.
+	 * @param object $author The normalized author object.
+	 */
+	// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- XML payload is escaped before filter application.
+	echo apply_filters( 'byline_feed_person_xml', $xml, $author );
 }
 
 /**
@@ -102,21 +122,34 @@ function output_entry(): void {
 	}
 
 	$authors = byline_feed_get_authors( $post );
+	$xml     = '';
 
 	foreach ( $authors as $author ) {
-		$ref = esc_attr( $author->id );
-		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Value is escaped via esc_attr().
-		echo "\t\t<byline:author ref=\"{$ref}\"/>\n";
+		$ref  = esc_attr( $author->id );
+		$xml .= "\t\t<byline:author ref=\"{$ref}\"/>\n";
 
 		if ( ! empty( $author->role ) ) {
-			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- esc_xml_value() handles XML escaping.
-			echo "\t\t<byline:role>" . esc_xml_value( $author->role ) . "</byline:role>\n";
+			$xml .= "\t\t<byline:role>" . esc_xml_value( $author->role ) . "</byline:role>\n";
 		}
 	}
 
 	$perspective = byline_feed_get_perspective( $post );
 	if ( '' !== $perspective ) {
-		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- esc_xml_value() handles XML escaping.
-		echo "\t\t<byline:perspective>" . esc_xml_value( $perspective ) . "</byline:perspective>\n";
+		$xml .= "\t\t<byline:perspective>" . esc_xml_value( $perspective ) . "</byline:perspective>\n";
 	}
+
+	/**
+	 * Filters the per-entry Byline XML output.
+	 *
+	 * @param string   $xml     The entry XML.
+	 * @param \WP_Post $post    The post.
+	 * @param object[] $authors The normalized author array.
+	 */
+	// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- XML payload is escaped before filter application.
+	echo apply_filters( 'byline_feed_item_xml', $xml, $post, $authors );
+
+	/**
+	 * Fires after per-entry Byline elements are output.
+	 */
+	do_action( 'byline_feed_after_atom_entry' );
 }

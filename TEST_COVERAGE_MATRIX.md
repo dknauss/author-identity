@@ -44,7 +44,7 @@
 | Atom namespace declaration | **Covered** | `test-feed-atom.php` | Verifies `xmlns:byline` present. |
 | Atom contributors block | **Covered** | `test-feed-atom.php` | Verifies `<byline:person>` output in feed head. |
 | Atom per-entry author refs | **Covered** | `test-feed-atom.php` | Verifies `<byline:author ref>` output for entries, including multi-author cases. |
-| Atom filter parity with RSS2 | **Gap** | Missing file | Atom layer has no extensibility hooks. |
+| Atom filter parity with RSS2 | **Covered** | `test-feed-atom.php` | Atom contributors and entry output now honor the same person/item XML filters as RSS2. |
 | Perspective — valid value accepted | **Covered** | `test-perspective.php` | All 12 allowed values pass. |
 | Perspective — invalid value rejected | **Covered** | `test-perspective.php` | Returns empty string. |
 | Perspective — filter override | **Covered** | `test-perspective.php` | Filter can replace value. |

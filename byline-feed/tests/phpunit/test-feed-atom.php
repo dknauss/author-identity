@@ -52,6 +52,8 @@ class Test_Feed_Atom extends WP_UnitTestCase {
 
 	public function tear_down(): void {
 		remove_all_filters( 'byline_feed_authors' );
+		remove_all_filters( 'byline_feed_person_xml' );
+		remove_all_filters( 'byline_feed_item_xml' );
 		wp_reset_postdata();
 		parent::tear_down();
 	}
@@ -305,5 +307,56 @@ class Test_Feed_Atom extends WP_UnitTestCase {
 
 		$this->assertNotFalse( $xml, 'Atom output must be well-formed XML.' );
 	}
-}
 
+	public function test_person_xml_filter_applies_to_atom_contributors(): void {
+		$user_id = self::factory()->user->create(
+			array(
+				'display_name' => 'Filtered Atom Author',
+			)
+		);
+
+		$post_id = self::factory()->post->create(
+			array(
+				'post_author' => $user_id,
+				'post_status' => 'publish',
+			)
+		);
+
+		$this->set_feed_posts( array( $post_id ) );
+
+		add_filter(
+			'byline_feed_person_xml',
+			static function ( string $xml ): string {
+				return $xml . "\t\t\t<byline:test>yes</byline:test>\n";
+			}
+		);
+
+		$feed = $this->capture_output(
+			static function () {
+				output_contributors();
+			}
+		);
+
+		$this->assertStringContainsString( '<byline:test>yes</byline:test>', $feed );
+	}
+
+	public function test_item_xml_filter_applies_to_atom_entries(): void {
+		$post_id = self::factory()->post->create( array( 'post_status' => 'publish' ) );
+		$this->set_current_post( $post_id );
+
+		add_filter(
+			'byline_feed_item_xml',
+			static function ( string $xml ): string {
+				return $xml . "\t\t<byline:test-entry>yes</byline:test-entry>\n";
+			}
+		);
+
+		$feed = $this->capture_output(
+			static function () {
+				output_entry();
+			}
+		);
+
+		$this->assertStringContainsString( '<byline:test-entry>yes</byline:test-entry>', $feed );
+	}
+}
