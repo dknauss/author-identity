@@ -53,7 +53,14 @@ The perspective feature builds successfully and its feed output is tested, but b
 
 ### 4. Gate A sign-off decision
 
-The MVP feed layer (RSS2 + Atom + JSON Feed), adapter layer, perspective field, contract validation, and CI are all in place. A formal Gate A sign-off should confirm: all CI jobs pass, output matches the Byline extension vocabulary, and the plugin is ready for real-world testing before moving to WP-04.
+The MVP feed layer (RSS2 + Atom + JSON Feed), adapter layer, perspective field, contract validation, and CI are all in place except for JSON Feed test coverage. A formal Gate A sign-off should happen only after:
+
+- all CI jobs pass
+- RSS2, Atom, and JSON Feed output are all covered by automated tests
+- adapter behavior and perspective output remain green
+- the perspective UI has at least a manual editor verification pass for panel registration, save behavior, and feed output
+
+Gate A is the MVP quality gate for real-world testing and wp.org readiness. It is not the same thing as stable 1.0 spec conformance.
 
 ---
 
@@ -93,9 +100,9 @@ The following items appeared in earlier audits but are now resolved:
 
 | Priority | Gaps | Rationale |
 | --- | --- | --- |
-| **Pre-release** | #2 (JSON Feed tests), #4 (Gate A sign-off) | Complete test coverage for all three feed formats before declaring MVP complete |
-| **Next product work** | #1 (WP-04/05/06) | The MVP feed layer is in place; remaining roadmap value is in additional output channels |
-| **Risk reduction** | #3 (editor verification) | Reduces regression risk in the block editor integration |
+| **Pre-release** | #2 (JSON Feed tests), #3 (editor verification), #4 (Gate A sign-off) | Finish the last feed-layer tests, do a manual editor QA pass, then declare the MVP complete |
+| **Pre-1.0 spec alignment** | Multi-author-per-item divergence, JSON Feed structure divergence | Resolve the two known Byline-spec divergences with the spec author before calling the plugin a stable 1.0 implementation |
+| **Next product work** | #1 (WP-04/05/06) | After Gate A, the main remaining roadmap value is in additional output channels |
 | **Process hygiene** | #5, #6 (track dev-tooling advisories, use changelog consistently) | Keeps maintenance and release quality disciplined without blocking feature work |
 
 ---
