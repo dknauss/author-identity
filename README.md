@@ -18,63 +18,22 @@ The current implementation focus is the `byline-feed` plugin:
 
 ## Documentation map
 
-### Vision
-
-- [docs/vision/author-identity-vision.md](docs/vision/author-identity-vision.md) - Full project vision and positioning
-
-### Planning
-
-- [docs/planning/implementation-spec.md](docs/planning/implementation-spec.md) - Plugin implementation spec and roadmap
-- [docs/planning/byline-spec-plan.md](docs/planning/byline-spec-plan.md) - Byline spec assessment and implementation plan
-- [docs/planning/byline-adoption-strategy.md](docs/planning/byline-adoption-strategy.md) - Adoption and ecosystem strategy
-
-### Research
-
-- [docs/research/multi-author-matrix.md](docs/research/multi-author-matrix.md) - Comparison of WordPress multi-author systems
-- [docs/research/protocol-coverage-map.md](docs/research/protocol-coverage-map.md) - Protocol coverage by output channel
-- [docs/research/architecture.md](docs/research/architecture.md) - HM Authorship architecture notes
-- [docs/research/landscape.md](docs/research/landscape.md) - Plugin ecosystem and historical lineage
-- [docs/research/known-gaps.md](docs/research/known-gaps.md) - Risks, gaps, and open issues
-- [docs/research/authorship-architecture.mermaid](docs/research/authorship-architecture.mermaid) - Architecture diagram source
-
-### Quality
-
-- [docs/quality/ASSESSMENT.md](docs/quality/ASSESSMENT.md) - Project assessment and recommendations
-- [docs/quality/TEST_COVERAGE_MATRIX.md](docs/quality/TEST_COVERAGE_MATRIX.md) - Coverage status and remaining gaps
-- [docs/quality/TDD_TESTING_STANDARD.md](docs/quality/TDD_TESTING_STANDARD.md) - Testing workflow and definition of done
-
-### Work Packages
-
-- [Implementation Strategy/wp-01.md](Implementation%20Strategy/wp-01.md) through [Implementation Strategy/wp-06.md](Implementation%20Strategy/wp-06.md) - Detailed delivery specs by package
-- [Implementation Strategy/gap-analysis.md](Implementation%20Strategy/gap-analysis.md) - Audit of code against the specs
-- [Implementation Strategy/implementation-spec.md](Implementation%20Strategy/implementation-spec.md) - Supplemental strategy details and cross-cutting concerns
-
-### Legacy and Spec-Adoption Material
-
-- [Byline RSS Spec Adoption/](Byline%20RSS%20Spec%20Adoption/) - Earlier Byline-specific planning and legacy positioning documents
+| Area | Items |
+| --- | --- |
+| Vision | [author-identity-vision.md](docs/vision/author-identity-vision.md): Full project vision and positioning |
+| Planning | [implementation-spec.md](docs/planning/implementation-spec.md): Plugin implementation spec and roadmap<br>[byline-spec-plan.md](docs/planning/byline-spec-plan.md): Byline spec assessment and implementation plan<br>[byline-adoption-strategy.md](docs/planning/byline-adoption-strategy.md): Adoption and ecosystem strategy |
+| Research | [multi-author-matrix.md](docs/research/multi-author-matrix.md): Comparison of WordPress multi-author systems<br>[protocol-coverage-map.md](docs/research/protocol-coverage-map.md): Protocol coverage by output channel<br>[architecture.md](docs/research/architecture.md): HM Authorship architecture notes<br>[landscape.md](docs/research/landscape.md): Plugin ecosystem and historical lineage<br>[known-gaps.md](docs/research/known-gaps.md): Risks, gaps, and open issues<br>[authorship-architecture.mermaid](docs/research/authorship-architecture.mermaid): Architecture diagram source |
+| Quality | [ASSESSMENT.md](docs/quality/ASSESSMENT.md): Project assessment and recommendations<br>[TEST_COVERAGE_MATRIX.md](docs/quality/TEST_COVERAGE_MATRIX.md): Coverage status and remaining gaps<br>[TDD_TESTING_STANDARD.md](docs/quality/TDD_TESTING_STANDARD.md): Testing workflow and definition of done |
+| Work Packages | [wp-01.md](Implementation%20Strategy/wp-01.md) to [wp-06.md](Implementation%20Strategy/wp-06.md): Detailed delivery specs by package<br>[gap-analysis.md](Implementation%20Strategy/gap-analysis.md): Audit of code against the specs<br>[implementation-spec.md](Implementation%20Strategy/implementation-spec.md): Supplemental strategy details and cross-cutting concerns |
+| Legacy | [Byline RSS Spec Adoption/](Byline%20RSS%20Spec%20Adoption/): Earlier Byline-specific planning and legacy positioning documents |
 
 ## Plugin status
 
-The `byline-feed` plugin currently includes:
-
-- adapter interface plus core, Co-Authors Plus, and PublishPress Authors adapters
-- RSS2 and Atom Byline output
-- content perspective storage and editor UI
-- runtime validation for the normalized author contract
-- PHPUnit, PHPCS, and GitHub Actions CI scaffolding
-
-Not implemented yet:
-
-- `fediverse:creator` output
-- multi-author JSON-LD output
-- AI consent and rights output
-- Molongui and HM Authorship adapters
-
-Primary implementation references:
-
-- [byline-feed/](byline-feed/)
-- [docs/planning/implementation-spec.md](docs/planning/implementation-spec.md)
-- [Implementation Strategy/wp-01.md](Implementation%20Strategy/wp-01.md) to [Implementation Strategy/wp-06.md](Implementation%20Strategy/wp-06.md)
+| Status | Items |
+| --- | --- |
+| Implemented | adapter interface plus core, Co-Authors Plus, and PublishPress Authors adapters<br>RSS2 and Atom Byline output<br>content perspective storage and editor UI<br>runtime validation for the normalized author contract<br>PHPUnit, PHPCS, and GitHub Actions CI scaffolding |
+| Not yet implemented | `fediverse:creator` output<br>multi-author JSON-LD output<br>AI consent and rights output<br>Molongui and HM Authorship adapters |
+| Primary references | [byline-feed/](byline-feed/)<br>[docs/planning/implementation-spec.md](docs/planning/implementation-spec.md)<br>[wp-01.md](Implementation%20Strategy/wp-01.md) to [wp-06.md](Implementation%20Strategy/wp-06.md) |
 
 ## Plugin layout
 
@@ -134,15 +93,12 @@ npm run build
 
 ### CI
 
-GitHub Actions currently runs:
-
-- PHPUnit across PHP 7.4 through 8.3 and WordPress 6.0, 6.4, and latest
-- PHPCS with WordPress Coding Standards
-- Node asset build
-
-Workflow file:
-
-- [.github/workflows/ci.yml](.github/workflows/ci.yml)
+| Check | Scope |
+| --- | --- |
+| PHPUnit | PHP 7.4 through 8.3 and WordPress 6.0, 6.4, and latest |
+| PHPCS | WordPress Coding Standards |
+| Node build | Asset build validation |
+| Workflow | [.github/workflows/ci.yml](.github/workflows/ci.yml) |
 
 ## Design constraints
 
