@@ -91,6 +91,12 @@ npm install
 npm run build
 ```
 
+Development-tooling note:
+
+- the remaining open Dependabot alerts are moderate `webpack-dev-server` advisories inherited from `@wordpress/scripts`
+- they affect local development workflows around `npm run start`, not the shipped plugin runtime
+- current policy and exit criteria are documented in [SECURITY.md](SECURITY.md)
+
 ### CI
 
 | Check | Scope |
@@ -110,6 +116,7 @@ npm run build
 | [.github/CODEOWNERS](.github/CODEOWNERS) | Default review ownership |
 | [.github/dependabot.yml](.github/dependabot.yml) | Automated dependency update policy |
 | [.github/PULL_REQUEST_TEMPLATE.md](.github/PULL_REQUEST_TEMPLATE.md) | PR checklist and verification prompts |
+| [SECURITY.md](SECURITY.md) | Security reporting guidance and accepted-risk notes for development tooling |
 
 Release discipline:
 
