@@ -441,6 +441,47 @@ A shorter document covering:
 
 ---
 
+## Pre-WP-04 refinements
+
+The following items should be resolved before starting WP-04. They address code duplication and test gaps introduced during WP-01/02/03 that will compound as new output channels are added.
+
+### R-1. Extract shared `output_person()` from feed layers
+
+`feed-rss2.php` and `feed-atom.php` each contain an identical `output_person()` function. Any bug fix or spec change (e.g., adding a new Byline element) requires updating two files. Extract the shared logic to a common location (e.g., `inc/feed-common.php` or a function in `namespace.php`) and have both layers call it.
+
+**Priority:** Do before WP-04, which will add a third output channel and make triple-maintenance worse.
+
+**Files:** `inc/feed-rss2.php`, `inc/feed-atom.php`, new shared file.
+
+### R-2. Decide on Atom filter naming
+
+`feed-atom.php` fires the `byline_feed_item_xml` filter — the same name RSS2 uses. A callback added to modify RSS2 item output will also run on Atom entries. Two options:
+
+1. **Rename the Atom filter** to `byline_feed_atom_entry_xml` (and `byline_feed_atom_person_xml` if person output is also separated). This gives consumers independent control.
+2. **Keep shared names and document the behavior.** Simpler if the Byline XML structure is intentionally identical across feed formats.
+
+The `byline_feed_person_xml` filter sharing is less risky since person XML is format-independent, but the item/entry filter should be an explicit decision.
+
+**Resolve before:** Any consumer-facing documentation or WP-04, whichever comes first.
+
+**Files:** `inc/feed-atom.php`, consumer documentation.
+
+### R-3. Add Atom role output test
+
+The Atom test suite verifies namespace, contributors, author refs, perspective, deduplication, multi-author, empty-field omission, and XML well-formedness — but does not assert that `<byline:role>` appears in entry output. Add a test case parallel to the RSS2 coverage.
+
+**Files:** `tests/phpunit/test-feed-atom.php`.
+
+### R-4. Add author meta save/render tests
+
+The `save_author_meta_fields()` and `render_author_meta_fields()` functions in `author-meta.php` handle nonce verification, capability checks, and `$_POST` parsing, but have no test coverage. The save path is admin-only and low-risk, but it's the only untested data persistence path in the plugin.
+
+**Priority:** Lower than R-1/R-2/R-3. Can be deferred past WP-04 if needed.
+
+**Files:** `tests/phpunit/test-author-meta.php` (new).
+
+---
+
 ## Delivery schedule
 
 Based on the [gap analysis](gap-analysis.md) — what exists, what remains, and what the remaining gaps require. Estimates assume one developer working on this as a focused project.

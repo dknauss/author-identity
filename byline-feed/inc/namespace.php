@@ -117,22 +117,7 @@ function byline_feed_get_perspective( \WP_Post $post ): string {
 	 */
 	$perspective = apply_filters( 'byline_feed_perspective', $perspective, $post );
 
-	$allowed = array(
-		'personal',
-		'reporting',
-		'analysis',
-		'official',
-		'sponsored',
-		'satire',
-		'review',
-		'announcement',
-		'tutorial',
-		'curation',
-		'fiction',
-		'interview',
-	);
-
-	if ( ! in_array( $perspective, $allowed, true ) ) {
+	if ( ! in_array( $perspective, Perspective\get_allowed_values(), true ) ) {
 		return '';
 	}
 

@@ -1,4 +1,11 @@
 <?xml version="1.0"?>
+<!--
+	PHPUnit 9.x configuration.
+	The convertErrorsToExceptions, convertNoticesToExceptions, convertWarningsToExceptions,
+	and <filter>/<whitelist> attributes were removed in PHPUnit 10. When upgrading to
+	PHPUnit 10+ (required for PHP 8.4+), remove those attributes and migrate <filter>
+	to <source>. See https://phpunit.de/announcements/phpunit-10.html
+-->
 <phpunit
 	bootstrap="tests/phpunit/bootstrap.php"
 	backupGlobals="false"

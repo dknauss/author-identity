@@ -56,17 +56,25 @@ The perspective feature builds successfully and its feed output is tested, but b
 
 The repository now has contributor/process guidance, but it still lacks the plugin output reference described in the implementation strategy: annotated RSS2, Atom, JSON-LD, and HTML-head examples with filter reference and field mapping.
 
+### 5. Feed layer code duplication and filter naming
+
+`feed-rss2.php` and `feed-atom.php` contain identical `output_person()` functions. Additionally, both layers fire the same `byline_feed_item_xml` filter name, meaning callbacks cannot distinguish RSS2 items from Atom entries. These issues are tracked as refinements R-1 through R-3 in the [implementation spec](implementation-spec.md#pre-wp-04-refinements) and should be resolved before WP-04 adds a third output channel.
+
+### 6. Author meta save/render path has no test coverage
+
+The `save_author_meta_fields()` function in `author-meta.php` handles nonce verification, capability checks, and POST data parsing but has no test. Tracked as refinement R-4 in the [implementation spec](implementation-spec.md#pre-wp-04-refinements).
+
 ---
 
 ## Structural notes
 
 These are not code defects, but they affect execution strategy.
 
-### 5. Remaining security advisories are development-tooling only
+### 7. Remaining security advisories are development-tooling only
 
 The high-severity npm advisories were resolved. The remaining open Dependabot alerts are moderate `webpack-dev-server` advisories inherited through the current `@wordpress/scripts` toolchain. They affect development tooling, not the shipped plugin runtime, and should be tracked as upstream risk unless the build stack is deliberately changed.
 
-### 6. Release discipline now exists, but needs consistent use
+### 8. Release discipline now exists, but needs consistent use
 
 The repository now has `CHANGELOG.md`, `RELEASE_NOTES.md`, issue templates, a PR template, and contributor guidance. The remaining gap is procedural: future releases should consistently update the changelog and apply the release-note convention when AI assistance materially shaped the release.
 
