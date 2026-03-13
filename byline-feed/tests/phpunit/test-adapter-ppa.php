@@ -135,6 +135,9 @@ class Test_Adapter_PPA extends WP_UnitTestCase {
 	private function invoke_normalize( object $author_object ): object {
 		$reflection = new ReflectionClass( Adapter_PPA::class );
 		$method     = $reflection->getMethod( 'normalize' );
+		if ( PHP_VERSION_ID < 80100 ) {
+			$method->setAccessible( true );
+		}
 
 		return $method->invoke( $this->adapter, $author_object );
 	}

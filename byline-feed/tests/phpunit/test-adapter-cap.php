@@ -94,6 +94,9 @@ class Test_Adapter_CAP extends WP_UnitTestCase {
 	private function invoke_normalize( object $coauthor ): object {
 		$reflection = new ReflectionClass( Adapter_CAP::class );
 		$method     = $reflection->getMethod( 'normalize' );
+		if ( PHP_VERSION_ID < 80100 ) {
+			$method->setAccessible( true );
+		}
 
 		return $method->invoke( $this->adapter, $coauthor );
 	}
