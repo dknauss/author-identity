@@ -101,7 +101,7 @@ The following items appeared in earlier audits but are now resolved:
 | Priority | Gaps | Rationale |
 | --- | --- | --- |
 | **Pre-release** | #2 (JSON Feed tests), #3 (editor verification), #4 (Gate A sign-off) | Finish the last feed-layer tests, do a manual editor QA pass, then declare the MVP complete |
-| **Pre-1.0 spec alignment** | Multi-author-per-item divergence, JSON Feed structure divergence | Resolve the two known Byline-spec divergences with the spec author before calling the plugin a stable 1.0 implementation |
+| **Pre-1.0 spec alignment** | Multi-author-per-item divergence, JSON Feed structure divergence, terminology drift (`organization` / `publication` / `publisher`) | Resolve the known Byline-spec structural and terminology issues with the spec author before calling the plugin a stable 1.0 implementation |
 | **Next product work** | #1 (WP-04/05/06) | After Gate A, the main remaining roadmap value is in additional output channels |
 | **Process hygiene** | #5, #6 (track dev-tooling advisories, use changelog consistently) | Keeps maintenance and release quality disciplined without blocking feature work |
 
