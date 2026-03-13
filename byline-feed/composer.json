@@ -18,6 +18,9 @@
 		"lint:fix": "phpcbf --standard=WordPress --extensions=php --ignore=vendor,node_modules,build,tests ."
 	},
 	"config": {
+		"platform": {
+			"php": "7.4.0"
+		},
 		"allow-plugins": {
 			"dealerdirect/phpcodesniffer-composer-installer": true
 		}
