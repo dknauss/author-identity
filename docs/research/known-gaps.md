@@ -82,7 +82,7 @@ On sites with Elasticsearch (e.g., WordPress VIP), this is likely irrelevant as 
 - No `dc:creator` output for individual co-authors.
 - No Schema.org / JSON-LD author metadata in feeds.
 
-See `docs/byline-spec-plan.md` for the proposed Byline spec implementation that would address structured feed output.
+See `../planning/byline-spec-plan.md` for the proposed Byline spec implementation that would address structured feed output.
 
 ## Compatibility
 

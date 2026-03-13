@@ -46,7 +46,7 @@ Output channels:
 ## Key risks
 
 1. **Adapter drift.** CAP and PPA adapters were written against API contracts, not tested against real plugin installations. If those plugins change return shapes, the adapters fail silently.
-2. **Scope creep.** The vision document covers C2S ActivityPub, C2PA, XFN harvesting, and a cross-plugin author API. The [scope boundaries](Implementation%20Strategy/implementation-spec.md#explicitly-not-in-scope) list explicitly defers these, but the temptation to expand is real.
+2. **Scope creep.** The vision document covers C2S ActivityPub, C2PA, XFN harvesting, and a cross-plugin author API. The [scope boundaries](../../Implementation%20Strategy/implementation-spec.md#explicitly-not-in-scope) list explicitly defers these, but the temptation to expand is real.
 3. **WP-06 complexity.** The consent resolution logic (most-restrictive-wins, post-level override, retroactive changes, audit logging) is the most complex state management in the plugin.
 4. **External dependency on Gate C.** Feed-level rights metadata requires reader-side Byline parsing interest, which is externally dependent.
 
@@ -60,8 +60,8 @@ Output channels:
 
 ## Related documents
 
-- [Implementation Strategy/implementation-spec.md](Implementation%20Strategy/implementation-spec.md) — Full spec, work packages, delivery schedule
-- [Implementation Strategy/gap-analysis.md](Implementation%20Strategy/gap-analysis.md) — Detailed gap audit
+- [Implementation Strategy/implementation-spec.md](../../Implementation%20Strategy/implementation-spec.md) — Full spec, work packages, delivery schedule
+- [Implementation Strategy/gap-analysis.md](../../Implementation%20Strategy/gap-analysis.md) — Detailed gap audit
 - [TEST_COVERAGE_MATRIX.md](TEST_COVERAGE_MATRIX.md) — Test coverage status by domain
 - [TDD_TESTING_STANDARD.md](TDD_TESTING_STANDARD.md) — Testing protocol
-- [author-identity-vision.md](author-identity-vision.md) — Vision document
+- [author-identity-vision.md](../vision/author-identity-vision.md) — Vision document

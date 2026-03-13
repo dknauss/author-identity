@@ -6,19 +6,19 @@ Structured author identity that travels with the work — across feeds, search, 
 
 ### Vision and research
 
-- [author-identity-vision.md](author-identity-vision.md) — Full vision document
-- [multi-author-matrix.md](multi-author-matrix.md) — **Implementation comparison matrix** across all multi-author systems
-- [protocol-coverage-map.md](protocol-coverage-map.md) — **Protocol coverage map** — which specs carry which identity signals across which channels
-- [architecture.md](architecture.md) — Authorship plugin architecture reference
-- [landscape.md](landscape.md) — Multi-author plugin landscape analysis
-- [known-gaps.md](known-gaps.md) — Known gaps and open questions
-- [implementation-spec.md](implementation-spec.md) — Byline Feed plugin implementation spec and roadmap
-- [byline-spec-plan.md](byline-spec-plan.md) — Byline RSS spec plan
-- [byline-adoption-strategy.md](byline-adoption-strategy.md) — Byline spec adoption strategy
+- [author-identity-vision.md](docs/vision/author-identity-vision.md) — Full vision document
+- [multi-author-matrix.md](docs/research/multi-author-matrix.md) — **Implementation comparison matrix** across all multi-author systems
+- [protocol-coverage-map.md](docs/research/protocol-coverage-map.md) — **Protocol coverage map** — which specs carry which identity signals across which channels
+- [architecture.md](docs/research/architecture.md) — Authorship plugin architecture reference
+- [landscape.md](docs/research/landscape.md) — Multi-author plugin landscape analysis
+- [known-gaps.md](docs/research/known-gaps.md) — Known gaps and open questions
+- [implementation-spec.md](docs/planning/implementation-spec.md) — Byline Feed plugin implementation spec and roadmap
+- [byline-spec-plan.md](docs/planning/byline-spec-plan.md) — Byline RSS spec plan
+- [byline-adoption-strategy.md](docs/planning/byline-adoption-strategy.md) — Byline spec adoption strategy
 - [authorship-architecture.mermaid](authorship-architecture.mermaid) — Architecture diagram
-- [ASSESSMENT.md](ASSESSMENT.md) — Project assessment: scope, current state, risks, recommendations
-- [TEST_COVERAGE_MATRIX.md](TEST_COVERAGE_MATRIX.md) — Test coverage status by domain, priority backlog, quality gates
-- [TDD_TESTING_STANDARD.md](TDD_TESTING_STANDARD.md) — Testing protocol: TDD workflow, required test cases, definition of done
+- [ASSESSMENT.md](docs/quality/ASSESSMENT.md) — Project assessment: scope, current state, risks, recommendations
+- [TEST_COVERAGE_MATRIX.md](docs/quality/TEST_COVERAGE_MATRIX.md) — Test coverage status by domain, priority backlog, quality gates
+- [TDD_TESTING_STANDARD.md](docs/quality/TDD_TESTING_STANDARD.md) — Testing protocol: TDD workflow, required test cases, definition of done
 - [Implementation Strategy/](Implementation%20Strategy/) — Work package specs (WP-01 through WP-06), [gap analysis](Implementation%20Strategy/gap-analysis.md), and [delivery schedule](Implementation%20Strategy/implementation-spec.md#delivery-schedule)
 - [Byline RSS Spec Adoption/](Byline%20RSS%20Spec%20Adoption/) — Byline RSS spec adoption documents
 

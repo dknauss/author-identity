@@ -4,7 +4,7 @@
 
 Maximize adoption of the Byline RSS spec (bylinespec.org) across the WordPress ecosystem by building a single standalone plugin that outputs Byline-structured feed data regardless of which multi-author plugin (if any) a site uses.
 
-This document complements `byline-spec-plan.md`, which covers the Authorship-specific integration. The strategy here is broader: a plugin that lives on wp.org and works for any WordPress site. For a detailed comparison of the multi-author systems the plugin must support, see [multi-author-matrix.md](multi-author-matrix.md).
+This document complements `byline-spec-plan.md`, which covers the Authorship-specific integration. The strategy here is broader: a plugin that lives on wp.org and works for any WordPress site. For a detailed comparison of the multi-author systems the plugin must support, see [multi-author-matrix.md](../research/multi-author-matrix.md).
 
 ## The adoption problem
 
@@ -251,4 +251,4 @@ Whatever the name, the wp.org description should lead with the problem ("your fe
 
 The Byline feed plugin is component 1 of a broader "structured author identity and content provenance" layer for WordPress. Subsequent components extend the same normalized author data into JSON-LD schema (technical SEO), ActivityPub federation, content rights signaling (AI training consent, TDM headers), and IndieWeb integration.
 
-See **[Author Identity, Content Provenance, and Distribution Control](author-identity-vision.md)** for the full vision connecting Byline to ActivityPub, LLM discoverability, intellectual property protection, and the journalism/IndieWeb adoption angles.
+See **[Author Identity, Content Provenance, and Distribution Control](../vision/author-identity-vision.md)** for the full vision connecting Byline to ActivityPub, LLM discoverability, intellectual property protection, and the journalism/IndieWeb adoption angles.

@@ -88,6 +88,6 @@
 ## Related documents
 
 - [ASSESSMENT.md](ASSESSMENT.md) — Project assessment
-- [Implementation Strategy/gap-analysis.md](Implementation%20Strategy/gap-analysis.md) — Detailed gap audit
+- [Implementation Strategy/gap-analysis.md](../../Implementation%20Strategy/gap-analysis.md) — Detailed gap audit
 - [TDD_TESTING_STANDARD.md](TDD_TESTING_STANDARD.md) — Testing protocol
-- [Implementation Strategy/implementation-spec.md](Implementation%20Strategy/implementation-spec.md) — Test strategy and testing matrix
+- [Implementation Strategy/implementation-spec.md](../../Implementation%20Strategy/implementation-spec.md) — Test strategy and testing matrix

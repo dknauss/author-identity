@@ -2,7 +2,7 @@
 
 **Date:** March 2026
 **Scope:** Audit of all existing plugin code against work package specifications (WP-01 through WP-06) and cross-cutting concerns.
-**Method:** File-by-file comparison of `byline-feed/` contents against [implementation-spec.md](implementation-spec.md) and individual work package specs.
+**Method:** File-by-file comparison of `byline-feed/` contents against [implementation-spec.md](../docs/planning/implementation-spec.md) and individual work package specs.
 
 ---
 
@@ -97,7 +97,7 @@ The adapter layer reads `byline_feed_fediverse` and `byline_feed_ai_consent` fro
 
 ### 11. No CI exists
 
-No `.github/workflows/ci.yml`. No automation of any kind. Already addressed in [cross-cutting concern #1](implementation-spec.md#1-continuous-integration) but confirmed by the audit.
+No `.github/workflows/ci.yml`. No automation of any kind. Already addressed in [cross-cutting concern #1](../docs/planning/implementation-spec.md#1-continuous-integration) but confirmed by the audit.
 
 ---
 
@@ -126,5 +126,5 @@ Things that look incomplete but are correctly deferred by the spec:
 
 ## Related documents
 
-- [implementation-spec.md](implementation-spec.md) — Work packages, cross-cutting concerns, delivery schedule
+- [implementation-spec.md](../docs/planning/implementation-spec.md) — Work packages, cross-cutting concerns, delivery schedule
 - [wp-01.md](wp-01.md) through [wp-06.md](wp-06.md) — Individual work package specifications

@@ -94,7 +94,7 @@ CAP's architecture dates to 2009 and carries significant legacy. The GitHub repo
 
 ### HM Authorship data model (this project)
 
-See `docs/architecture.md` for the full source-level walkthrough. The key differentiator: a two-entity model (`wp_users` + hidden `authorship` taxonomy as relational bridge) with the taxonomy being an implementation detail that never surfaces to themes, API consumers, or admin users. The only objects anyone interacts with are `WP_User` and `WP_Post`.
+See `architecture.md` for the full source-level walkthrough. The key differentiator: a two-entity model (`wp_users` + hidden `authorship` taxonomy as relational bridge) with the taxonomy being an implementation detail that never surfaces to themes, API consumers, or admin users. The only objects anyone interacts with are `WP_User` and `WP_Post`.
 
 ## Historical lineage
 

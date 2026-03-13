@@ -2,15 +2,15 @@
 
 ## Plugin identity
 
-- **Working name:** `byline-feed` — ship MVP under this name, earn a broader name through delivered scope (see [naming decision](Implementation%20Strategy/implementation-spec.md#naming-decision-pre-mvp))
+- **Working name:** `byline-feed` — ship MVP under this name, earn a broader name through delivered scope (see [naming decision](../../Implementation%20Strategy/implementation-spec.md#naming-decision-pre-mvp))
 - **Type:** WordPress plugin, distributed via wp.org
 - **License:** GPLv2 or later
 - **PHP floor:** 7.4
 - **WP floor:** 6.0
 - **Dependencies:** None (all multi-author plugin integrations are optional adapters)
-- **Multi-author landscape:** See [multi-author-matrix.md](multi-author-matrix.md) for a comparison of the systems this plugin adapts
-- **Protocol landscape:** See [protocol-coverage-map.md](protocol-coverage-map.md) for how the output protocols (Byline, JSON-LD, fediverse:creator, TDM-Rep) relate to each other
-- **Scope boundaries:** See [explicitly not in scope](Implementation%20Strategy/implementation-spec.md#explicitly-not-in-scope) for what the vision discusses but the plugin deliberately defers
+- **Multi-author landscape:** See [multi-author-matrix.md](../research/multi-author-matrix.md) for a comparison of the systems this plugin adapts
+- **Protocol landscape:** See [protocol-coverage-map.md](../research/protocol-coverage-map.md) for how the output protocols (Byline, JSON-LD, fediverse:creator, TDM-Rep) relate to each other
+- **Scope boundaries:** See [explicitly not in scope](../../Implementation%20Strategy/implementation-spec.md#explicitly-not-in-scope) for what the vision discusses but the plugin deliberately defers
 
 ## Architectural overview
 
@@ -225,7 +225,7 @@ Work packages 01 + 02 + 03 constitute the MVP:
 
 ## Cross-cutting concerns
 
-The following concerns span multiple work packages. They are not separate deliverables — they are quality dimensions that apply throughout. For the full detail on each, see [Implementation Strategy/implementation-spec.md](Implementation%20Strategy/implementation-spec.md#cross-cutting-concerns).
+The following concerns span multiple work packages. They are not separate deliverables — they are quality dimensions that apply throughout. For the full detail on each, see [Implementation Strategy/implementation-spec.md](../../Implementation%20Strategy/implementation-spec.md#cross-cutting-concerns).
 
 ### 1. Continuous integration
 
@@ -251,10 +251,10 @@ The following concerns span multiple work packages. They are not separate delive
 
 ## Delivery schedule
 
-For full ETA table, milestone timeline, and caveats, see [Implementation Strategy/implementation-spec.md § Delivery schedule](Implementation%20Strategy/implementation-spec.md#delivery-schedule).
+For full ETA table, milestone timeline, and caveats, see [Implementation Strategy/implementation-spec.md § Delivery schedule](../../Implementation%20Strategy/implementation-spec.md#delivery-schedule).
 
 Summary: ~3.5 weeks to wp.org submission (Gate A), ~7–8 weeks total for all work packages through Gate B'.
 
 ## Gap analysis
 
-For a point-in-time audit of what exists vs. what the specs require, see [Implementation Strategy/gap-analysis.md](Implementation%20Strategy/gap-analysis.md). Key findings: 11 gaps identified (3 critical, 5 spec divergences, 3 structural), with resolution priorities mapped to work packages.
+For a point-in-time audit of what exists vs. what the specs require, see [Implementation Strategy/gap-analysis.md](../../Implementation%20Strategy/gap-analysis.md). Key findings: 11 gaps identified (3 critical, 5 spec divergences, 3 structural), with resolution priorities mapped to work packages.

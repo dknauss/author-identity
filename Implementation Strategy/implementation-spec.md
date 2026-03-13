@@ -11,7 +11,7 @@
 
 ### Naming decision (pre-MVP)
 
-The working name "Byline Feed" accurately describes WP-01 through WP-03 (feed output), but scopes too narrowly once WP-04 (fediverse:creator), WP-05 (JSON-LD schema), and WP-06 (AI consent) ship. The [vision document's naming section](../author-identity-vision.md#naming-and-positioning) frames the eventual positioning as "structured author identity and content provenance for WordPress" — but launching on wp.org under a name that broad invites scope confusion.
+The working name "Byline Feed" accurately describes WP-01 through WP-03 (feed output), but scopes too narrowly once WP-04 (fediverse:creator), WP-05 (JSON-LD schema), and WP-06 (AI consent) ship. The [vision document's naming section](../docs/vision/author-identity-vision.md#naming-and-positioning) frames the eventual positioning as "structured author identity and content provenance for WordPress" — but launching on wp.org under a name that broad invites scope confusion.
 
 **Resolve before wp.org submission.** Options:
 
@@ -161,7 +161,7 @@ Waiting for reader-side signal before shipping fediverse:creator tags and JSON-L
 
 ## Explicitly not in scope
 
-The [vision document](../author-identity-vision.md) discusses capabilities that the plugin deliberately does not attempt. This list prevents scope creep by naming the boundaries:
+The [vision document](../docs/vision/author-identity-vision.md) discusses capabilities that the plugin deliberately does not attempt. This list prevents scope creep by naming the boundaries:
 
 - **ActivityPub C2S publishing.** The vision explores Client-to-Server ActivityPub as a future publication protocol. The plugin does not implement C2S. The adapter pattern is designed so a C2S output channel could be added, but no work package targets it.
 - **C2PA content provenance.** The protocol coverage map lists C2PA (Coalition for Content Provenance and Authenticity) as a content-authenticity standard. The plugin does not generate or verify C2PA manifests. C2PA operates at the media-asset level (images, video), not at the article-metadata level where this plugin works.

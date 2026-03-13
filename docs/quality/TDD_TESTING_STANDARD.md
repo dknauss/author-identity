@@ -110,4 +110,4 @@ Adopt a test-driven workflow where every behavior change is introduced through f
 
 - [TEST_COVERAGE_MATRIX.md](TEST_COVERAGE_MATRIX.md) — Current test coverage status
 - [ASSESSMENT.md](ASSESSMENT.md) — Project assessment
-- [Implementation Strategy/implementation-spec.md](Implementation%20Strategy/implementation-spec.md) — Test strategy and testing matrix
+- [Implementation Strategy/implementation-spec.md](../../Implementation%20Strategy/implementation-spec.md) — Test strategy and testing matrix

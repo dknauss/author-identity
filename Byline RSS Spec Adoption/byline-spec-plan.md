@@ -152,4 +152,4 @@ The Byline spec explicitly states: "Always include standard elements for maximum
 
 The Authorship-specific integration described above is one path. A broader strategy for spec adoption would be a standalone wp.org plugin that works with any multi-author plugin (Co-Authors Plus, PublishPress Authors, Molongui, or no plugin at all) via an adapter pattern. This approach maximizes the number of feeds emitting Byline data, which is the critical supply-side requirement for feed reader adoption.
 
-See **[Byline Feed Plugin — Cross-Plugin Adoption Strategy](../byline-adoption-strategy.md)** for the full analysis, including the addressable audience (~40K+ multi-author sites), adapter architecture, per-plugin integration details, and the phased adoption roadmap.
+See **[Byline Feed Plugin — Cross-Plugin Adoption Strategy](../docs/planning/byline-adoption-strategy.md)** for the full analysis, including the addressable audience (~40K+ multi-author sites), adapter architecture, per-plugin integration details, and the phased adoption roadmap.
