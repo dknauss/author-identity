@@ -8,7 +8,7 @@
 		"start": "wp-scripts start src/perspective-panel.tsx --output-path=build"
 	},
 	"devDependencies": {
-		"@wordpress/scripts": "^28.0.0",
+		"@wordpress/scripts": "^31.6.0",
 		"@types/wordpress__plugins": "^3.0.0",
 		"@types/wordpress__components": "^19.0.0"
 	}
