@@ -11,10 +11,10 @@ This repository has two related parts:
 
 The current implementation focus is the `byline-feed` plugin:
 
-- normalize author data from core WordPress, Co-Authors Plus, and PublishPress Authors
-- emit structured Byline metadata in RSS2 and Atom
-- expose content perspective metadata for feed consumers
-- preserve standard feed elements so Byline output remains additive
+- Normalize author data from core WordPress, Co-Authors Plus, and PublishPress Authors.
+- Emit structured Byline metadata in RSS2 and Atom.
+- Expose content perspective metadata for feed consumers.
+- Preserve standard feed elements so Byline output remains additive.
 
 ## Documentation map
 
