@@ -100,6 +100,116 @@ jobs:
         env:
           WP_TESTS_DIR: /tmp/wordpress-tests-lib
 
+  integration-cap:
+    name: Integration — Co-Authors Plus
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: byline-feed
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: wordpress_test
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Set up PHP 8.2
+        uses: shivammathur/setup-php@bf6b4fbd49ca58e4608c9c89fba0b8d90bd2a39f # 2.35.5
+        with:
+          php-version: '8.2'
+          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, mysql, mysqli, pdo_mysql, bcmath, soap, intl, gd, exif, iconv
+          coverage: none
+
+      - name: Install Composer dependencies
+        run: composer install --prefer-dist --no-progress
+
+      - name: Install Subversion
+        run: sudo apt-get update && sudo apt-get install -y subversion
+
+      - name: Install WordPress test suite
+        run: bash bin/install-wp-tests.sh wordpress_test root root 127.0.0.1 latest true
+        env:
+          WP_TESTS_DIR: /tmp/wordpress-tests-lib
+          WP_CORE_DIR: /tmp/wordpress
+
+      - name: Download Co-Authors Plus
+        run: |
+          curl -sL https://downloads.wordpress.org/plugin/co-authors-plus.latest-stable.zip -o /tmp/cap.zip
+          unzip -q /tmp/cap.zip -d /tmp/plugins
+
+      - name: Run PHPUnit with Co-Authors Plus
+        run: vendor/bin/phpunit
+        env:
+          WP_TESTS_DIR: /tmp/wordpress-tests-lib
+          BYLINE_CAP_PLUGIN: /tmp/plugins/co-authors-plus/co-authors-plus.php
+
+  integration-ppa:
+    name: Integration — PublishPress Authors
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: byline-feed
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: wordpress_test
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Set up PHP 8.2
+        uses: shivammathur/setup-php@bf6b4fbd49ca58e4608c9c89fba0b8d90bd2a39f # 2.35.5
+        with:
+          php-version: '8.2'
+          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, mysql, mysqli, pdo_mysql, bcmath, soap, intl, gd, exif, iconv
+          coverage: none
+
+      - name: Install Composer dependencies
+        run: composer install --prefer-dist --no-progress
+
+      - name: Install Subversion
+        run: sudo apt-get update && sudo apt-get install -y subversion
+
+      - name: Install WordPress test suite
+        run: bash bin/install-wp-tests.sh wordpress_test root root 127.0.0.1 latest true
+        env:
+          WP_TESTS_DIR: /tmp/wordpress-tests-lib
+          WP_CORE_DIR: /tmp/wordpress
+
+      - name: Download PublishPress Authors
+        run: |
+          curl -sL https://downloads.wordpress.org/plugin/publishpress-authors.latest-stable.zip -o /tmp/ppa.zip
+          unzip -q /tmp/ppa.zip -d /tmp/plugins
+
+      - name: Run PHPUnit with PublishPress Authors
+        run: vendor/bin/phpunit
+        env:
+          WP_TESTS_DIR: /tmp/wordpress-tests-lib
+          BYLINE_PPA_PLUGIN: /tmp/plugins/publishpress-authors/publishpress-authors.php
+
   phpcs:
     name: PHPCS
     runs-on: ubuntu-latest

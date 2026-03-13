@@ -28,6 +28,34 @@ if ( ! file_exists( $_tests_dir . '/includes/functions.php' ) ) {
 require_once $_tests_dir . '/includes/functions.php';
 
 /**
+ * Optionally load integration plugins before the main plugin bootstraps.
+ *
+ * Set BYLINE_CAP_PLUGIN or BYLINE_PPA_PLUGIN to the absolute path of the
+ * plugin's main file to activate real-plugin integration mode in CI.
+ */
+$_cap_plugin = getenv( 'BYLINE_CAP_PLUGIN' );
+if ( $_cap_plugin && file_exists( $_cap_plugin ) ) {
+	tests_add_filter(
+		'muplugins_loaded',
+		static function () use ( $_cap_plugin ) {
+			require_once $_cap_plugin;
+		},
+		1
+	);
+}
+
+$_ppa_plugin = getenv( 'BYLINE_PPA_PLUGIN' );
+if ( $_ppa_plugin && file_exists( $_ppa_plugin ) ) {
+	tests_add_filter(
+		'muplugins_loaded',
+		static function () use ( $_ppa_plugin ) {
+			require_once $_ppa_plugin;
+		},
+		1
+	);
+}
+
+/**
  * Manually load the plugin for testing.
  */
 tests_add_filter( 'muplugins_loaded', function () {

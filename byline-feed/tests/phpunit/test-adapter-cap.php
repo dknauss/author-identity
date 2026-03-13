@@ -24,6 +24,10 @@ class Test_Adapter_CAP extends WP_UnitTestCase {
 	}
 
 	public function test_get_authors_returns_empty_when_cap_api_missing(): void {
+		if ( function_exists( 'get_coauthors' ) ) {
+			$this->markTestSkipped( 'Co-Authors Plus is active — test only applies without it.' );
+		}
+
 		$post_id = self::factory()->post->create();
 		$post    = get_post( $post_id );
 

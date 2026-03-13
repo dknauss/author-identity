@@ -24,6 +24,13 @@ class Test_Adapter_PPA extends WP_UnitTestCase {
 	}
 
 	public function test_get_authors_returns_empty_when_ppa_api_missing(): void {
+		if ( function_exists( 'publishpress_authors_get_post_authors' )
+			|| function_exists( 'get_post_authors' )
+			|| class_exists( 'MultipleAuthors\\Classes\\Objects\\Author' )
+		) {
+			$this->markTestSkipped( 'PublishPress Authors is active — test only applies without it.' );
+		}
+
 		$post_id = self::factory()->post->create();
 		$post    = get_post( $post_id );
 
