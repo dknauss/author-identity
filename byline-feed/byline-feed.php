@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       Byline Feed
  * Plugin URI:        https://github.com/dknauss/Author-Identity
- * Description:       Enriches RSS and Atom feeds with structured author identity metadata following the Byline specification.
+ * Description:       Enriches RSS, Atom, and JSON feeds with structured author identity metadata using the Byline extension vocabulary.
  * Version:           0.1.0-dev
  * Requires at least: 6.0
  * Requires PHP:      7.4
@@ -36,8 +36,10 @@ require_once BYLINE_FEED_PLUGIN_DIR . 'inc/class-adapter-cap.php';
 require_once BYLINE_FEED_PLUGIN_DIR . 'inc/class-adapter-ppa.php';
 
 // Load output layers.
+require_once BYLINE_FEED_PLUGIN_DIR . 'inc/feed-common.php';
 require_once BYLINE_FEED_PLUGIN_DIR . 'inc/feed-rss2.php';
 require_once BYLINE_FEED_PLUGIN_DIR . 'inc/feed-atom.php';
+require_once BYLINE_FEED_PLUGIN_DIR . 'inc/feed-json.php';
 require_once BYLINE_FEED_PLUGIN_DIR . 'inc/perspective.php';
 
 // Bootstrap.

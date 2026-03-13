@@ -12,7 +12,8 @@ namespace Byline_Feed\Feed_Atom;
 
 use function Byline_Feed\byline_feed_get_authors;
 use function Byline_Feed\byline_feed_get_perspective;
-use function Byline_Feed\Feed_RSS2\esc_xml_value;
+use function Byline_Feed\Feed_Common\esc_xml_value;
+use function Byline_Feed\Feed_Common\output_person;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -76,63 +77,6 @@ function output_contributors(): void {
 }
 
 /**
- * Output a single <byline:person> element.
- *
- * @param object $author Normalized author object.
- */
-function output_person( object $author ): void {
-	$id = esc_attr( $author->id );
-
-	$xml  = "\t\t\t<byline:person id=\"{$id}\">\n";
-	$xml .= "\t\t\t\t<byline:name>" . esc_xml_value( $author->display_name ) . "</byline:name>\n";
-
-	if ( ! empty( $author->description ) ) {
-		$context = mb_substr( wp_strip_all_tags( $author->description ), 0, 280 );
-		$xml    .= "\t\t\t\t<byline:context>" . esc_xml_value( $context ) . "</byline:context>\n";
-	}
-
-	if ( ! empty( $author->url ) ) {
-		$xml .= "\t\t\t\t<byline:url>" . esc_url( $author->url ) . "</byline:url>\n";
-	}
-
-	if ( ! empty( $author->avatar_url ) ) {
-		$xml .= "\t\t\t\t<byline:avatar>" . esc_url( $author->avatar_url ) . "</byline:avatar>\n";
-	}
-
-	if ( ! empty( $author->profiles ) && is_array( $author->profiles ) ) {
-		foreach ( $author->profiles as $profile ) {
-			$href = isset( $profile['href'] ) ? esc_url( $profile['href'] ) : '';
-			$rel  = isset( $profile['rel'] ) ? esc_attr( $profile['rel'] ) : '';
-
-			if ( '' === $href || '' === $rel ) {
-				continue;
-			}
-
-			$xml .= "\t\t\t\t<byline:profile href=\"{$href}\" rel=\"{$rel}\"/>\n";
-		}
-	}
-
-	if ( ! empty( $author->now_url ) ) {
-		$xml .= "\t\t\t\t<byline:now>" . esc_url( $author->now_url ) . "</byline:now>\n";
-	}
-
-	if ( ! empty( $author->uses_url ) ) {
-		$xml .= "\t\t\t\t<byline:uses>" . esc_url( $author->uses_url ) . "</byline:uses>\n";
-	}
-
-	$xml .= "\t\t\t</byline:person>\n";
-
-	/**
-	 * Filters the XML for a <byline:person> element.
-	 *
-	 * @param string $xml    The person XML.
-	 * @param object $author The normalized author object.
-	 */
-	// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- XML payload is escaped before filter application.
-	echo apply_filters( 'byline_feed_person_xml', $xml, $author );
-}
-
-/**
  * Output per-entry Byline elements.
  */
 function output_entry(): void {
@@ -160,14 +104,17 @@ function output_entry(): void {
 	}
 
 	/**
-	 * Filters the per-entry Byline XML output.
+	 * Filters the per-entry Byline XML output for Atom feeds.
+	 *
+	 * Use byline_feed_atom_entry_xml to target Atom entries specifically.
+	 * Use byline_feed_item_xml in RSS2 for RSS2 items.
 	 *
 	 * @param string   $xml     The entry XML.
 	 * @param \WP_Post $post    The post.
 	 * @param object[] $authors The normalized author array.
 	 */
 	// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- XML payload is escaped before filter application.
-	echo apply_filters( 'byline_feed_item_xml', $xml, $post, $authors );
+	echo apply_filters( 'byline_feed_atom_entry_xml', $xml, $post, $authors );
 
 	/**
 	 * Fires after per-entry Byline elements are output.

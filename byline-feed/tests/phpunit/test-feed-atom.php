@@ -53,7 +53,7 @@ class Test_Feed_Atom extends WP_UnitTestCase {
 	public function tear_down(): void {
 		remove_all_filters( 'byline_feed_authors' );
 		remove_all_filters( 'byline_feed_person_xml' );
-		remove_all_filters( 'byline_feed_item_xml' );
+		remove_all_filters( 'byline_feed_atom_entry_xml' );
 		wp_reset_postdata();
 		parent::tear_down();
 	}
@@ -386,12 +386,12 @@ class Test_Feed_Atom extends WP_UnitTestCase {
 		$this->assertStringContainsString( '<byline:test>yes</byline:test>', $feed );
 	}
 
-	public function test_item_xml_filter_applies_to_atom_entries(): void {
+	public function test_atom_entry_xml_filter_applies_to_atom_entries(): void {
 		$post_id = self::factory()->post->create( array( 'post_status' => 'publish' ) );
 		$this->set_current_post( $post_id );
 
 		add_filter(
-			'byline_feed_item_xml',
+			'byline_feed_atom_entry_xml',
 			static function ( string $xml ): string {
 				return $xml . "\t\t<byline:test-entry>yes</byline:test-entry>\n";
 			}
@@ -404,5 +404,41 @@ class Test_Feed_Atom extends WP_UnitTestCase {
 		);
 
 		$this->assertStringContainsString( '<byline:test-entry>yes</byline:test-entry>', $feed );
+	}
+
+	public function test_entry_outputs_role_for_author(): void {
+		$post_id = self::factory()->post->create( array( 'post_status' => 'publish' ) );
+		$this->set_current_post( $post_id );
+
+		add_filter(
+			'byline_feed_authors',
+			static function () {
+				return array(
+					(object) array(
+						'id'           => 'role-atom-author',
+						'display_name' => 'Role Atom Author',
+						'description'  => '',
+						'url'          => '',
+						'avatar_url'   => '',
+						'user_id'      => 1,
+						'role'         => 'staff',
+						'is_guest'     => false,
+						'profiles'     => array(),
+						'now_url'      => '',
+						'uses_url'     => '',
+						'fediverse'    => '',
+						'ai_consent'   => '',
+					),
+				);
+			}
+		);
+
+		$feed = $this->capture_output(
+			static function () {
+				output_entry();
+			}
+		);
+
+		$this->assertStringContainsString( '<byline:role>staff</byline:role>', $feed );
 	}
 }
