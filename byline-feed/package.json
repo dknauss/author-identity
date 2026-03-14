@@ -9,7 +9,7 @@
 	},
 	"devDependencies": {
 		"@wordpress/scripts": "^31.6.0",
-		"@types/wordpress__plugins": "^3.0.0",
+		"@types/wordpress__plugins": "^6.0.0",
 		"@types/wordpress__components": "^23.8.0"
 	},
 	"overrides": {
