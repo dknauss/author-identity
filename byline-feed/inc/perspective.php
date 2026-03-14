@@ -164,7 +164,7 @@ function save_metabox( int $post_id ): void {
  * Enqueue the block editor sidebar panel script.
  */
 function enqueue_editor_assets(): void {
-	$asset_file = BYLINE_FEED_PLUGIN_DIR . 'build/perspective-panel.asset.php';
+	$asset_file = BYLINE_FEED_PLUGIN_DIR . 'build/perspective-panel.tsx.asset.php';
 
 	if ( ! file_exists( $asset_file ) ) {
 		return;
@@ -174,7 +174,7 @@ function enqueue_editor_assets(): void {
 
 	wp_enqueue_script(
 		'byline-feed-perspective-panel',
-		BYLINE_FEED_PLUGIN_URL . 'build/perspective-panel.js',
+		BYLINE_FEED_PLUGIN_URL . 'build/perspective-panel.tsx.js',
 		$asset['dependencies'] ?? array(),
 		$asset['version'] ?? BYLINE_FEED_VERSION,
 		true

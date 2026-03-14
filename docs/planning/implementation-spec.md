@@ -258,4 +258,4 @@ Summary: ~3.5 weeks to wp.org submission (Gate A), ~7–8 weeks total for all wo
 
 ## Gap analysis
 
-For the current audit of what still remains vs. what the specs require, see [Implementation Strategy/gap-analysis.md](../../Implementation%20Strategy/gap-analysis.md). The main remaining pre-release items are editor-level verification and formal Gate A sign-off. After that, the major product work is WP-04/05/06, with the known upstream Byline-spec issues to be resolved before a stable 1.0 release: multi-author item structure, JSON Feed structure, and terminology drift around `organization` / `publication` / `publisher`.
+For the current audit of what still remains vs. what the specs require, see [Implementation Strategy/gap-analysis.md](../../Implementation%20Strategy/gap-analysis.md). The remaining pre-release step is formal Gate A sign-off. Manual editor verification has been completed; what remains after Gate A is WP-04/05/06, plus the known upstream Byline-spec issues to be resolved before a stable 1.0 release: multi-author item structure, JSON Feed structure, and terminology drift around `organization` / `publication` / `publisher`.

@@ -9,8 +9,15 @@ namespace Byline_Feed\Tests;
 
 use WP_UnitTestCase;
 use function Byline_Feed\byline_feed_get_perspective;
+use function Byline_Feed\Perspective\enqueue_editor_assets;
+use function Byline_Feed\Perspective\register_meta;
 
 class Test_Perspective extends WP_UnitTestCase {
+
+	public function tear_down(): void {
+		remove_all_filters( 'byline_feed_perspective' );
+		parent::tear_down();
+	}
 
 	public function test_returns_empty_when_not_set(): void {
 		$post_id = self::factory()->post->create();
@@ -63,7 +70,30 @@ class Test_Perspective extends WP_UnitTestCase {
 		} );
 
 		$this->assertSame( 'satire', byline_feed_get_perspective( $post ) );
+	}
 
-		remove_all_filters( 'byline_feed_perspective' );
+	public function test_meta_is_registered_for_rest_with_expected_shape(): void {
+		register_meta();
+
+		$registered = get_registered_meta_keys( 'post', '' );
+		$meta       = $registered['_byline_perspective'] ?? null;
+
+		$this->assertIsArray( $meta );
+		$this->assertSame( 'string', $meta['type'] );
+		$this->assertTrue( $meta['single'] );
+		$this->assertTrue( $meta['show_in_rest'] );
+		$this->assertIsCallable( $meta['sanitize_callback'] );
+		$this->assertIsCallable( $meta['auth_callback'] );
+	}
+
+	public function test_editor_assets_enqueue_expected_built_script(): void {
+		wp_scripts();
+		enqueue_editor_assets();
+
+		$handle = wp_scripts()->registered['byline-feed-perspective-panel'] ?? null;
+
+		$this->assertNotNull( $handle );
+		$this->assertContains( 'byline-feed-perspective-panel', wp_scripts()->queue );
+		$this->assertStringEndsWith( 'build/perspective-panel.tsx.js', $handle->src );
 	}
 }

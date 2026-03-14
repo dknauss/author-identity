@@ -42,17 +42,13 @@ These are the meaningful remaining gaps after WP-01/WP-02 completion.
 
 The adapter layer already normalizes `fediverse` and `ai_consent` fields, but there is no user UI, meta registration, front-end output, or tests for fediverse attribution, JSON-LD, or rights/consent handling. The roadmap is still front-loaded around feeds and perspective only.
 
-### 2. WP-03 needs stronger editor-specific verification
+### 2. WP-03 has manual editor verification, but no automated editor coverage
 
-The perspective feature builds successfully and its feed output is tested, but block-editor behavior is not covered by browser or end-to-end tests. Regressions in panel registration, UI labels, or save behavior would currently be caught only by manual testing.
+The perspective feature has now been manually verified on the local Studio site: the editor asset enqueues, the saved value persists, and the saved perspective reaches feed output. However, block-editor behavior is still not covered by browser or end-to-end tests. Regressions in panel registration, UI labels, or save behavior would still be caught manually rather than by CI.
 
 ### 3. Gate A sign-off decision
 
-The MVP feed layer (RSS2 + Atom + JSON Feed), adapter layer, perspective field, contract validation, and CI are all in place. A formal Gate A sign-off should happen only after:
-
-- all CI jobs pass
-- adapter behavior and perspective output remain green
-- the perspective UI has at least a manual editor verification pass for panel registration, save behavior, and feed output
+The MVP feed layer (RSS2 + Atom + JSON Feed), adapter layer, perspective field, contract validation, CI, and manual editor verification are all in place. A formal Gate A sign-off should happen once the latest CI run is green and the repository owner is satisfied the MVP is ready for real-world testing.
 
 Gate A is the MVP quality gate for real-world testing and wp.org readiness. It is not the same thing as stable 1.0 spec conformance.
 
@@ -81,6 +77,7 @@ The following items appeared in earlier audits but are now resolved:
 - CAP, PPA, RSS2, Atom, and author-contract tests exist and pass in CI.
 - CAP and PPA integration CI jobs download real plugins from wordpress.org and test against live APIs.
 - JSON Feed now has automated coverage for document shape, author deduplication, per-item roles, perspective output, omission behavior, and feed metadata.
+- The perspective UI has been manually verified on the local Studio site, which surfaced and corrected an editor asset enqueue bug.
 - Atom now has filter parity with RSS2 (renamed to `byline_feed_atom_entry_xml`).
 - Feed layer code duplication resolved — shared `output_person()` in `feed-common.php` (R-1).
 - Atom filter naming resolved — format-specific filter names (R-2).
@@ -95,7 +92,7 @@ The following items appeared in earlier audits but are now resolved:
 
 | Priority | Gaps | Rationale |
 | --- | --- | --- |
-| **Pre-release** | #2 (editor verification), #3 (Gate A sign-off) | Finish the remaining editor QA work, then declare the MVP complete |
+| **Pre-release** | #3 (Gate A sign-off) | Engineering work is complete; the remaining step is formal MVP sign-off once the latest CI run is green |
 | **Pre-1.0 spec alignment** | Multi-author-per-item divergence, JSON Feed structure divergence, terminology drift (`organization` / `publication` / `publisher`) | Resolve the known Byline-spec structural and terminology issues with the spec author before calling the plugin a stable 1.0 implementation |
 | **Next product work** | #1 (WP-04/05/06) | After Gate A, the main remaining roadmap value is in additional output channels |
 | **Process hygiene** | #5, #6 (track dev-tooling advisories, use changelog consistently) | Keeps maintenance and release quality disciplined without blocking feature work |
