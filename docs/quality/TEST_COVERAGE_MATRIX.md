@@ -75,15 +75,11 @@
 
 ## Priority backlog (highest impact first)
 
-1. ~~**Create `phpunit.xml.dist` and test bootstrap.**~~ Done — `phpunit.xml.dist`, `tests/phpunit/bootstrap.php`, `bin/install-wp-tests.sh`.
-2. ~~**Create `.github/workflows/ci.yml`.**~~ Done — PHPUnit matrix, PHPCS, Node build jobs.
-3. ~~**Write `test-adapter-cap.php`.**~~ Done — normalization coverage added for user+guest CAP objects.
-4. ~~**Write `test-adapter-ppa.php`.**~~ Done — normalization coverage added for term-meta, user-fallback, and guest paths.
-5. ~~**Write `test-feed-atom.php`.**~~ Done — Atom namespace, contributors, entry refs, perspective, omission, and XML coverage added.
-6. ~~**Add an RSS2 template-level preservation test for standard feed elements.**~~ Done — full template render now verifies `dc:creator` survives alongside Byline output.
-7. ~~**Add adapter contract validation tests.**~~ Done — malformed entries are now rejected before feed rendering.
-8. ~~**Write `test-feed-json.php`.**~~ Done — fallback JSON Feed renderer now has automated coverage for document shape, dedupe, roles, perspective, omission, and feed metadata.
-9. ~~**Run `npm run build` and verify perspective panel loads.**~~ CI job added and local build command is part of baseline verification.
+1. **Add browser or end-to-end coverage for the perspective panel.** This is the main remaining shipped-scope verification gap.
+2. **Add `test-fediverse.php` when WP-04 starts.** Treat fediverse output tests as part of the feature, not a follow-up.
+3. **Add `test-schema.php` when WP-05 starts.** Cover graph shape, multi-author output, and coexistence with other schema providers.
+4. **Add HM Authorship adapter tests when that tranche starts.** Unit normalization + real-plugin integration coverage should land together.
+5. **Optional later hardening:** add deeper Byline spec-conformance and round-trip parsing tests for feed output.
 
 ## Quality target
 

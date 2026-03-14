@@ -237,6 +237,12 @@ The following concerns span multiple work packages. They are not separate delive
 
 **Applies to:** WP-01. CAP and PPA are now validated against real plugin code in CI. The next adapter-validation tranche is HM Authorship: its public `Authorship\get_authors( WP_Post )` API returns ordered `WP_User` objects, which is a cleaner upstream contract than CAP/PPA. There is prior art in the separate `authorship` repo's `byline-feed` branch, but that code predates the standalone plugin's normalized contract and should be treated as reference material rather than merged directly.
 
+When the HM Authorship tranche begins, testing should be explicit from the start:
+
+- adapter unit tests for normalization and role mapping
+- integration tests against a real Authorship install
+- live verification on a site running Authorship
+
 ### 3. Adapter contract enforcement
 
 **Applies to:** WP-01. The adapter contract is now validated in `byline_feed_get_authors()`, with invalid entries surfaced through the plugin's validation hook and optional fields normalized to zero values. The remaining work here is maintenance: keep new adapters and future fields aligned with the same contract and test expectations.
@@ -249,6 +255,17 @@ The following concerns span multiple work packages. They are not separate delive
 
 **Applies to:** Adoption strategy. The repository now has a consumer-facing output reference (`byline-feed/docs/output-reference.md`) for RSS2, Atom, and current JSON Feed output. It should be kept current as new channels land, especially JSON-LD and HTML-head output in WP-04 and WP-05.
 
+### 6. Post-Gate-A testing priorities
+
+The main remaining testing gap in shipped scope is editor automation, not feed output. The roadmap should treat these as the concrete next testing tranches:
+
+- browser or end-to-end coverage for the perspective panel (WP-03 hardening)
+- `test-fediverse.php` when WP-04 starts
+- `test-schema.php` when WP-05 starts
+- HM Authorship adapter tests when that tranche starts
+
+Longer-term spec-conformance and round-trip parsing tests remain useful, but they are lower priority than closing editor automation and testing each new output channel as it lands.
+
 ---
 
 ## Delivery schedule
@@ -259,4 +276,4 @@ Summary: ~3.5 weeks to wp.org submission (Gate A), ~7–8 weeks total for all wo
 
 ## Gap analysis
 
-For the current audit of what still remains vs. what the specs require, see [Implementation Strategy/gap-analysis.md](../../Implementation%20Strategy/gap-analysis.md). Gate A is complete. What remains after Gate A is WP-04/05/06, then a dedicated HM Authorship adapter tranche, and the known upstream Byline-spec issues to be resolved before a stable 1.0 release: multi-author item structure, JSON Feed structure, and terminology drift around `organization` / `publication` / `publisher`. The exploratory research set in [`../research/exploratory/`](../research/exploratory/) strengthens the long-term case for publication/organization modeling and persistent identifiers, but does not change this near-term execution order.
+For the current audit of what still remains vs. what the specs require, see [Implementation Strategy/gap-analysis.md](../../Implementation%20Strategy/gap-analysis.md). Gate A is complete. What remains after Gate A is WP-04/05/06, then a dedicated HM Authorship adapter tranche, plus the specific testing follow-through for editor automation and each new output channel. The known upstream Byline-spec issues still need to be resolved before a stable 1.0 release: multi-author item structure, JSON Feed structure, and terminology drift around `organization` / `publication` / `publisher`. The exploratory research set in [`../research/exploratory/`](../research/exploratory/) strengthens the long-term case for publication/organization modeling and persistent identifiers, but does not change this near-term execution order.

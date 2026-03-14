@@ -46,6 +46,11 @@ The adapter layer already normalizes `fediverse` and `ai_consent` fields, but th
 
 The perspective feature has now been manually verified on the local Studio site: the editor asset enqueues, the saved value persists, and the saved perspective reaches feed output. However, block-editor behavior is still not covered by browser or end-to-end tests. Regressions in panel registration, UI labels, or save behavior would still be caught manually rather than by CI.
 
+This should now be tracked as a specific post-Gate-A hardening item:
+
+- add browser-level or end-to-end coverage for the perspective panel
+- verify panel registration, value persistence, and post-save behavior in the editor UI
+
 ### 3. Gate A status
 
 Gate A is complete.
@@ -70,6 +75,12 @@ The practical path is:
 2. then implement `Adapter_Authorship` in `byline-feed`
 3. reuse the old branch only as reference for detection, role mapping, and test scenarios
 
+That tranche should be considered incomplete until it ships with:
+
+- adapter unit tests against the normalized contract
+- integration tests against the real Authorship plugin
+- live feed verification on a site running Authorship
+
 ---
 
 ## Structural notes
@@ -93,6 +104,16 @@ The reorganized research set now makes a clearer distinction between current roa
 - an eventual publication/organization model beyond just author bylines
 
 But they do not justify expanding the near-term plugin scope yet. Near-term execution still runs through WP-04, WP-05, and then HM Authorship support before broader graph or identifier work.
+
+### 9. Testing roadmap should stay specific, not generic
+
+The remaining testing work is no longer "add more tests" in the abstract. The roadmap should keep naming the concrete testing tranches that matter:
+
+- WP-03 editor end-to-end coverage
+- WP-04 fediverse output tests
+- WP-05 JSON-LD graph tests
+- HM Authorship adapter unit + integration coverage
+- optional later spec-conformance and round-trip parsing tests for Byline output
 
 ---
 
@@ -121,6 +142,7 @@ The following items appeared in earlier audits but are now resolved:
 | Priority | Gaps | Rationale |
 | --- | --- | --- |
 | **Current state** | #3 (Gate A complete) | MVP quality gate is satisfied; keep CI green and maintain release discipline |
+| **Post-Gate-A hardening** | #2 (WP-03 editor automation), #9 (specific testing roadmap) | Close the main shipped-scope verification gap without reopening Gate A |
 | **Next adapter tranche** | #4 (Authorship support) | Implement immediately after WP-04/05; prior art exists, but it must be ported into the standalone plugin rather than merged directly |
 | **Pre-1.0 spec alignment** | Multi-author-per-item divergence, JSON Feed structure divergence, terminology drift (`organization` / `publication` / `publisher`) | Resolve the known Byline-spec structural and terminology issues with the spec author before calling the plugin a stable 1.0 implementation |
 | **Next product work** | #1 (WP-04/05/06) | After Gate A, the main remaining roadmap value is in additional output channels |
