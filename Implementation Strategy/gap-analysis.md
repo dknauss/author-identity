@@ -54,9 +54,21 @@ The MVP feed layer (RSS2 + Atom + JSON Feed), adapter layer, perspective field, 
 
 Gate A is the MVP quality gate for real-world testing and wp.org readiness. It is not the same thing as stable 1.0 spec conformance.
 
-### 4. Backlog: Authorship adapter support
+### 4. Next adapter tranche after WP-04/05: Authorship support
 
-Live verification on `single-site-local.local` confirmed that `byline-feed` correctly emits multi-author Byline output when PublishPress Authors is active. Separate verification on an `authorship`-based site showed that unsupported multi-author plugins can still produce a mismatch between core feed author strings and Byline output. If Human Made Authorship support matters to the target adoption landscape, it should be tracked as a dedicated adapter tranche rather than folded into the current Gate A baseline.
+Live verification on `single-site-local.local` confirmed that `byline-feed` correctly emits multi-author Byline output when PublishPress Authors is active. Separate verification on an `authorship`-based site showed that unsupported multi-author plugins can still produce a mismatch between core feed author strings and Byline output.
+
+Human Made Authorship should no longer be treated as a vague backlog item. It is the next concrete adapter tranche after WP-04 and WP-05:
+
+- the upstream plugin exposes a clean `Authorship\get_authors( WP_Post )` API returning ordered `WP_User` objects
+- there is already prior art in the separate `authorship` repo's `byline-feed` branch
+- but that branch is an older inline feed emitter, not code that should be merged directly into the standalone plugin
+
+The practical path is:
+
+1. ship WP-04 and WP-05 first
+2. then implement `Adapter_Authorship` in `byline-feed`
+3. reuse the old branch only as reference for detection, role mapping, and test scenarios
 
 ---
 
@@ -99,7 +111,7 @@ The following items appeared in earlier audits but are now resolved:
 | Priority | Gaps | Rationale |
 | --- | --- | --- |
 | **Current state** | #3 (Gate A complete) | MVP quality gate is satisfied; keep CI green and maintain release discipline |
-| **Backlog / adapter expansion** | #4 (Authorship adapter support) | Optional next adapter tranche if HM Authorship matters to the target plugin landscape |
+| **Next adapter tranche** | #4 (Authorship support) | Implement immediately after WP-04/05; prior art exists, but it must be ported into the standalone plugin rather than merged directly |
 | **Pre-1.0 spec alignment** | Multi-author-per-item divergence, JSON Feed structure divergence, terminology drift (`organization` / `publication` / `publisher`) | Resolve the known Byline-spec structural and terminology issues with the spec author before calling the plugin a stable 1.0 implementation |
 | **Next product work** | #1 (WP-04/05/06) | After Gate A, the main remaining roadmap value is in additional output channels |
 | **Process hygiene** | #6, #7 (track dev-tooling advisories, use changelog consistently) | Keeps maintenance and release quality disciplined without blocking feature work |

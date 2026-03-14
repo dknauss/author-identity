@@ -37,7 +37,7 @@ The plugin has three layers:
 ├─────────────────────────────────────────────────┤
 │                 Adapter Layer                   │
 │  Co-Authors Plus · PublishPress Authors ·       │
-│  Molongui · HM Authorship · Core WP fallback    │
+│  HM Authorship · Molongui · Core WP fallback    │
 └─────────────────────────────────────────────────┘
 ```
 
@@ -324,13 +324,14 @@ The CI workflow now exists and every PR should continue to pass it. The next ste
 
 **Applies to:** WP-01, and indirectly every work package that consumes adapter output.
 
-The CAP and PPA adapters were written against those plugins' public API contracts as documented in their source code. They have not been tested against actual plugin installations. The `function_exists` detection is standard WordPress practice and won't break — but the data those functions *return* could differ between plugin versions, and the object shapes could change in updates.
+The CAP and PPA adapters are now tested against real plugin installations in CI. The next adapter-validation tranche is HM Authorship. Its `Authorship\get_authors( WP_Post )` API returns ordered `WP_User` objects, which is a cleaner upstream contract than CAP/PPA. There is already prior art in the separate `authorship` repo's `byline-feed` branch, but that code should be treated as reference material rather than merged directly because it predates the standalone plugin's normalized contract, JSON Feed support, and canonical author metadata fields.
 
 **Integration test strategy:**
 
-- **CI matrix jobs** (see § CI above) that install specific versions of CAP and PPA via Composer or WP-CLI before running tests:
+- **CI matrix jobs** (see § CI above) that install specific versions of CAP, PPA, and eventually HM Authorship before running tests:
   - Co-Authors Plus: latest stable from wp.org.
   - PublishPress Authors: latest stable from wp.org (free tier).
+  - Human Made Authorship: local checkout or pinned git ref once the adapter tranche begins.
   - Neither installed: core fallback path.
 - **Adapter edge-case tests** (expand `test-adapter-cap.php` and `test-adapter-ppa.php`):
   - Mixed author sets: WP users + guest authors in the same post.
@@ -388,7 +389,7 @@ function validate_author_object( object $author ): object {
 
 This runs in `byline_feed_get_authors()` after the adapter returns and before the `byline_feed_authors` filter fires. In development/debug mode (`WP_DEBUG === true`), it emits `_doing_it_wrong` notices for missing required fields. In production, it silently applies defaults for optional fields so output never breaks.
 
-This hardening pass is now implemented in the plugin. Future adapter authors (Molongui, HM Authorship, or third-party) still need to satisfy the same contract and should be covered by the same validation and tests.
+This hardening pass is now implemented in the plugin. Future adapter authors (HM Authorship, Molongui, or third-party) still need to satisfy the same contract and should be covered by the same validation and tests.
 
 **Files:** `inc/namespace.php` (add validation), `tests/phpunit/test-adapter-contract.php` (new — tests that intentionally malformed objects are caught).
 

@@ -28,7 +28,7 @@ The plugin has three layers:
 ├─────────────────────────────────────────────────┤
 │                 Adapter Layer                    │
 │  Co-Authors Plus · PublishPress Authors ·        │
-│  Molongui · HM Authorship · Core WP fallback    │
+│  HM Authorship · Molongui · Core WP fallback    │
 └─────────────────────────────────────────────────┘
 ```
 
@@ -234,7 +234,7 @@ The following concerns span multiple work packages. They are not separate delive
 
 ### 2. Adapter validation against real plugins
 
-**Applies to:** WP-01. The CAP and PPA adapters were written against those plugins' public API contracts but have not been tested against actual installations. CI integration test jobs that install specific plugin versions and run adapter/feed tests against real data are the most valuable testing investment. Edge cases: mixed user/guest author sets, author ordering, missing data fields, 5+ co-author posts, and plugin version drift.
+**Applies to:** WP-01. CAP and PPA are now validated against real plugin code in CI. The next adapter-validation tranche is HM Authorship: its public `Authorship\get_authors( WP_Post )` API returns ordered `WP_User` objects, which is a cleaner upstream contract than CAP/PPA. There is prior art in the separate `authorship` repo's `byline-feed` branch, but that code predates the standalone plugin's normalized contract and should be treated as reference material rather than merged directly.
 
 ### 3. Adapter contract enforcement
 
@@ -258,4 +258,4 @@ Summary: ~3.5 weeks to wp.org submission (Gate A), ~7–8 weeks total for all wo
 
 ## Gap analysis
 
-For the current audit of what still remains vs. what the specs require, see [Implementation Strategy/gap-analysis.md](../../Implementation%20Strategy/gap-analysis.md). Gate A is complete. What remains after Gate A is WP-04/05/06, an optional backlog adapter tranche for Human Made Authorship support, and the known upstream Byline-spec issues to be resolved before a stable 1.0 release: multi-author item structure, JSON Feed structure, and terminology drift around `organization` / `publication` / `publisher`.
+For the current audit of what still remains vs. what the specs require, see [Implementation Strategy/gap-analysis.md](../../Implementation%20Strategy/gap-analysis.md). Gate A is complete. What remains after Gate A is WP-04/05/06, then a dedicated HM Authorship adapter tranche, and the known upstream Byline-spec issues to be resolved before a stable 1.0 release: multi-author item structure, JSON Feed structure, and terminology drift around `organization` / `publication` / `publisher`.
