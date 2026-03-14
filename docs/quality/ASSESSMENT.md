@@ -33,8 +33,8 @@ Output channels:
 | Area | Status |
 | --- | --- |
 | Adapter layer (WP-01) | Implemented, tested, and CI-verified |
-| Feed output (WP-02) | Implemented for RSS2, Atom, and JSON Feed; JSON Feed tests still pending |
-| Perspective field (WP-03) | Implemented, built locally, and covered in feed tests |
+| Feed output (WP-02) | Implemented for RSS2, Atom, and JSON Feed with automated coverage |
+| Perspective field (WP-03) | Implemented, built locally, covered in feed tests, and manually verified |
 | fediverse:creator (WP-04) | Not started |
 | JSON-LD schema (WP-05) | Not started |
 | AI consent (WP-06) | Not started |
@@ -44,7 +44,7 @@ Output channels:
 ## Key risks
 
 1. **Upstream plugin drift.** CAP and PPA have PHPUnit coverage and local manual verification, but not yet dedicated CI jobs against installed upstream plugins.
-2. **Editor verification gap.** The perspective feature builds and the emitted feed output is tested, but editor-side UI behavior still depends on manual QA.
+2. **Unsupported-plugin behavior.** Live verification showed that sites using unsupported multi-author plugins can still have a mismatch between core author strings and Byline output. That is expected today, but it argues for explicit backlog tracking if HM Authorship support matters.
 3. **Scope expansion pressure.** The documentation landscape still covers broader ideas beyond the plugin’s immediate roadmap. Without discipline, WP-04/05/06 can sprawl.
 4. **WP-06 complexity.** Rights and consent remain the most stateful and policy-sensitive part of the roadmap.
 

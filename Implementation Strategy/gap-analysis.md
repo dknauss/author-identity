@@ -46,11 +46,17 @@ The adapter layer already normalizes `fediverse` and `ai_consent` fields, but th
 
 The perspective feature has now been manually verified on the local Studio site: the editor asset enqueues, the saved value persists, and the saved perspective reaches feed output. However, block-editor behavior is still not covered by browser or end-to-end tests. Regressions in panel registration, UI labels, or save behavior would still be caught manually rather than by CI.
 
-### 3. Gate A sign-off decision
+### 3. Gate A status
 
-The MVP feed layer (RSS2 + Atom + JSON Feed), adapter layer, perspective field, contract validation, CI, and manual editor verification are all in place. A formal Gate A sign-off should happen once the latest CI run is green and the repository owner is satisfied the MVP is ready for real-world testing.
+Gate A is complete.
+
+The MVP feed layer (RSS2 + Atom + JSON Feed), adapter layer, perspective field, contract validation, CI, and manual editor verification are all in place. The latest `main` GitHub Actions run is green, and live local verification confirmed Byline output on RSS2 and Atom feeds.
 
 Gate A is the MVP quality gate for real-world testing and wp.org readiness. It is not the same thing as stable 1.0 spec conformance.
+
+### 4. Backlog: Authorship adapter support
+
+Live verification on `single-site-local.local` confirmed that `byline-feed` correctly emits multi-author Byline output when PublishPress Authors is active. Separate verification on an `authorship`-based site showed that unsupported multi-author plugins can still produce a mismatch between core feed author strings and Byline output. If Human Made Authorship support matters to the target adoption landscape, it should be tracked as a dedicated adapter tranche rather than folded into the current Gate A baseline.
 
 ---
 
@@ -58,11 +64,11 @@ Gate A is the MVP quality gate for real-world testing and wp.org readiness. It i
 
 These are not code defects, but they affect execution strategy.
 
-### 5. Remaining security advisories are development-tooling only
+### 6. Remaining security advisories are development-tooling only
 
 The high-severity npm advisories were resolved. The remaining open Dependabot alerts are moderate `webpack-dev-server` advisories inherited through the current `@wordpress/scripts` toolchain. They affect development tooling, not the shipped plugin runtime, and should be tracked as upstream risk unless the build stack is deliberately changed.
 
-### 6. Release discipline now exists, but needs consistent use
+### 7. Release discipline now exists, but needs consistent use
 
 The repository now has `CHANGELOG.md`, `RELEASE_NOTES.md`, issue templates, a PR template, and contributor guidance. The remaining gap is procedural: future releases should consistently update the changelog and apply the release-note convention when AI assistance materially shaped the release.
 
@@ -92,10 +98,11 @@ The following items appeared in earlier audits but are now resolved:
 
 | Priority | Gaps | Rationale |
 | --- | --- | --- |
-| **Pre-release** | #3 (Gate A sign-off) | Engineering work is complete; the remaining step is formal MVP sign-off once the latest CI run is green |
+| **Current state** | #3 (Gate A complete) | MVP quality gate is satisfied; keep CI green and maintain release discipline |
+| **Backlog / adapter expansion** | #4 (Authorship adapter support) | Optional next adapter tranche if HM Authorship matters to the target plugin landscape |
 | **Pre-1.0 spec alignment** | Multi-author-per-item divergence, JSON Feed structure divergence, terminology drift (`organization` / `publication` / `publisher`) | Resolve the known Byline-spec structural and terminology issues with the spec author before calling the plugin a stable 1.0 implementation |
 | **Next product work** | #1 (WP-04/05/06) | After Gate A, the main remaining roadmap value is in additional output channels |
-| **Process hygiene** | #5, #6 (track dev-tooling advisories, use changelog consistently) | Keeps maintenance and release quality disciplined without blocking feature work |
+| **Process hygiene** | #6, #7 (track dev-tooling advisories, use changelog consistently) | Keeps maintenance and release quality disciplined without blocking feature work |
 
 ---
 
