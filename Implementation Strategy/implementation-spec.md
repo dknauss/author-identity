@@ -487,7 +487,7 @@ Based on the [gap analysis](gap-analysis.md) — what exists, what remains, and 
 | **WP-01 completion** | Implemented | Ongoing compatibility maintenance only | — | CI |
 | **WP-02 completion** | Implemented | Optional deeper Byline-spec conformance checks | 1–2 days | WP-01 |
 | **WP-03 completion** | Implemented | Editor-specific QA or browser automation | 1 day | WP-01, WP-02 |
-| **Gate A: MVP quality** | Not yet signed off | Add JSON Feed test coverage, keep CI green, and complete a manual editor QA pass | 1–2 days | WP-01/02/03 |
+| **Gate A: MVP quality** | Not yet signed off | Keep CI green and complete a manual editor QA pass | 1 day | WP-01/02/03 |
 | **Output reference doc** | Implemented | Keep current as output formats evolve | Ongoing | Gate A |
 | **CONTRIBUTING.md** | Repository-level doc exists | Add plugin-local quick-start only if needed | 0.5–1 day | CI |
 | **wp.org submission** | — | Readme review, plugin check, screenshots, initial release | 1–2 days | Gate A |
@@ -502,7 +502,7 @@ Based on the [gap analysis](gap-analysis.md) — what exists, what remains, and 
 
 | Milestone | Cumulative estimate |
 | --- | --- |
-| **Current repo state** | MVP code largely complete; Gate A pending JSON Feed tests and editor QA |
+| **Current repo state** | MVP code complete; Gate A pending editor QA |
 | **WP-04** | +3–4 days |
 | **WP-05** | +7–9 days total |
 | **WP-06** | +13–17 days total |

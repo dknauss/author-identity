@@ -46,6 +46,11 @@
 | Atom per-entry author refs | **Covered** | `test-feed-atom.php` | Verifies `<byline:author ref>` output for entries, including multi-author cases. |
 | Atom profile/now/uses elements | **Covered** | `test-feed-atom.php` | Verifies `byline:profile`, `byline:now`, and `byline:uses` output when normalized fields are present. |
 | Atom filter parity with RSS2 | **Covered** | `test-feed-atom.php` | Atom contributors and entry output now honor the same person/item XML filters as RSS2. |
+| JSON Feed 1.1 fallback document | **Covered** | `test-feed-json.php` | Verifies standalone renderer returns valid JSON Feed 1.1 with feed-level `_byline.org` metadata. |
+| JSON Feed feed-level author deduplication | **Covered** | `test-feed-json.php` | Verifies top-level `authors` are deduplicated across posts and include `_byline.id`. |
+| JSON Feed per-item author roles | **Covered** | `test-feed-json.php` | Verifies item `authors[]._byline.role` values survive multi-author output. |
+| JSON Feed perspective output | **Covered** | `test-feed-json.php` | Verifies `_byline.perspective` is present when set and absent when unset. |
+| JSON Feed empty-field omission | **Covered** | `test-feed-json.php` | Verifies empty optional author fields are omitted from standard and `_byline` payloads. |
 | Perspective — valid value accepted | **Covered** | `test-perspective.php` | All 12 allowed values pass. |
 | Perspective — invalid value rejected | **Covered** | `test-perspective.php` | Returns empty string. |
 | Perspective — filter override | **Covered** | `test-perspective.php` | Filter can replace value. |
@@ -77,7 +82,8 @@
 5. ~~**Write `test-feed-atom.php`.**~~ Done — Atom namespace, contributors, entry refs, perspective, omission, and XML coverage added.
 6. ~~**Add an RSS2 template-level preservation test for standard feed elements.**~~ Done — full template render now verifies `dc:creator` survives alongside Byline output.
 7. ~~**Add adapter contract validation tests.**~~ Done — malformed entries are now rejected before feed rendering.
-8. ~~**Run `npm run build` and verify perspective panel loads.**~~ CI job added and local build command is part of baseline verification.
+8. ~~**Write `test-feed-json.php`.**~~ Done — fallback JSON Feed renderer now has automated coverage for document shape, dedupe, roles, perspective, omission, and feed metadata.
+9. ~~**Run `npm run build` and verify perspective panel loads.**~~ CI job added and local build command is part of baseline verification.
 
 ## Quality target
 
