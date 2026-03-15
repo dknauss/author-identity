@@ -111,6 +111,18 @@ function get_byline_feed_fediverse_for_user( int $user_id ): string {
 }
 
 /**
+ * Return the stored AI-consent preference for a user.
+ *
+ * @param int $user_id User ID.
+ * @return string
+ */
+function get_byline_feed_ai_consent_for_user( int $user_id ): string {
+	$consent = get_user_meta( $user_id, 'byline_feed_ai_consent', true );
+
+	return Rights\sanitize_ai_consent( $consent );
+}
+
+/**
  * Return the ActivityPub actor URL for a linked WordPress user when resolvable.
  *
  * This is derived identity data. It must remain distinct from authored
@@ -277,6 +289,7 @@ function render_author_meta_fields( \WP_User $user ): void {
 	$now_url   = get_byline_feed_now_url_for_user( $user->ID );
 	$uses_url  = get_byline_feed_uses_url_for_user( $user->ID );
 	$fediverse = get_byline_feed_fediverse_for_user( $user->ID );
+	$consent   = get_byline_feed_ai_consent_for_user( $user->ID );
 
 	$profile_lines = array_map(
 		static function ( array $profile ): string {
@@ -314,6 +327,17 @@ function render_author_meta_fields( \WP_User $user ): void {
 				<p class="description"><?php esc_html_e( 'Your Mastodon or fediverse account (for example @you@mastodon.social). Used for author attribution on shared links.', 'byline-feed' ); ?></p>
 			</td>
 		</tr>
+		<tr>
+			<th><label for="byline-feed-ai-consent"><?php esc_html_e( 'AI training consent', 'byline-feed' ); ?></label></th>
+			<td>
+				<select name="byline_feed_ai_consent" id="byline-feed-ai-consent">
+					<option value="" <?php selected( '', $consent ); ?>><?php esc_html_e( 'No preference', 'byline-feed' ); ?></option>
+					<option value="allow" <?php selected( 'allow', $consent ); ?>><?php esc_html_e( 'Allow', 'byline-feed' ); ?></option>
+					<option value="deny" <?php selected( 'deny', $consent ); ?>><?php esc_html_e( 'Deny', 'byline-feed' ); ?></option>
+				</select>
+				<p class="description"><?php esc_html_e( 'Advisory preference used for machine-readable AI training signals on content attributed to you.', 'byline-feed' ); ?></p>
+			</td>
+		</tr>
 	</table>
 	<?php
 }
@@ -338,10 +362,11 @@ function save_author_meta_fields( int $user_id ): void {
 		return;
 	}
 
-		$profiles  = array();
-		$now_url   = '';
-		$uses_url  = '';
-		$fediverse = '';
+		$profiles   = array();
+		$now_url    = '';
+		$uses_url   = '';
+		$fediverse  = '';
+		$ai_consent = '';
 
 	if ( isset( $_POST['byline_feed_profiles'] ) ) {
 		$profiles = parse_byline_profiles_textarea( sanitize_textarea_field( wp_unslash( $_POST['byline_feed_profiles'] ) ) );
@@ -357,6 +382,10 @@ function save_author_meta_fields( int $user_id ): void {
 
 	if ( isset( $_POST['byline_feed_fediverse'] ) ) {
 		$fediverse = normalize_byline_feed_fediverse( sanitize_text_field( wp_unslash( $_POST['byline_feed_fediverse'] ) ) );
+	}
+
+	if ( isset( $_POST['byline_feed_ai_consent'] ) ) {
+		$ai_consent = Rights\sanitize_ai_consent( sanitize_text_field( wp_unslash( $_POST['byline_feed_ai_consent'] ) ) );
 	}
 
 	if ( empty( $profiles ) ) {
@@ -381,5 +410,11 @@ function save_author_meta_fields( int $user_id ): void {
 		delete_user_meta( $user_id, 'byline_feed_fediverse' );
 	} else {
 		update_user_meta( $user_id, 'byline_feed_fediverse', $fediverse );
+	}
+
+	if ( '' === $ai_consent ) {
+		delete_user_meta( $user_id, 'byline_feed_ai_consent' );
+	} else {
+		update_user_meta( $user_id, 'byline_feed_ai_consent', $ai_consent );
 	}
 }

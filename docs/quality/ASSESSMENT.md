@@ -17,7 +17,7 @@ The project is no longer deciding whether the MVP is viable. The main question i
 - **Perspective meta field:** Per-post editorial intent with block editor support and feed output.
 - **fediverse:creator output:** HTML meta tags for Mastodon-style author attribution on singular content. `ap_actor_url` is a supporting cross-cutting design field for this and WP-05, not a separate roadmap item.
 - **JSON-LD schema output:** Multi-author Article + Person structured data on singular content, with conservative coexistence rules for known schema-owning SEO plugins.
-- **AI consent and rights (planned):** Per-author/per-post training consent, TDM headers, and related output.
+- **AI consent and rights:** Initial per-author/per-post training consent, `robots` meta, `TDMRep` headers, and `ai.txt` now exist. Feed-level rights metadata, audit logging, and richer UI remain later WP-06 work.
 
 ## Data flows
 
@@ -32,7 +32,7 @@ Output channels:
     → JSON Feed: _byline extension objects on authors and items
     → HTML head: fediverse:creator meta tags (WP-04, implemented)
     → HTML head / JSON-LD: Article + Person graph (WP-05, implemented)
-    → HTTP headers / meta / files: rights and consent signals (WP-06, planned)
+    → HTTP headers / meta / files: rights and consent signals (WP-06, initial slice implemented)
 ```
 
 ## Current state
@@ -44,7 +44,7 @@ Output channels:
 | Perspective field (WP-03) | Implemented, covered in PHPUnit and Playwright, and manually verified on the local Studio site |
 | fediverse:creator (WP-04) | Implemented with PHPUnit coverage and user-profile field support |
 | JSON-LD schema (WP-05) | Implemented with PHPUnit coverage and conservative Yoast/Rank Math coexistence |
-| AI consent (WP-06) | Not started |
+| AI consent (WP-06) | Initial slice implemented; feed-level rights metadata and audit logging remain |
 | CI/CD | Present and passing on supported PHP/WP matrix combinations |
 | Documentation | Strong project/governance docs; consumer output reference exists and now covers feeds plus HTML-head outputs |
 

@@ -18,6 +18,7 @@ Current shipped scope:
 - perspective storage and editor UI
 - `fediverse:creator` meta tag output for singular content
 - multi-author JSON-LD Article + Person output for singular content
+- initial WP-06 rights signaling: per-author and per-post AI consent, `robots` meta for denied posts, `TDMRep` headers, and `ai.txt`
 
 Next planned tranches:
 
@@ -37,7 +38,7 @@ This repository has two related parts:
 
 The current implementation focus is the `byline-feed` plugin:
 
-- Normalize author data from core WordPress, Co-Authors Plus, and PublishPress Authors.
+- Normalize author data from core WordPress, Co-Authors Plus, PublishPress Authors, and HM Authorship.
 - Emit structured Byline metadata in RSS2, Atom, and JSON Feed.
 - Emit `fediverse:creator` meta tags in HTML heads for authors with configured fediverse handles.
 - Expose content perspective metadata for feed consumers.
@@ -60,8 +61,8 @@ The current implementation focus is the `byline-feed` plugin:
 
 | Status | Items |
 | --- | --- |
-| Implemented | adapter interface plus core, Co-Authors Plus, PublishPress Authors, and HM Authorship adapters<br>RSS2, Atom, JSON Feed, and JSON-LD output, including `profile` / `now` / `uses` for linked WordPress users via plugin-owned meta<br>content perspective storage and editor UI<br>`fediverse:creator` meta tags for authors with configured fediverse handles<br>conservative `ap_actor_url` resolution for linked WordPress users when ActivityPub identity can be resolved<br>runtime validation for the normalized author contract<br>PHPUnit, PHPCS, Playwright E2E, and GitHub Actions CI scaffolding |
-| Not yet implemented | AI consent and rights output<br>Molongui adapter |
+| Implemented | adapter interface plus core, Co-Authors Plus, PublishPress Authors, and HM Authorship adapters<br>RSS2, Atom, JSON Feed, and JSON-LD output, including `profile` / `now` / `uses` for linked WordPress users via plugin-owned meta<br>content perspective storage and editor UI<br>`fediverse:creator` meta tags for authors with configured fediverse handles<br>conservative `ap_actor_url` resolution for linked WordPress users when ActivityPub identity can be resolved<br>initial WP-06 rights signaling: per-author/per-post AI consent, `robots` meta output, `TDMRep` headers, and `ai.txt`<br>runtime validation for the normalized author contract<br>PHPUnit, PHPCS, Playwright E2E, and GitHub Actions CI scaffolding |
+| Not yet implemented | feed-level rights metadata, audit logging, and richer WP-06 editor UI<br>Molongui adapter |
 | Primary references | [byline-feed/](byline-feed/)<br>[byline-feed/docs/output-reference.md](byline-feed/docs/output-reference.md)<br>[implementation-spec.md](Implementation%20Strategy/implementation-spec.md)<br>[wp-01.md](Implementation%20Strategy/wp-01.md) to [wp-06.md](Implementation%20Strategy/wp-06.md) |
 
 ## Plugin layout
@@ -87,6 +88,7 @@ byline-feed/
 |   |-- feed-json.php
 |   |-- fediverse.php
 |   |-- schema.php
+|   |-- rights.php
 |   |-- author-meta.php
 |   `-- perspective.php
 |-- src/
@@ -105,6 +107,7 @@ byline-feed/
     |-- test-feed-atom.php
     |-- test-feed-json.php
     |-- test-feed-rss2.php
+    |-- test-rights.php
     |-- test-schema.php
     |-- test-perspective.php
     `-- test-integration-authorship.php

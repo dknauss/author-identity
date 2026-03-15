@@ -15,7 +15,7 @@
 | WP-03: Perspective Field | PHP + TSX present | PHPUnit + Playwright coverage | Implemented | Browser-verified in a self-contained `wp-env` harness |
 | WP-04: fediverse:creator | Output module + user meta/UI | Meta-tag, normalization, and profile-field tests | Implemented | Automated coverage exists; ActivityPub integration remains conservative |
 | WP-05: JSON-LD Schema | Output module present | Schema graph and coexistence tests | Implemented | Automated coverage exists; real SEO-plugin filter integration is intentionally conservative |
-| WP-06: Rights & AI Consent | None | None | Not started | N/A |
+| WP-06: Rights & AI Consent | Initial slice present | Rights tests present | Partially implemented | HTML/header/`ai.txt` signals covered; feed-level rights and audit logging remain |
 
 ---
 
@@ -25,8 +25,8 @@ Files still planned by the implementation strategy that do not yet exist:
 
 | File | Work package | Impact |
 | --- | --- | --- |
-| `inc/rights.php` | WP-06 | No rights / TDM / consent output yet |
-| `tests/phpunit/test-rights.php` | WP-06 | No automated coverage for rights output |
+| `inc/rights.php` | WP-06 | Present; current slice covers consent resolution plus HTML/header/`ai.txt` output |
+| `tests/phpunit/test-rights.php` | WP-06 | Present; current slice covered by automated tests |
 
 ---
 
@@ -34,7 +34,7 @@ Files still planned by the implementation strategy that do not yet exist:
 
 These are the meaningful remaining gaps after WP-04 completion.
 
-### 1. WP-06 remains unimplemented; WP-04 and WP-05 are now in place
+### 1. WP-06 is now partially implemented; WP-04 and WP-05 are fully in place
 
 WP-04 and WP-05 are no longer gaps. The plugin now has:
 
@@ -47,7 +47,7 @@ WP-04 and WP-05 are no longer gaps. The plugin now has:
 - conservative default suppression when known schema-owning SEO plugins are active
 - PHPUnit coverage for graph shape, author ordering, guest omission, and Yoast/Rank Math coexistence rules
 
-The remaining output-channel gap is now WP-06.
+The remaining output-channel gap is the rest of WP-06: feed-level rights metadata, audit logging, and richer UI/editor integration.
 
 `ap_actor_url` is now part of the official WP-04/WP-05 design boundary, but only as a cross-cutting field for those work packages. It is not a standalone roadmap item. `did:web:` remains vision-level future work and should not be treated as an active post-Gate-A deliverable.
 
@@ -81,7 +81,7 @@ Human Made Authorship is no longer a planned tranche. It now ships as a supporte
 
 What remains after that tranche is:
 
-- WP-06 rights / AI-consent work
+- the remaining WP-06 work beyond the current HTML/header/`ai.txt` slice
 - future adapter expansion such as Molongui
 - continued live verification against supported upstream plugins
 
@@ -164,10 +164,10 @@ The following items appeared in earlier audits but are now resolved:
 | --- | --- | --- |
 | **Current state** | #3 (Gate A complete) | MVP quality gate is satisfied; keep CI green and maintain release discipline |
 | **Post-Gate-A hardening** | #8, #9 (specific testing roadmap and staged Playground demos) | Keep extending verification depth and demo quality without reopening Gate A |
-| **Current next roadmap work** | #1 (WP-06) | With HM Authorship shipped, the next substantive product tranche is rights / AI-consent output |
+| **Current next roadmap work** | #1 (WP-06 continuation) | The first rights slice is in place; the remaining tranche is feed-level rights metadata, audit logging, and richer UI |
 | **Later adapter work** | Molongui and any other unsupported multi-author plugins | Lower priority than WP-06 and should meet the same real-plugin validation bar HM now has |
 | **Pre-1.0 spec alignment** | Multi-author-per-item divergence, JSON Feed structure divergence, terminology drift (`organization` / `publication` / `publisher`) | Resolve the known Byline-spec structural and terminology issues with the spec author before calling the plugin a stable 1.0 implementation |
-| **Next product work** | #1 (WP-06) | The adapter/output baseline is now core + CAP + PPA + HM plus WP-04/WP-05; the remaining planned output tranche is rights / AI consent |
+| **Next product work** | #1 (WP-06 continuation) | The adapter/output baseline is now core + CAP + PPA + HM plus WP-04/WP-05 and an initial rights slice; remaining WP-06 work is the next product step |
 | **Process hygiene** | #5, #6 (track dev-tooling advisories, use changelog consistently) | Keeps maintenance and release quality disciplined without blocking feature work |
 
 ---

@@ -13,12 +13,14 @@ Current shipped output:
 - JSON Feed 1.1 output with `_byline` extensions
 - `fediverse:creator` meta tags on singular HTML views
 - JSON-LD Article + Person schema on singular HTML views
+- initial WP-06 rights signals on singular/content-policy routes
 - Perspective post meta and feed output
 - Public filters and actions for feed customization
 
 Not yet shipped:
 
-- rights / TDM / AI-consent output
+- feed-level rights metadata
+- consent audit logging
 
 ## Output model
 
@@ -55,7 +57,7 @@ Optional fields:
 | `uses_url` | string | `''` | Emitted as `byline:uses` when non-empty |
 | `fediverse` | string | `''` | Emitted as `fediverse:creator` in HTML head when non-empty |
 | `ap_actor_url` | string | `''` | Extends JSON-LD `sameAs` when confidently resolved; never substitutes for `fediverse` |
-| `ai_consent` | string | `''` | Not emitted yet |
+| `ai_consent` | string | `''` | Used in WP-06 consent resolution and rights signaling |
 
 Important current limitation:
 
@@ -80,6 +82,38 @@ Behavior:
 - handles are normalized to include a leading `@`
 - `profiles[]` and `ap_actor_url` do not substitute for the `fediverse` handle
 - per-author handle output can be overridden with `byline_feed_fediverse_handle`
+
+## Rights output
+
+The plugin now ships an initial WP-06 slice for advisory AI-consent signaling.
+
+Current behavior:
+
+- per-author AI consent is stored in plugin-owned user meta
+- per-post AI consent override is stored in post meta
+- consent resolution uses the most restrictive linked-author preference when there is no post override
+- denied posts emit `<meta name="robots" content="noai, noimageai">`
+- denied posts emit a `TDMRep` header pointing to the policy URL
+- `/ai.txt` is generated dynamically and is filterable
+
+Example HTML:
+
+```html
+<meta name="robots" content="noai, noimageai" />
+```
+
+Example header:
+
+```text
+TDMRep: https://example.com/ai.txt
+```
+
+Current limitations:
+
+- these are advisory machine-readable signals, not enforcement
+- no feed-level rights metadata is emitted yet
+- no consent audit log is emitted or stored yet
+- block-editor UI for WP-06 is not shipped yet
 
 ## JSON-LD output
 

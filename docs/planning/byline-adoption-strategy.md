@@ -29,7 +29,7 @@ Current shipped baseline:
 
 What is still not shipped:
 
-- rights and AI-consent output (WP-06)
+- the remaining WP-06 work beyond the initial rights-signaling slice
 - Molongui adapter
 
 Adoption therefore has two tracks:
@@ -200,7 +200,7 @@ Success signal:
 ### What not to say
 
 - do not pitch the project as if it still has no implementation
-- do not imply the plugin already ships WP-06
+- do not imply the plugin already ships the full WP-06 package
 - do not present `did:web:` or broader graph work as near-term roadmap
 - do not treat HM Authorship as either a must-have MVP dependency or as permanently out of scope
 

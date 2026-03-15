@@ -554,7 +554,7 @@ Based on the [gap analysis](gap-analysis.md) — what exists, what remains, and 
 | | | | | |
 | **WP-04: fediverse:creator** | Implemented | Keep docs current and add deeper ActivityPub integration coverage only when the real plugin is in play | Ongoing maintenance | WP-01 |
 | **WP-05: JSON-LD schema** | Implemented | Keep consumer docs current and add deeper real-plugin coexistence checks only when needed | Ongoing maintenance | WP-01 |
-| **WP-06: AI consent** | 0% | Per-author/per-post consent, resolution logic, HTML/header output, ai.txt, user/post UI, audit logging, tests | 6–8 days | WP-01 |
+| **WP-06: AI consent** | Partial | Initial slice ships per-author/per-post consent, resolution logic, HTML/header output, `TDMRep`, and `ai.txt`; remaining work is feed-level rights metadata, richer UI, and audit logging | 3–5 days | WP-01 |
 | **Gate B': adapter-proven expansion** | Complete | WP-04 + WP-05 + HM Authorship shipped | After Gate A | WP-04/05 + HM Authorship |
 | **Gate D: rights expansion** | — | WP-06 HTML/header signals after B'; feed-level rights after Gate C | After Gate B' / Gate C | WP-06 |
 
@@ -567,7 +567,7 @@ Based on the [gap analysis](gap-analysis.md) — what exists, what remains, and 
 | **WP-04: fediverse:creator** | Implemented |
 | **WP-05: JSON-LD schema** | Implemented |
 | **HM Authorship adapter** | Implemented |
-| **WP-06: AI consent** | +6–8 days from current state |
+| **WP-06: AI consent** | +3–5 days from current state for the remaining slice |
 | **Gate B': adapter-proven expansion** | Complete |
 | **Gate D: rights expansion** | After WP-06 HTML/header signals; feed-level rights still wait for Gate C |
 

@@ -12,6 +12,7 @@ use function Byline_Feed\get_byline_feed_profiles_for_user;
 use function Byline_Feed\get_byline_feed_now_url_for_user;
 use function Byline_Feed\get_byline_feed_uses_url_for_user;
 use function Byline_Feed\get_byline_feed_fediverse_for_user;
+use function Byline_Feed\get_byline_feed_ai_consent_for_user;
 use function Byline_Feed\get_byline_feed_ap_actor_url_for_user;
 use function Byline_Feed\normalize_byline_profiles;
 use function Byline_Feed\normalize_byline_feed_fediverse;
@@ -173,6 +174,13 @@ class Test_Author_Meta extends WP_UnitTestCase {
 		$this->assertSame( '@user@example.social', get_byline_feed_fediverse_for_user( $user_id ) );
 	}
 
+	public function test_get_ai_consent_returns_sanitized_value(): void {
+		$user_id = self::factory()->user->create();
+		update_user_meta( $user_id, 'byline_feed_ai_consent', 'deny' );
+
+		$this->assertSame( 'deny', get_byline_feed_ai_consent_for_user( $user_id ) );
+	}
+
 	public function test_get_ap_actor_url_returns_empty_when_activitypub_is_unavailable(): void {
 		$user_id = self::factory()->user->create();
 
@@ -276,6 +284,19 @@ class Test_Author_Meta extends WP_UnitTestCase {
 		);
 
 		$this->assertStringContainsString( 'name="byline_feed_fediverse"', $output );
+	}
+
+	public function test_render_outputs_ai_consent_field(): void {
+		$user_id = self::factory()->user->create();
+		$user    = get_user_by( 'id', $user_id );
+
+		$output = $this->capture_output(
+			static function () use ( $user ) {
+				render_author_meta_fields( $user );
+			}
+		);
+
+		$this->assertStringContainsString( 'name="byline_feed_ai_consent"', $output );
 	}
 
 	// -------------------------------------------------------------------------
@@ -414,6 +435,39 @@ class Test_Author_Meta extends WP_UnitTestCase {
 		save_author_meta_fields( $user_id );
 
 		$this->assertSame( '', get_byline_feed_fediverse_for_user( $user_id ) );
+
+		$_POST = array();
+	}
+
+	public function test_save_stores_ai_consent_value(): void {
+		$user_id = self::factory()->user->create( array( 'role' => 'administrator' ) );
+		wp_set_current_user( $user_id );
+
+		$_POST = array(
+			'byline_feed_author_meta_nonce' => wp_create_nonce( 'byline_feed_author_meta' ),
+			'byline_feed_ai_consent'       => 'deny',
+		);
+
+		save_author_meta_fields( $user_id );
+
+		$this->assertSame( 'deny', get_byline_feed_ai_consent_for_user( $user_id ) );
+
+		$_POST = array();
+	}
+
+	public function test_save_deletes_ai_consent_when_empty(): void {
+		$user_id = self::factory()->user->create( array( 'role' => 'administrator' ) );
+		wp_set_current_user( $user_id );
+		update_user_meta( $user_id, 'byline_feed_ai_consent', 'allow' );
+
+		$_POST = array(
+			'byline_feed_author_meta_nonce' => wp_create_nonce( 'byline_feed_author_meta' ),
+			'byline_feed_ai_consent'       => '',
+		);
+
+		save_author_meta_fields( $user_id );
+
+		$this->assertSame( '', get_byline_feed_ai_consent_for_user( $user_id ) );
 
 		$_POST = array();
 	}

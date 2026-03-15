@@ -26,6 +26,7 @@ The plugin currently supports:
 * Content Perspective editorial field
 * `fediverse:creator` meta tags for authors with configured fediverse handles
 * Multi-author JSON-LD Article + Person output on singular views
+* Initial AI-consent signaling with `robots` meta, `TDMRep` headers, and `ai.txt`
 * Filter and action hooks for output customization
 
 Byline Feed is additive. It preserves core feed elements such as `<author>` and `<dc:creator>` and adds Byline metadata alongside them.
@@ -38,7 +39,7 @@ Byline Feed is additive. It preserves core feed elements such as `<author>` and 
 * Emits `<meta name="fediverse:creator">` tags on singular views for authors with configured handles
 * Emits JSON-LD `Article` + ordered `Person` schema on singular post views
 * Auto-detects PublishPress Authors, HM Authorship, Co-Authors Plus, or falls back to core WordPress
-* Adds Content Perspective and fediverse-handle fields in WordPress editing/profile UI
+* Adds Content Perspective, fediverse-handle, and AI-consent fields in WordPress editing/profile UI
 * Validates normalized author data before output
 * Works without requiring a specific multi-author plugin
 
@@ -62,6 +63,10 @@ Byline Feed is additive. It preserves core feed elements such as `<author>` and 
 = Does this replace my SEO plugin? =
 
 No. Byline Feed focuses on author identity and attribution output. It now emits its own JSON-LD Article + Person schema on singular content, but disables that output by default when known schema-owning SEO plugins such as Yoast SEO or Rank Math are active.
+
+= Does this block AI crawlers? =
+
+No. The WP-06 output currently emits advisory machine-readable consent signals such as `robots` meta, `TDMRep` headers, and `ai.txt`. These signals may be ignored by crawlers and should not be described as enforcement.
 
 = What is the Byline spec? =
 
@@ -96,4 +101,5 @@ Content Perspective is an editorial field that communicates the intent behind a 
 * Content Perspective field with block editor panel and classic editor support.
 * Fediverse-handle profile field and `fediverse:creator` meta tag output.
 * Multi-author JSON-LD Article + Person schema with conservative Yoast/Rank Math coexistence rules.
+* Initial AI-consent signaling with per-author and per-post consent resolution, `robots` meta output, `TDMRep` headers, and `ai.txt`.
 * Test and CI baseline established for supported PHP and WordPress versions.

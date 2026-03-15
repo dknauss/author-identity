@@ -73,19 +73,20 @@
 | JSON-LD sameAs from profiles | **Covered** | `test-schema.php` | `sameAs` is populated from normalized `profiles[]` entries. |
 | JSON-LD sameAs extension with `ap_actor_url` | **Covered** | `test-schema.php` | `ap_actor_url` is added only when present and never inferred from other profile URLs. `did:web:` remains intentionally outside the active matrix. |
 | JSON-LD Yoast/Rank Math detection | **Covered** | `test-schema.php` | Known SEO-plugin conflict detection disables output by default and respects override filters. |
-| AI consent resolution logic | **Gap** | Missing file | `inc/rights.php` and tests do not exist. |
-| AI consent HTML meta output | **Gap** | Missing file | No code exists. |
-| AI consent TDM headers | **Gap** | Missing file | No code exists. |
-| ai.txt generation | **Gap** | Missing file | No code exists. |
-| Consent audit logging | **Gap** | Missing file | No code exists. |
+| AI consent resolution logic | **Covered** | `test-rights.php` | Post override, most-restrictive-wins author resolution, and filter override are covered. |
+| AI consent HTML meta output | **Covered** | `test-rights.php` | Denied singular posts emit `robots` meta; allow/unset produce no output. |
+| AI consent TDM headers | **Covered** | `test-rights.php` | Denied singular posts emit `TDMRep` with a filterable policy URL. |
+| ai.txt generation | **Covered** | `test-rights.php` | Default generated content and direct render path are covered. |
+| Consent audit logging | **Gap** | Missing file | No logging implementation exists yet. |
 
 ## Priority backlog (highest impact first)
 
-1. **Add `test-rights.php` when WP-06 starts.** Treat rights/consent coverage as part of the work package from day one.
-2. **Add real ActivityPub-plugin integration checks for `ap_actor_url`.** The current WP-04/WP-05 suite intentionally keeps actor resolution conservative and only partially covered.
-3. **Add browser coverage for the fediverse profile field.** The save/normalization logic is covered in PHPUnit, but the user-profile UI is not yet covered in a browser run.
-4. **Add browser coverage for the classic editor perspective metabox.** Lower priority than the block editor path, but still useful as fallback hardening.
-5. **Optional later hardening:** add deeper Byline spec-conformance and round-trip parsing tests for feed output.
+1. **Add feed-level rights metadata coverage when that WP-06 sub-slice starts.** Current tests stop at HTML/header/`ai.txt` output.
+2. **Add consent audit-log coverage if logging is implemented.** That statefulness is not in the current slice.
+3. **Add real ActivityPub-plugin integration checks for `ap_actor_url`.** The current WP-04/WP-05 suite intentionally keeps actor resolution conservative and only partially covered.
+4. **Add browser coverage for the fediverse profile field.** The save/normalization logic is covered in PHPUnit, but the user-profile UI is not yet covered in a browser run.
+5. **Add browser coverage for the classic editor perspective metabox.** Lower priority than the block editor path, but still useful as fallback hardening.
+6. **Optional later hardening:** add deeper Byline spec-conformance and round-trip parsing tests for feed output.
 
 ## Quality target
 

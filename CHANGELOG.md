@@ -46,6 +46,7 @@ When cutting a release:
 - `byline-feed` now emits multi-author JSON-LD Article + Person schema on singular content, with conservative Yoast/Rank Math coexistence rules
 - `byline-feed` now has browser E2E coverage for the perspective editor panel via `wp-env` + Playwright
 - `byline-feed` now supports Human Made Authorship as a first-class adapter with real-plugin integration coverage in CI
+- `byline-feed` now includes the first WP-06 slice: AI-consent user/post meta, consent resolution, `robots` meta output, `TDMRep` headers, and `ai.txt`
 - Root documentation now reflects the current MVP-complete state of WP-01 through WP-03 rather than the earlier pre-CI audit snapshot
 
 ### Fixed
