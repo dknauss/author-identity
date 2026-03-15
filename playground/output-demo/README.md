@@ -24,6 +24,8 @@ Expected demo URLs:
 - `/feed/atom/`
 - `/feed/json/`
 
+Right-click "View Frame Source" in Chrome for a clean view to test each feed URL.
+
 Notes:
 - This is the source-of-truth bundle for the public Playground demo.
 - The public CTA points to an immutable published blueprint pinned to the `playground-output-demo` tag, not to a mutable branch install.
