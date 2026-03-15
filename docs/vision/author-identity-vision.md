@@ -115,7 +115,7 @@ Source-level inspection of the codebase ([plume-models/src/posts.rs](https://git
 **Ghost's ActivityPub implementation.** Ghost (TryGhost/ActivityPub) is also grappling with multi-author federation — the pre-FEP discussion explicitly references Ghost's implementation alongside WordPress. Ghost's forum has active threads on how multi-author content appears in the fediverse, with the current behavior attributing all content to a single site-level account.
 
 > [!NOTE]
-> **Source:** [forum.ghost.org/t/multiple-authors-shared-to-the-fediverse-what-does-that-look-like/59502](hyyps://forum.ghost.org/t/multiple-authors-shared-to-the-fediverse-what-does-that-look-like/59502).
+> **Source:** [forum.ghost.org/t/multiple-authors-shared-to-the-fediverse-what-does-that-look-like/59502](https://forum.ghost.org/t/multiple-authors-shared-to-the-fediverse-what-does-that-look-like/59502).
 
 **Current limitations.** The default Mastodon web UI still displays a single author for interaction purposes (replying, liking). The `fediverse:creator` tag currently only shows the first tag when multiple are present. The pre-FEP for co-author representation is in draft status and has not been formally proposed. PeerTube and other platforms that handle multi-contributor content use workarounds — attributing to a single primary account and mentioning others in body or metadata.
 
