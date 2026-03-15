@@ -14,8 +14,6 @@ Forty thousand multi-author WordPress sites. Zero structured identity in their f
 
 This document extends the Byline feed adoption strategy into broader territory: how structured author identity in WordPress intersects with ActivityPub federation, LLM discoverability, technical SEO, and intellectual property protection. It is a vision document, not an implementation spec. It identifies convergences, tensions, and practical components that could be built incrementally on top of the Byline feed plugin described in `byline-adoption-strategy.md`.
 
-For a side-by-side comparison of existing multi-author plugin implementations — the systems this vision builds on — see [multi-author-matrix.md](../research/current/multi-author-matrix.md). For how the protocols referenced throughout this document cover (or fail to cover) each identity signal across output channels, see [protocol-coverage-map.md](../research/current/protocol-coverage-map.md).
-
 ## Target communities
 
 ### Professional journalists and newsrooms
@@ -128,9 +126,9 @@ Concrete steps:
 4. **Coordinate with the ActivityPub plugin team.** The post_author/object_actor sync issue (#2353, closed) identified the problem but didn't resolve it. The actor management proposal (Discussion #547) suggests architectural changes are planned. If the ActivityPub plugin exposes filters for customizing `attributedTo`, the Byline identity plugin could use those filters to inject multi-author data without protocol changes.
 5. **Map Byline `role` values to fediverse metadata.** A `guest` author vs. a `staff` author carries editorial meaning that could inform how platforms display the attribution. This is forward-looking — no current platform uses this — but establishing the convention early influences the spec.
 
-## Untangling attribution, control, provenance, relationships, and rights
+## Untangling attribution, control, provenance, and rights
 
-The SocialHub discussion of the pre-FEP proposal surfaced trwnh's observation that `attributedTo` bundles too many concerns. But even that critique uses "ownership" as if it's a single thing, and it isn't. What's actually tangled up in `attributedTo` is at least five distinct relationships, and the word "ownership" obscures the differences between them.
+The SocialHub discussion of the pre-FEP proposal surfaced trwnh's observation that `attributedTo` bundles too many concerns. But even that critique uses "ownership" as if it's a single thing, and it isn't. What's actually tangled up in `attributedTo` is at least four distinct relationships, and the word "ownership" obscures the differences between them.
 
 ### Attribution
 
@@ -147,30 +145,6 @@ Control requires authentication. You need to prove you are who you claim to be b
 ### Provenance
 
 Where did this object come from, whose server delivered it, whose cryptographic keys signed it. This is what FEP-fe34 is really about with "origin-based security." It's a server trust question, not an authorship question. When Mastodon receives a federated Article, it trusts it because the delivering server's signature matches the `attributedTo` actor's public key. That's infrastructure, not editorial metadata.
-
-### Relationships
-
-How authors relate to each other and to the organizations they write for — the social graph of authorship that neither attribution nor control captures alone. Attribution answers "who created this." Control answers "who can modify it." Provenance answers "whose server delivered it." Relationships answer "how do these people know each other, how do they work together, and where else can you find them?"
-
-This is the dimension that XFN (XHTML Friends Network) was designed to express. XFN 1.1, published in 2004 and built into WordPress core since version 2.2 (2007), defines machine-readable relationship types for links between people: `friend`, `colleague`, `co-worker`, `met`, `co-resident`, `neighbor`, and the identity-assertion `me`. WordPress has shipped XFN support in its Links Manager and blogroll functionality for nearly two decades, though the feature has been hidden behind the Link Manager plugin since WordPress 3.5. The `rel="me"` attribute — the foundation of IndieWeb identity verification and now used by Mastodon for profile link verification — originated in XFN. See [protocol-coverage-map.md § XFN](../research/current/protocol-coverage-map.md#identity-verification-and-social-graph) for the full protocol inventory.
-
-**Author-to-author relationships.** Co-authorship itself is a relationship — when two people share a byline, they are declaring a professional connection. But existing multi-author plugins model only the author-to-post link (who wrote this), not the author-to-author link (who works with whom). A newsroom where Jane Doe and Alex Rivera frequently co-author investigations has a collaboration pattern that is editorially meaningful but invisible in current metadata. The Byline spec's `<byline:person>` elements within a single `<item>` implicitly declare co-authorship for that post, but there is no mechanism to express durable relationships across posts — no "these authors are regular collaborators" signal.
-
-**Author-to-organization relationships.** The Byline spec's `<byline:org>` element and `affiliation` attribute capture the author-to-publisher relationship, but only in terms of the current post. An author's broader organizational affiliations — staff writer at Publication A, contributing editor at Publication B, formerly at Publication C — are part of their professional identity and relevant to credibility assessment. JSON-LD `Person` schema supports `worksFor` and `memberOf`, which can partially express this. But the relationship between an author and an organization changes over time and varies per piece: a freelancer might be staff for one outlet and a guest contributor for another, simultaneously.
-
-**Social graph via profile links.** The Byline spec's `<byline:profile>` element already carries links to an author's profiles across platforms (Mastodon, personal site, LinkedIn, etc.). Each of these links is implicitly a `rel="me"` identity assertion — "this feed author and this fediverse account are the same person." The IndieWeb community has built a robust mutual-link verification model on this foundation: if your WordPress site links to your Mastodon profile *and* your Mastodon profile links back to your WordPress site, the bidirectional link constitutes a verified identity claim without any centralized authority.
-
-XFN extends this beyond `me` to the full range of interpersonal relationships. A blogroll annotated with XFN `rel` values (`colleague`, `friend`, `co-worker`) is a machine-readable social graph that predates and conceptually underpins the social web. A WordPress author's links page, properly annotated, declares their professional and personal network in a way that search engines, feed readers, and AI systems could use to contextualize their work and their credibility.
-
-**Relationships as context for credibility.** This matters because authorship doesn't exist in isolation. An article's credibility depends not just on who wrote it but on the network of relationships surrounding the author — their institutional affiliations, their collaborators, their professional community. E-E-A-T (Experience, Expertise, Authoritativeness, Trustworthiness) is fundamentally a relationship question: expertise is demonstrated through a body of work, authoritativeness through institutional and peer recognition, trustworthiness through sustained reputation across a network. Structured relationship metadata — XFN annotations, `worksFor` schema, co-authorship patterns, mutual `rel="me"` verification — gives machines the signals to assess these qualities rather than guessing from unstructured text.
-
-**What the plugin should express.** The Byline identity plugin intersects with relationships at three levels:
-
-1. **Per-post co-authorship** — already handled by the adapter layer and `<byline:author>` elements in feeds. This is the minimum viable relationship: these people worked together on this piece.
-2. **Profile links as identity graph** — the `<byline:profile>` elements in feeds and `sameAs` in JSON-LD connect each author to their presence across platforms. Adding `rel="me"` semantics to these links (where bidirectional verification exists) strengthens the identity claim from "declared" to "verified."
-3. **Organizational affiliation** — the `<byline:org>` element and JSON-LD `worksFor` connect authors to institutions. This is the relationship that matters most for credibility and editorial context.
-
-The plugin does not need to implement a full social graph or replicate XFN's blogroll functionality. But it should emit relationship metadata in the output channels where it already operates — feeds, HTML head, schema — so that the relationship dimension of authorship travels with the work alongside attribution, control, provenance, and rights.
 
 ### Intellectual property
 
@@ -199,10 +173,9 @@ So when trwnh says `attributedTo` conflates authorship and ownership, it's actua
 - "Who created this" (attribution) — the staff reporter
 - "Who controls this" (access control) — the CMS admin or any user with `edit_others_posts` capability
 - "Whose server delivered this" (provenance) — the publication's server
-- "How these people relate to each other" (relationships) — the reporter is a colleague of the co-author and an employee of the publication
 - "Who holds legal rights" (IP) — the media corporation, or the author, depending on the employment relationship and license
 
-These are five different concerns in a newsroom, involving different actors and different kinds of links between them. They happen to collapse into a single identity on a single-user Mastodon account, which is why the conflation went unnoticed for so long.
+These are four different actors in a newsroom. They happen to be the same person on a single-user Mastodon account, which is why the conflation went unnoticed for so long.
 
 ### The newsroom workflow problem
 
@@ -232,7 +205,7 @@ The plugin architecture should accommodate a full spectrum of identity without f
 
 **Bots and AI** where the Byline spec's `role: bot` flag is the relevant signal, and the identity question shifts from "who is this person" to "what system generated this."
 
-For each of these, attribution (Byline), control (ActivityPub actor), provenance (server signatures), relationships (profile links, XFN, co-authorship patterns), and IP rights (TDM/consent metadata) can point to different entities and express different connections. The normalized author object in the adapter should carry enough information to populate all five dimensions without assuming they converge on a single identity.
+For each of these, attribution (Byline), control (ActivityPub actor), provenance (server signatures), and IP rights (TDM/consent metadata) can point to different entities. The normalized author object in the adapter should carry enough information to populate all four output channels without assuming they converge on a single identity.
 
 ### The deeper point: attribution vs. authentication
 
@@ -271,6 +244,57 @@ ActivityPub has a `Delete` activity, but it's advisory — receiving servers can
 **Pseudonymity as partial mitigation.** An author who publishes under a pen name and links it to a pseudonymous fediverse account has substantially more room to exercise a de facto right to be forgotten. They can abandon the pseudonym without the structured metadata chain leading back to their legal identity. The plugin's identity spectrum (fully identified → pseudonymous → anonymous) is also an exposure spectrum, and the plugin should support authors moving along it over time — not just choosing a fixed point at the moment of first publication. Practically, this means the plugin should handle byline changes gracefully: if Jane Doe's posts are re-attributed to "J.D." or to the organizational byline, the feed output should reflect the new attribution without leaving traces of the old one in the XML or JSON-LD.
 
 **The design principle.** Every piece of identity metadata the plugin emits should be reversible from the origin server, even if downstream persistence is beyond the plugin's control. The plugin should never emit identity data that the author cannot later ask to have removed from the origin. And the plugin should never make it harder to remove identity than the underlying WordPress system already does — if WordPress lets you change a post's author, the plugin should let that change flow cleanly to every output channel.
+
+## Atom as the natural multi-author feed format
+
+### Why Atom matters more than its market share suggests
+
+Atom (RFC 4287, December 2005) holds roughly 17% of feed usage against RSS 2.0's ~67%. It's the less popular format. But for multi-author identity, it's the technically superior one — and the gap is significant enough that the plugin should treat Atom not as an afterthought parallel to RSS2, but as the primary showcase for structured authorship.
+
+**Atom has native multi-author support baked into the spec.** RFC 4287 explicitly allows multiple `atom:author` elements per entry and per feed. The spec states: entries "MUST contain one or more atom:author elements" and "MAY contain any number of atom:contributor elements." This is not an extension or a hack — it's a first-class feature of the format. An Atom entry can have three co-authors and two contributors, each with a structured Person Construct containing `atom:name`, `atom:uri`, and `atom:email`, and a conforming parser is required to handle all of them.
+
+RSS 2.0, by contrast, has a single `<author>` element per item that is specced to contain an email address (which publishers routinely ignore), and a `<dc:creator>` element via the Dublin Core namespace that is plain text. Multi-author in RSS2 requires either stuffing comma-separated names into `dc:creator` (ugly, unparseable) or using a namespace extension like Byline. RSS2 was never designed for multi-author content.
+
+**Atom's Person Construct is what Byline is trying to add to RSS.** Each `atom:author` or `atom:contributor` element contains:
+
+```xml
+<author>
+  <name>Jane Doe</name>
+  <uri>https://example.com/authors/jane</uri>
+  <email>jane@example.com</email>
+</author>
+```
+
+This is already a structured identity: name, URL, email. Byline's `byline:person` adds context (bio), avatar, profile links, role, and perspective — but the structural foundation for "who wrote this, with a resolvable identity" is already in Atom. The Byline namespace extends Atom cleanly; it patches a fundamental gap in RSS2.
+
+**Atom has the author/contributor distinction.** `atom:author` and `atom:contributor` are separate elements with distinct semantics. An author is a primary creator; a contributor is someone who participated in creating the entry. This maps naturally to what multi-author plugins already track — primary authors vs. editors, researchers, or other credited contributors. RSS2 has no equivalent distinction.
+
+**Atom handles feed-level vs. entry-level authorship correctly.** If a feed-level `atom:author` is set, entries inherit it unless they specify their own authors. This means a newsroom feed can declare the organization as the default author, and individual entries override with their specific reporters. RSS2's author inheritance is undefined and inconsistent across readers.
+
+**Atom supports xml:lang per element.** For multilingual publications, author names can carry language annotations. This matters for publications that transliterate author names or publish in multiple languages.
+
+### What WordPress actually does with Atom
+
+WordPress generates Atom feeds at `/feed/atom/` using the `wp-includes/feed-atom.php` template. The template outputs a single `<author>` block per entry with `<name>` and `<uri>` derived from the post author. WordPress hooks available: `atom_ns` (add namespaces to `<feed>` element), `atom_head` (add elements to feed header), `atom_entry` (add elements per entry), and `atom_author` (fires at the end of each author entry). There's also `rss_tag_pre` which fires before both RSS and Atom feeds.
+
+The critical limitation: WordPress outputs exactly one `<author>` per entry, even though Atom allows multiple. Multi-author plugins (Co-Authors Plus, PublishPress Authors, HM Authorship) don't modify the Atom template — their feed hooks, when they exist at all, target RSS2 only. HM Authorship's `filter_the_author_for_rss()` explicitly checks `is_feed('rss2')` and does nothing for Atom.
+
+This means the plugin's Atom implementation isn't just a parallel of the RSS2 implementation — it's an opportunity to use Atom's native capabilities that nobody else is using. For multi-author posts, the plugin should output multiple `<author>` elements in the Atom entry (using Atom's built-in Person Construct) *in addition to* the Byline namespace extensions. This gives Atom-aware parsers structured multi-author data even if they don't understand the Byline namespace.
+
+### Atom's viability as a standard
+
+**The good.** Atom is an IETF Proposed Standard (RFC 4287), not a de facto spec controlled by one person (RSS 2.0's history with Dave Winer). The spec is stable — it hasn't changed since 2005, which in standards terms means it's mature, not dead. Every major feed reader supports it. WordPress generates it by default. Google historically preferred it (though Google Reader's death in 2013 was a blow to feeds generally). YouTube uses Atom for its channel feeds. Mastodon generates Atom feeds for user profiles. The spec is extensible via XML namespaces — the same mechanism Byline uses.
+
+**The bad.** iTunes dropped Atom support in 2023, requiring podcasts to use RSS 2.0. This is significant because podcasting drove much of the feed ecosystem's growth. RSS 2.0's market share (~67% vs. ~17%) means many publishers only generate RSS2 and don't bother with Atom. Some feed readers treat Atom as second-class. The Atom Publishing Protocol (AtomPub, RFC 5023), which was the CRUD API companion to Atom syndication, never achieved meaningful adoption — it was eclipsed by proprietary APIs and later by ActivityPub for the federation use case.
+
+**The strategic read.** Atom is not going to overtake RSS2 in market share. But it doesn't need to. For the Byline identity plugin's purposes, Atom is the format where the multi-author story is cleanest and most spec-compliant. The plugin should:
+
+1. **Use Atom's native multi-author elements** (`atom:author` × N, `atom:contributor`) for the structural authorship data that Atom already handles.
+2. **Layer Byline namespace extensions** on top for what Atom doesn't cover: perspective, role, affiliation, profile links, context/bio, avatar.
+3. **Make the Atom feed the reference implementation** in documentation and examples, because it's the format where multi-author identity is most naturally expressed.
+4. **Continue full RSS2 support** because that's where the users are, using Byline elements to compensate for RSS2's structural limitations.
+
+The net effect: Atom-consuming clients get rich multi-author attribution using both native Atom elements and Byline extensions. RSS2-consuming clients get equivalent data entirely through Byline extensions. Both produce the same information; Atom just expresses it more natively.
 
 ## LLM discoverability and credit
 
@@ -386,6 +410,65 @@ Output `fediverse:creator` meta tags from normalized author data — this is the
 
 This component is architecturally anticipated but not near-term. It depends on the C2S ecosystem maturing — which is currently at a discussion stage but has active energy behind it (see the C2S section below for full context). The adapter pattern should be designed so that a C2S output channel is natural to add when the infrastructure is ready.
 
+### Component 7: `did:web:` identity anchoring (post-MVP)
+
+`did:web:` support is anticipated as a post-MVP addition to the normalized author object and output channels. See "WordPress as a Personal Data Server" below for the full rationale and implementation path. The `did` field is reserved in the author object contract; implementations MUST NOT assume the existing `id` field carries DID semantics.
+
+## WordPress as a Personal Data Server
+
+### The framing
+
+WordPress — with the ActivityPub plugin installed and this plugin routing identity to output channels — is not merely a CMS that supports open web protocols. It is a **Personal Data Server** for authors.
+
+The concept comes from the AT Protocol's architecture, where every user owns a personal repository of structured records. Apps are reactive to those records — they don't trap the data, they reflect it. Every app's database is derived data: a cached materialized view of the user's folder. The file format is the API. Apps may come and go; the files stay.
+
+WordPress fits this model precisely. The author's WordPress profile is their everything folder. The normalized author data our adapter layer produces is the structured record. The Byline feed, the JSON-LD schema, the `fediverse:creator` tag, the ActivityPub actor — these are all apps being reactive to what's in that folder. None of them own the data. The WordPress installation does.
+
+This is not just a useful analogy. It is the correct mental model for every design decision in this plugin. When we ask "should this field be in the normalized author object?", the right question is: *did the author create this, or did the system derive it?* Authored data — display name, bio, profile links the user entered, fediverse handle, AI consent preferences — belongs in the record. Derived data — Gravatar fallbacks, system-computed URLs — belongs in the output layer, clearly flagged as a fallback, never silently promoted to authoritative identity.
+
+### ActivityPub resolves the domain question from the other direction
+
+The AT Protocol lifts identity *off* the domain — a `did:plc:` identifier is stable even when the author's server changes. ActivityPub resolves the same problem from the opposite direction: it makes the domain itself the identity. Your `@author@example.com` handle, your actor JSON, your HTTP Signatures — all anchored to a domain you control. The domain *is* the PDS. It's already yours.
+
+This means a WordPress author publishing via ActivityPub already has a domain-anchored identity that is as portable as their domain. For most independent writers and newsrooms, that is sufficient. A journalist at `janedoe.com` who federates via AP has an identity that survives any platform's shutdown — because the platform is their own site.
+
+The two models — ATProto's identifier-over-domain portability and ActivityPub's domain-as-identity — are not competing. They are complementary trust levels operating in different contexts:
+
+| Model | Identity anchor | Portability | Trust basis |
+|---|---|---|---|
+| ActivityPub | Domain (`example.com`) | As portable as the domain | HTTP Signatures, WebFinger |
+| `did:web:` | Domain, DID-expressed | Same as AP, but DID-legible | DID resolution over HTTPS |
+| `did:plc:` | Third-party PLC directory | Portable off the domain | PLC log, key rotation |
+| ATProto PDS | Personal Data Server | Fully portable | Cryptographic key ownership |
+
+For WordPress authors, the practical path is: AP identity now (domain-anchored, cryptographically signed, working today), `did:web:` as the post-MVP bridge to DID-aware systems.
+
+**Jurisdiction boundary.** This plugin and the ActivityPub plugin have a precise and documented division of responsibility. This plugin outputs `ap_actor_url` per author, `fediverse:creator` meta tags, and AP actor URLs in JSON-LD `sameAs` arrays. The ActivityPub plugin owns `attributedTo` on the federated object, HTTP Signatures, and actor resolution via WebFinger. The specific gap: no mechanism currently exists for our multi-author data to influence the AP plugin's `attributedTo` output — that requires either a filter hook the AP plugin would need to expose, or a coordinated integration layer neither plugin currently plans. This is a candidate for an upstream conversation with the AP plugin maintainers. See `known-gaps.md § ActivityPub plugin: attributedTo is out of scope` for the full boundary specification.
+
+### `did:web:` as the post-MVP bridge
+
+`did:web:` is the lightest-weight DID method. A `did:web:example.com` resolves to a DID document at `https://example.com/.well-known/did.json`. No PLC directory. No third-party trust anchor. The domain is the anchor — exactly as in ActivityPub — but expressed in a format that DID-aware systems (ATProto, Verifiable Credentials, C2PA provenance chains) can resolve natively.
+
+When `did:web:` support ships, the practical implementation is:
+
+1. **Author user meta** — store `did` as a user meta field, populated either manually or auto-derived as `did:web:{site_domain}` for site-level identity or `did:web:{site_domain}:authors:{user_slug}` for per-author identity.
+2. **Normalized author object** — expose as a first-class `did` field alongside `ap_actor_url`. These are distinct fields; a DID is meaningful in the DID trust model, an AP actor URL is meaningful in the AP trust model, and a social profile link in the `profiles` array is declared metadata only. They must never be conflated.
+3. **JSON-LD `sameAs`** — include the DID URI in the `sameAs` array for the `Person` object. This is where DID-aware search and AI systems will look first.
+4. **Byline feed** — include as a `byline:profile` element with `rel="did"`.
+5. **`/.well-known/did.json`** — optionally generate this endpoint from WordPress, referencing the author's AP actor URL and profile links, closing the loop between the DID document and the AP identity already in place.
+
+Step 5 is what makes WordPress a genuine DID-anchored PDS, not merely a system that emits DID URIs. It is also the step that requires the most careful scope management — generating a `/.well-known/did.json` that correctly represents multiple authors' identities is a non-trivial endpoint to maintain and has security implications if malformed. It is noted here as the full vision; the MVP for `did:web:` support is steps 1–4 only.
+
+### Design implication: authored vs. derived fields
+
+The PDS framing makes a practical annotation requirement concrete for the normalized author object contract. Every field carries one of three classifications in code comments and documentation:
+
+- **Authored** — data the user explicitly entered. Authoritative. Emitted as-is.
+- **Derived** — system-computed fallback (e.g., Gravatar URL, auto-constructed author archive URL). Not authoritative. Must be clearly flagged in filter names and documentation so integrators know what they are overriding.
+- **Composite** — user-entered with a system fallback. The distinction between the two must be preserved in the output layer; a derived fallback must never be silently promoted to the same semantic weight as an authored value.
+
+This classification matters most in WP-05 (JSON-LD `Person` objects indexed by Google) and in any future DID document generation. A Gravatar URL in `sameAs` alongside a Mastodon handle is semantically wrong — one is a declared identity link, the other is a display convenience. The output layer must treat them differently even if the adapter delivers them through the same `avatar_url` field.
+
 ## The neglected ActivityPub C2S API
 
 ### Background
@@ -484,4 +567,4 @@ For authors concerned about privacy and safety: "your identity metadata is alway
 
 ### Design principle: reversible identity
 
-Every piece of identity metadata the plugin emits should be reversible from the origin server, even if downstream persistence is beyond the plugin's control. The plugin should never emit identity data that the author cannot later ask to have removed from the origin. And the plugin should never make it harder to remove identity than the underlying WordPress system already does — if WordPress lets you change a post's author, the plugin should let that change flow cleanly to every output channel. This principle applies across all components, from Byline feed elements to JSON-LD schema to `fediverse:creator` tags to AI consent metadata. See "The permanence problem" in the attribution/control/provenance/relationships/rights analysis for the full rationale.
+Every piece of identity metadata the plugin emits should be reversible from the origin server, even if downstream persistence is beyond the plugin's control. The plugin should never emit identity data that the author cannot later ask to have removed from the origin. And the plugin should never make it harder to remove identity than the underlying WordPress system already does — if WordPress lets you change a post's author, the plugin should let that change flow cleanly to every output channel. This principle applies across all components, from Byline feed elements to JSON-LD schema to `fediverse:creator` tags to AI consent metadata. See "The permanence problem" in the attribution/control/provenance/rights analysis for the full rationale.

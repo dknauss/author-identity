@@ -2,16 +2,12 @@
 
 ## Plugin identity
 
-- **Working name:** `byline-feed` — ship MVP under this name, earn a broader name through delivered scope (see [naming decision](../../Implementation%20Strategy/implementation-spec.md#naming-decision-pre-mvp))
+- **Working name:** `byline-feed` (final name TBD, see `author-identity-vision.md` naming section)
 - **Type:** WordPress plugin, distributed via wp.org
 - **License:** GPLv2 or later
 - **PHP floor:** 7.4
 - **WP floor:** 6.0
 - **Dependencies:** None (all multi-author plugin integrations are optional adapters)
-- **Multi-author landscape:** See [multi-author-matrix.md](../research/current/multi-author-matrix.md) for a comparison of the systems this plugin adapts
-- **Protocol landscape:** See [protocol-coverage-map.md](../research/current/protocol-coverage-map.md) for how the output protocols (Byline, JSON-LD, fediverse:creator, TDM-Rep) relate to each other
-- **JSON-LD background:** See [metadata-models-for-publishers.md](../research/current/metadata-models-for-publishers.md) for the vocabulary survey that informs WP-05 without changing the near-term plugin scope
-- **Scope boundaries:** See [explicitly not in scope](../../Implementation%20Strategy/implementation-spec.md#explicitly-not-in-scope) for what the vision discusses but the plugin deliberately defers
 
 ## Architectural overview
 
@@ -29,7 +25,7 @@ The plugin has three layers:
 ├─────────────────────────────────────────────────┤
 │                 Adapter Layer                    │
 │  Co-Authors Plus · PublishPress Authors ·        │
-│  HM Authorship · Molongui · Core WP fallback    │
+│  Molongui · HM Authorship · Core WP fallback    │
 └─────────────────────────────────────────────────┘
 ```
 
@@ -57,9 +53,34 @@ Every adapter MUST return an ordered array of objects conforming to this shape:
 
     // Optional extended identity (progressive enhancement)
     'profiles'     => array,   // Array of ['href' => string, 'rel' => string].
+                               // Declared social profile links. NOT cryptographically verified.
+                               // Do not use as a substitute for ap_actor_url or did.
     'now_url'      => string,  // /now page URL.
     'uses_url'     => string,  // /uses page URL.
     'fediverse'    => string,  // Fediverse handle (@user@instance).
+
+    // Optional ActivityPub identity (cryptographically meaningful)
+    'ap_actor_url' => string,  // ActivityPub actor URL. Distinct from social profile links.
+                               // Cryptographically meaningful — AP servers use this for
+                               // signature verification and actor resolution via WebFinger.
+                               // Example: 'https://example.com/wp-json/activitypub/1.0/users/1'
+                               //      or: 'https://mastodon.social/users/janedoe'
+                               // Guest authors (is_guest: true) MUST return empty string —
+                               // they have no domain-anchored AP identity.
+                               // Adapter resolution: check user meta for AP plugin's stored
+                               // actor URL; fall back to constructing it if AP plugin is active.
+                               // JURISDICTION NOTE: this plugin outputs ap_actor_url in
+                               // fediverse:creator tags and JSON-LD sameAs. The AP plugin
+                               // owns attributedTo on the federated object, HTTP Signatures,
+                               // and WebFinger resolution. See known-gaps.md for boundary spec.
+
+    // Reserved — post-MVP (do NOT use id field as a substitute)
+    'did'          => string,  // Decentralized Identifier. Reserved for post-MVP did:web:
+                               // support. MUST be empty string until implemented.
+                               // Anticipated form: 'did:web:example.com' (site-level) or
+                               // 'did:web:example.com:authors:jane' (per-author).
+                               // Distinct trust model from ap_actor_url — never conflate.
+                               // See author-identity-vision.md § did:web: as post-MVP bridge.
 
     // Optional rights
     'ai_consent'   => string,  // 'allow', 'deny', or '' (unset).
@@ -92,11 +113,14 @@ Each work package is a self-contained deliverable. Packages are ordered by depen
 | 01 | Plugin scaffold and adapter interface | — | Plugin activates, detects multi-author plugin, returns normalized authors |
 | 02 | Byline RSS2 and Atom output | 01 | Feeds include valid Byline namespace, contributors, per-item author refs |
 | 03 | Perspective meta field and editor UI | 01, 02 | Editors set perspective per post, appears in feed output |
-| 04 | `fediverse:creator` meta tag output | 01 | Shared links on Mastodon show author bylines |
-| 05 | JSON-LD schema output | 01 | Multi-author Article + Person schema in `wp_head` |
+| 04 | `fediverse:creator` meta tag output | 01 | Shared links on Mastodon show author bylines; `ap_actor_url` field populated per author |
+| 05 | JSON-LD schema output | 01 | Multi-author Article + Person schema in `wp_head`; `ap_actor_url` in `sameAs` |
 | 06 | Content rights and AI consent | 01 | Per-author/per-post consent, TDM headers, `ai.txt` |
+| 07 | `did:web:` identity anchoring | 05, 06 | `did` field in author object; DID URI in JSON-LD `sameAs` and Byline feed; optional `/.well-known/did.json` endpoint |
 
-Detailed scaffolds for each: `docs/spec/work-packages/wp-01.md` through `wp-06.md`.
+Detailed scaffolds for each: `docs/spec/work-packages/wp-01.md` through `wp-06.md`. WP-07 scaffold is deferred until post-MVP; see `author-identity-vision.md § did:web: as post-MVP bridge` for the full rationale and implementation steps.
+
+**Field reservation note:** The `did` field in the normalized author object is reserved and MUST return empty string in all adapters until WP-07 ships. The `ap_actor_url` field is first-class from WP-04 onward. These fields have distinct trust models and MUST NOT be conflated. The `id` field carries neither AP actor nor DID semantics.
 
 ## Filter and hook API
 
@@ -114,8 +138,7 @@ The plugin exposes the following public API for theme and plugin developers:
 - `byline_feed_role` — override role mapping per author per post. Receives `( $role, $author_object, $post )`.
 - `byline_feed_perspective` — compute or override perspective. Receives `( $perspective, $post )`.
 - `byline_feed_person_xml` — modify the XML output for a `byline:person` element. Receives `( $xml, $author_object )`.
-- `byline_feed_item_xml` — modify RSS2 item XML. Receives `( $xml, $post, $authors )`.
-- `byline_feed_atom_entry_xml` — modify Atom entry XML. Receives `( $xml, $post, $authors )`.
+- `byline_feed_item_xml` — modify the XML output for per-item Byline elements. Receives `( $xml, $post, $authors )`.
 - `byline_feed_schema_person` — modify the JSON-LD Person object. Receives `( $person_array, $author_object )`.
 - `byline_feed_ai_consent` — override AI consent per author per post. Receives `( $consent, $author_object, $post )`.
 - `byline_feed_fediverse_handle` — override fediverse handle per author. Receives `( $handle, $author_object )`.
@@ -221,59 +244,3 @@ Work packages 01 + 02 + 03 constitute the MVP:
 10. All filters are documented and functional.
 11. PHPUnit test suite passes for all adapter and feed output scenarios.
 12. No PHPCS violations against WordPress coding standards.
-13. GitHub Actions CI passes on all supported PHP/WP matrix combinations.
-
----
-
-## Cross-cutting concerns
-
-The following concerns span multiple work packages. They are not separate deliverables — they are quality dimensions that apply throughout. For the full detail on each, see [Implementation Strategy/implementation-spec.md](../../Implementation%20Strategy/implementation-spec.md#cross-cutting-concerns).
-
-### 1. Continuous integration
-
-**Applies to:** All work packages. The plugin now has a GitHub Actions workflow running PHPUnit (across the supported PHP/WP matrix), PHPCS, and the `@wordpress/scripts` build. The remaining CI gap is not existence but depth: separate integration jobs should install Co-Authors Plus and PublishPress Authors as test dependencies and exercise the adapters against real plugin code.
-
-### 2. Adapter validation against real plugins
-
-**Applies to:** WP-01. CAP and PPA are now validated against real plugin code in CI. The next adapter-validation tranche is HM Authorship: its public `Authorship\get_authors( WP_Post )` API returns ordered `WP_User` objects, which is a cleaner upstream contract than CAP/PPA. There is prior art in the separate `authorship` repo's `byline-feed` branch, but that code predates the standalone plugin's normalized contract and should be treated as reference material rather than merged directly.
-
-When the HM Authorship tranche begins, testing should be explicit from the start:
-
-- adapter unit tests for normalization and role mapping
-- integration tests against a real Authorship install
-- live verification on a site running Authorship
-
-### 3. Adapter contract enforcement
-
-**Applies to:** WP-01. The adapter contract is now validated in `byline_feed_get_authors()`, with invalid entries surfaced through the plugin's validation hook and optional fields normalized to zero values. The remaining work here is maintenance: keep new adapters and future fields aligned with the same contract and test expectations.
-
-### 4. Feed output validation against the Byline spec
-
-**Applies to:** WP-02. Current feed tests check XML well-formedness and structural expectations but do not validate against the Byline specification itself. Structural spec conformance tests (required attributes and children on Byline elements, vocabulary validation for roles and perspectives, omission vs. empty-element handling), and a round-trip test (parse generated XML back into author objects, verify they match input) catch encoding, escaping, and structural errors.
-
-### 5. Consumer documentation — output reference
-
-**Applies to:** Adoption strategy. The repository now has a consumer-facing output reference (`byline-feed/docs/output-reference.md`) for RSS2, Atom, and current JSON Feed output. It should be kept current as new channels land, especially JSON-LD and HTML-head output in WP-04 and WP-05.
-
-### 6. Post-Gate-A testing priorities
-
-The main remaining testing gap in shipped scope is editor automation, not feed output. The roadmap should treat these as the concrete next testing tranches:
-
-- browser or end-to-end coverage for the perspective panel (WP-03 hardening)
-- `test-fediverse.php` when WP-04 starts
-- `test-schema.php` when WP-05 starts
-- HM Authorship adapter tests when that tranche starts
-
-Longer-term spec-conformance and round-trip parsing tests remain useful, but they are lower priority than closing editor automation and testing each new output channel as it lands.
-
----
-
-## Delivery schedule
-
-For full ETA table, milestone timeline, and caveats, see [Implementation Strategy/implementation-spec.md § Delivery schedule](../../Implementation%20Strategy/implementation-spec.md#delivery-schedule).
-
-Summary: ~3.5 weeks to wp.org submission (Gate A), ~7–8 weeks total for all work packages through Gate B'.
-
-## Gap analysis
-
-For the current audit of what still remains vs. what the specs require, see [Implementation Strategy/gap-analysis.md](../../Implementation%20Strategy/gap-analysis.md). Gate A is complete. What remains after Gate A is WP-04/05/06, then a dedicated HM Authorship adapter tranche, plus the specific testing follow-through for editor automation and each new output channel. The known upstream Byline-spec issues still need to be resolved before a stable 1.0 release: multi-author item structure, JSON Feed structure, and terminology drift around `organization` / `publication` / `publisher`. The exploratory research set in [`../research/exploratory/`](../research/exploratory/) strengthens the long-term case for publication/organization modeling and persistent identifiers, but does not change this near-term execution order.

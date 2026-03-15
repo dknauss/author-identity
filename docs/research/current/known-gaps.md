@@ -1,6 +1,6 @@
 # Known Gaps, Security Notes, and Hardening Opportunities
 
-This document preserves the source-level Authorship findings that informed the broader Byline Feed research pass. Some references in the original audit pointed to Authorship-repo-specific audit artifacts that are not copied into this repository. For how these gaps compare across all multi-author systems, see [multi-author-matrix.md](multi-author-matrix.md).
+This document supplements the Phase 01 audit (`docs/audit/HM_WPCS_audit.md`) with additional findings from the source-level architecture review.
 
 ## Security
 
@@ -38,19 +38,19 @@ $username = sanitize_title( sanitize_user( $request->get_param( 'name' ), true )
 $username = preg_replace( '/[^a-z0-9]/', '', $username );
 ```
 
-This can produce empty strings for non-ASCII names (e.g., Japanese, Arabic, Chinese names) or collide for near-duplicate display names. This remains relevant as a hardening concern if Authorship adapter support moves from planning into implementation.
+This can produce empty strings for non-ASCII names (e.g., Japanese, Arabic, Chinese names) or collide for near-duplicate display names. See `docs/audit/patch_scaffolds/01-02-security_build.md` for the planned hardening.
 
 ### Signup validation filter scope
 
 **Severity:** Low (code hygiene)
 
-`create_item()` adds an anonymous `wpmu_validate_user_signup` filter and never removes it. This is a request-scoped side effect that is inconsistent with the pattern used in `get_items()` where the filter is explicitly removed after use.
+`create_item()` adds an anonymous `wpmu_validate_user_signup` filter and never removes it. This is a request-scoped side effect that is inconsistent with the pattern used in `get_items()` where the filter is explicitly removed after use. See `docs/audit/patch_scaffolds/01-02-security_build.md`.
 
 ## Data integrity
 
 ### Post-insert author assignment failures are silent
 
-`InsertPostHandler::action_wp_insert_post()` catches exceptions from `set_authors()` and discards them. This means author attribution can silently fail during post save, migration, or programmatic post creation. The REST API path handles the same exceptions by returning `WP_Error`.
+`InsertPostHandler::action_wp_insert_post()` catches exceptions from `set_authors()` and discards them. This means author attribution can silently fail during post save, migration, or programmatic post creation. The REST API path handles the same exceptions by returning `WP_Error`. See `docs/audit/patch_scaffolds/01-02-observability_build.md`.
 
 ### `post_author` field divergence
 
@@ -72,7 +72,7 @@ On sites with Elasticsearch (e.g., WordPress VIP), this is likely irrelevant as 
 
 ### Editor component render behavior
 
-`AuthorsSelect.tsx` performs state initialization and can trigger `apiFetch()` from render-time conditionals.
+`AuthorsSelect.tsx` performs state initialization and can trigger `apiFetch()` from render-time conditionals. See `docs/audit/patch_scaffolds/01-02-performance_build.md`.
 
 ## Feed output limitations
 
@@ -82,7 +82,7 @@ On sites with Elasticsearch (e.g., WordPress VIP), this is likely irrelevant as 
 - No `dc:creator` output for individual co-authors.
 - No Schema.org / JSON-LD author metadata in feeds.
 
-See [../../planning/byline-spec-plan.md](../../planning/byline-spec-plan.md) for the Byline planning document that originally motivated structured feed output.
+See `docs/byline-spec-plan.md` for the proposed Byline spec implementation that would address structured feed output.
 
 ## Compatibility
 
@@ -92,7 +92,7 @@ Plugin header declares `Requires at least: 5.4`, tested up to 6.2. The 6.2 cap i
 
 ### PHP version
 
-Plugin requires PHP 7.2+. Tooling observations in the original Authorship audit were tied to repo-specific quality-baseline documents that are not copied into this repository.
+Plugin requires PHP 7.2+. Tooling (PHPCS, PHPStan) is pinned to PHP 7.4 and does not run on PHP 8.5 without deprecation suppression. See `docs/audit/foundation-quality-baseline.md`.
 
 ### Multisite
 
@@ -105,3 +105,35 @@ Authorship intercepts `the_author`, author query vars, and capability checks tra
 ### Plugin compatibility
 
 Co-Authors Plus and PublishPress Authors both use the `author` taxonomy slug. Authorship uses `authorship`. These should not conflict if multiple plugins are active, though running multiple multi-author plugins simultaneously is not recommended. Authorship provides WP-CLI migration commands for both CAP and PPA data.
+
+## Byline Feed plugin — integration boundaries
+
+### ActivityPub plugin: `attributedTo` is out of scope
+
+**Affects:** WP-04 (`fediverse:creator`), WP-05 (JSON-LD), normalized author object `ap_actor_url` field
+
+The Byline Feed plugin outputs per-author ActivityPub identity signals — `fediverse:creator` meta tags and `ap_actor_url` in `sameAs` — but does not and cannot influence what appears in `attributedTo` on federated post objects. That field is owned by the ActivityPub plugin (Matthias Pfefferle / Automattic), which currently assigns a single actor to each federated object.
+
+**The specific gap:** On a multi-author post where two of three co-authors have AP actors, Byline Feed will emit correct `fediverse:creator` tags and `sameAs` entries for all three. The AP plugin's federated `Article` object will still reflect only one `attributedTo` actor. No hook currently exists in the AP plugin to accept multi-author attribution data from an external source.
+
+**What we output vs. what AP owns:**
+
+| Signal | Owner |
+|---|---|
+| `fediverse:creator` meta tags (per author) | Byline Feed |
+| `sameAs` AP actor URLs in JSON-LD | Byline Feed |
+| `ap_actor_url` field in normalized author object | Byline Feed |
+| `attributedTo` on federated AP object | ActivityPub plugin |
+| Actor JSON, HTTP Signatures, WebFinger resolution | ActivityPub plugin |
+
+**Future path:** Resolving this gap requires either a filter hook from the AP plugin that accepts an array of actor URLs for `attributedTo`, or a coordinated FEP addressing multi-author attribution (the pre-FEP referenced in `author-identity-vision.md` is the relevant upstream thread). This is a candidate for an upstream conversation with the AP plugin maintainers, framed as an interface request rather than a bug report.
+
+**For now:** Document in user-facing plugin notes that `fediverse:creator` tags reflect all attributed authors, but fediverse feed display of co-authors depends on the AP plugin and Mastodon's evolving multi-author support.
+
+### Normalized author object: `ap_actor_url` and `did` field semantics
+
+The normalized author object contract (see `implementation-spec.md`) includes `ap_actor_url` as a first-class field from WP-04 onward and reserves `did` for post-MVP WP-07 work. Three constraints apply across all adapters:
+
+1. The `profiles` array MUST NOT be used as a substitute for `ap_actor_url` — the AP actor URL is cryptographically meaningful in a way that social profile links are not.
+2. Guest authors (`is_guest: true`) MUST return empty string for `ap_actor_url` — they have no domain-anchored AP identity.
+3. The `did` field MUST return empty string in all adapters until WP-07 ships. The `id` field carries neither AP actor nor DID semantics. See `author-identity-vision.md § did:web: as post-MVP bridge` for rationale.
