@@ -95,13 +95,16 @@ The proposal also references Ghost's ActivityPub implementation (TryGhost/Activi
 
 **Plume: prior art for multi-author `attributedTo` in production.** Plume ([joinplu.me](joinplu.me), [git.joinplu.me/Plume/Plume](https://git.joinplu.me/Plume/Plume)) is a federated blogging engine written in Rust that has been shipping `attributedTo` as a list in production since its early versions. Plume's federation documentation states: "`object.attributedTo` is a list containing the ID of the authors and of the blog in which this article have been published. If no blog ID is specified, the article will be rejected."
 
-Source-level inspection of the codebase ([plume-models/src/posts.rs](https://git.joinplu.me/Plume/Plume/src/branch/main/plume-models/src/posts.rs)]) reveals a fully realized multi-author data model:
+Source-level inspection of the codebase ([plume-models/src/posts.rs](https://git.joinplu.me/Plume/Plume/src/branch/main/plume-models/src/posts.rs)) reveals a fully realized multi-author data model:
 
 - **Database layer.** A `post_authors` join table with `post_id` and `author_id` columns implements a proper many-to-many relationship between posts and users. A separate `blog_authors` table with `blog_id`, `author_id`, and `is_owner` handles blog membership. These are distinct relationships — who can write for this blog vs. who authored this specific post.
 
 - **Sending side** (posts.rs lines 362-368). When federating an Article, the code calls `get_authors()` which queries the `post_authors` join table and returns a `Vec<User>`. It collects their AP URLs into a Vec, then pushes the blog's AP URL onto the end, and calls `set_many_attributed_tos(authors)`. The test fixtures confirm the output: `"attributedTo": ["https://plu.me/@/admin/", "https://plu.me/~/BlogName/"]`. If multiple authors were assigned to a post via the join table, the output would naturally be `["https://plu.me/@/author1/", "https://plu.me/@/author2/", "https://plu.me/~/BlogName/"]`.
 
 - **Receiving side** (posts.rs lines 630-653). When parsing an incoming Article, the code iterates the `attributedTo` list using a fold. For each URL, it first tries `User::from_id()` — if that succeeds, the entry is an author and gets pushed into an authors vec. If that fails, it tries `Blog::from_id()` — if that succeeds, it's the blog. This design doesn't depend on ordering or type annotations; it resolves each URL dynamically. Multiple Users all accumulate in the authors vec.
+
+> [!TIP]
+> **What is Vec?:** Vec is a growable, heap-allocated data structure in Rust, similar to a dynamic array or an ArrayList in other languages. It is used to store a collection of items (such as posts, comments, or IDs) that can change in size at runtime.
 
 **The significance:** Plume's architecture is designed from the start for multi-author `attributedTo`. The join table, the `Vec<User>` return type, and the receiving-side fold that accumulates multiple authors are all in place. The Lemmy team wrote specific handling code for Plume's `attributedTo` format, and the SocialHub forum documents cross-platform interop with this pattern.
 
