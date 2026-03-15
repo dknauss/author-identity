@@ -55,12 +55,12 @@ A plugin that populates both from the same WordPress author data gives writers a
 **Mastodon's `fediverse:creator` meta tag (July 2024).** Mastodon introduced a new OpenGraph-style meta tag for author attribution on shared links: `<meta name="fediverse:creator" content="@user@instance" />`. When a link is shared on Mastodon, the author byline becomes clickable, opening the author's fediverse profile directly in the app. This was explicitly designed for journalism — the launch partners were The Verge, MacStories, and MacRumors. The tag works with any fediverse account (Mastodon, Flipboard, Threads, WordPress with ActivityPub plugin, PeerTube, Pixelfed).
 
 > [!NOTE]
-> **※ Source:** Eugen Rochko, "[Highlighting journalism on Mastodon](https://blog.joinmastodon.org/2024/07/highlighting-journalism-on-mastodon/)," [blog.joinmastodon.org](https://blog.joinmastodon.org/), July 2, 2024.
+> **Source:** Eugen Rochko, "[Highlighting journalism on Mastodon](https://blog.joinmastodon.org/2024/07/highlighting-journalism-on-mastodon/)," [blog.joinmastodon.org](https://blog.joinmastodon.org/), July 2, 2024.
 
 **Multi-author limitation acknowledged.** The same blog post states: "If multiple tags are present on the page, the first one will be displayed, but we may add support for showing multiple authors in the future. We intend to propose a specification draft for other ActivityPub platforms in the coming weeks." As of the June 2024 engineering update, Mastodon introduced an `authors` attribute in the REST API for link previews that "cannot contain more than one author on Mastodon, but this might change."
 
 > [!NOTE]
-> **※ Sources:** [blog.joinmastodon.org/2024/07/highlighting-journalism-on-mastodon/](blog.joinmastodon.org/2024/07/highlighting-journalism-on-mastodon/)  and [blog.joinmastodon.org/2024/07/trunk-tidbits-june-2024/](blog.joinmastodon.org/2024/07/trunk-tidbits-june-2024/) (PR #[30846](https://github.com/mastodon/mastodon/pull/30846)).
+> **Sources:** [blog.joinmastodon.org/2024/07/highlighting-journalism-on-mastodon/](blog.joinmastodon.org/2024/07/highlighting-journalism-on-mastodon/)  and [blog.joinmastodon.org/2024/07/trunk-tidbits-june-2024/](blog.joinmastodon.org/2024/07/trunk-tidbits-june-2024/) (PR #[30846](https://github.com/mastodon/mastodon/pull/30846)).
 
 **WordPress ActivityPub plugin — post author/object actor synchronization (closed).** [Issue #2353](https://github.com/Automattic/wordpress-activitypub/issues/2353) on the [Automattic/wordpress-activitypub](https://github.com/Automattic/wordpress-activitypub/) repo identified the fundamental problem: WordPress's `post_author` and the ActivityPub object's `actor`/`attributedTo` can diverge, especially with multi-author plugins like Co-Authors Plus. This led to [Discussion #2358](https://github.com/Automattic/wordpress-activitypub/discussions/2358), a draft pre-FEP (Fediverse Enhancement Proposal) titled "[Reassigning Actor and CoAuthor Representation for Federated CMS](https://socialhub.activitypub.rocks/t/pre-fep-reassigning-actor-and-coauthor-representation-for-federated-cms/8172/2)," which proposed new ActivityPub activity types (`Reattribute`, `Transfer`) for author reassignment and co-authorship.
 
@@ -90,7 +90,8 @@ The proposal also references Ghost's ActivityPub implementation (TryGhost/Activi
 
 4. **Feed-level identity is independent of this entire debate.** RSS and Atom feeds don't have the authorship/ownership conflation problem. Byline elements can express multi-author attribution cleanly because feeds are read-only — there's no "who can modify this" concern. This makes feeds the safest ground for shipping multi-author identity first.
 
-References: github.com/Automattic/wordpress-activitypub/issues/2353 (closed), github.com/Automattic/wordpress-activitypub/discussions/2358, socialhub.activitypub.rocks/t/pre-fep-reassigning-actor-and-coauthor-representation-for-federated-cms/8172, FEP-fe34 (origin-based security model), FEP-1580 (object portability).
+> [!NOTE]
+> **References:** github.com/Automattic/wordpress-activitypub/issues/2353 (closed), github.com/Automattic/wordpress-activitypub/discussions/2358, socialhub.activitypub.rocks/t/pre-fep-reassigning-actor-and-coauthor-representation-for-federated-cms/8172, FEP-fe34 (origin-based security model), FEP-1580 (object portability).
 
 **Plume: prior art for multi-author `attributedTo` in production.** Plume (joinplu.me) is a federated blogging engine written in Rust that has been shipping `attributedTo` as a list in production since its early versions. Plume's federation documentation states: "`object.attributedTo` is a list containing the ID of the authors and of the blog in which this article have been published. If no blog ID is specified, the article will be rejected."
 
@@ -108,11 +109,13 @@ Source-level inspection of the codebase (plume-models/src/posts.rs) reveals a fu
 
 **Lesson for our project:** Plume demonstrates that multi-author `attributedTo` is not theoretical — the database schema, the serialization code, the parsing code, and the cross-platform interop all exist. WordPress multi-author plugins already have the editorial UI that Plume lacks (assigning multiple authors to a post). What WordPress lacks is the federation layer that Plume has. A Byline identity plugin bridges this gap by taking WordPress's multi-author data and outputting it in the same patterns that Plume has already proven work across the fediverse.
 
-**※ Sources:** docs.joinplu.me/federation/ (federation documentation), plume-models/src/posts.rs (source), plume-models/src/post_authors.rs (join table), socialhub.activitypub.rocks/t/differences-in-group-federation-between-projects/2472, socialhub.activitypub.rocks/t/how-to-implement-activitypub-for-a-blog-that-has-multiple-authors/2673.
+> [!NOTE]
+> **※ Sources:** docs.joinplu.me/federation/ (federation documentation), plume-models/src/posts.rs (source), plume-models/src/post_authors.rs (join table), socialhub.activitypub.rocks/t/differences-in-group-federation-between-projects/2472, socialhub.activitypub.rocks/t/how-to-implement-activitypub-for-a-blog-that-has-multiple-authors/2673.
 
 **Ghost's ActivityPub implementation.** Ghost (TryGhost/ActivityPub) is also grappling with multi-author federation — the pre-FEP discussion explicitly references Ghost's implementation alongside WordPress. Ghost's forum has active threads on how multi-author content appears in the fediverse, with the current behavior attributing all content to a single site-level account.
 
-**※ Source:** forum.ghost.org/t/multiple-authors-shared-to-the-fediverse-what-does-that-look-like/59502.
+> [!NOTE]
+> **※ Source:** forum.ghost.org/t/multiple-authors-shared-to-the-fediverse-what-does-that-look-like/59502.
 
 **Current limitations.** The default Mastodon web UI still displays a single author for interaction purposes (replying, liking). The `fediverse:creator` tag currently only shows the first tag when multiple are present. The pre-FEP for co-author representation is in draft status and has not been formally proposed. PeerTube and other platforms that handle multi-contributor content use workarounds — attributing to a single primary account and mentioning others in body or metadata.
 
@@ -251,7 +254,7 @@ ActivityPub has a `Delete` activity, but it's advisory — receiving servers can
 
 ### Why Atom matters more than its market share suggests
 
-Atom (RFC 4287, December 2005) holds roughly 17% of feed usage against RSS 2.0's ~67%. It's the less popular format. But for multi-author identity, it's the technically superior one — and the gap is significant enough that the plugin should treat Atom not as an afterthought parallel to RSS2, but as the primary showcase for structured authorship.
+[Atom](https://en.wikipedia.org/wiki/Atom_(web_standard)) ([RFC 4287](https://www.rfc-editor.org/rfc/rfc4287), December 2005) holds roughly 17% of feed usage against RSS 2.0's ~67%. It's the less popular format. But for multi-author identity, it's the technically superior one — and the gap is significant enough that the plugin should treat Atom not as an afterthought parallel to RSS2, but as the primary showcase for structured authorship.
 
 **Atom has native multi-author support baked into the spec.** RFC 4287 explicitly allows multiple `atom:author` elements per entry and per feed. The spec states: entries "MUST contain one or more atom:author elements" and "MAY contain any number of atom:contributor elements." This is not an extension or a hack — it's a first-class feature of the format. An Atom entry can have three co-authors and two contributors, each with a structured Person Construct containing `atom:name`, `atom:uri`, and `atom:email`, and a conforming parser is required to handle all of them.
 
