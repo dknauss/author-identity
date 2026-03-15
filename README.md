@@ -178,6 +178,12 @@ The current Playground strategy is intentionally two-tiered:
 - [playground/output-demo/](playground/output-demo/) is the stable source-of-truth bundle for demonstrating shipped outputs
 - a later adapter-demo blueprint will showcase real Co-Authors Plus and PublishPress Authors integration without burdening the primary public demo
 
+The output-demo README includes direct inspection routes for:
+- feeds
+- singular `fediverse:creator` and JSON-LD output
+- denied rights-signaling routes
+- `/ai.txt`
+
 [![Try in Playground](https://img.shields.io/badge/Try%20in-Playground-21759B?logo=wordpress&logoColor=white)](https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2Fdknauss%2FAuthor-Identity%2Fcodex%2Fplayground-assets%2Fplayground%2Fpublic%2Foutput-demo.blueprint.json&url=%2F%3Fp%3D1&mode=browser-full-screen&login=no)
 
 Use the output-demo bundle locally with:

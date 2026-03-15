@@ -12,6 +12,10 @@ SOURCE_SHORT_SHA="$(git -C "$ROOT_DIR" rev-parse --short=12 HEAD)"
 SOURCE_TAG="playground-output-demo-source-${SOURCE_SHORT_SHA}"
 PUBLIC_BLUEPRINT_URL="https://raw.githubusercontent.com/${REPO_SLUG}/${ASSET_BRANCH}/playground/public/output-demo.blueprint.json"
 PLAYGROUND_URL="https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2Fdknauss%2FAuthor-Identity%2Fcodex%2Fplayground-assets%2Fplayground%2Fpublic%2Foutput-demo.blueprint.json&url=%2F%3Fp%3D1&mode=browser-full-screen&login=no"
+PLAYGROUND_FEED_URL="https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2Fdknauss%2FAuthor-Identity%2Fcodex%2Fplayground-assets%2Fplayground%2Fpublic%2Foutput-demo.blueprint.json&url=%2Ffeed%2F&mode=browser-full-screen&login=no"
+PLAYGROUND_AUTHOR_DENY_URL="https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2Fdknauss%2FAuthor-Identity%2Fcodex%2Fplayground-assets%2Fplayground%2Fpublic%2Foutput-demo.blueprint.json&url=%2F%3Fp%3D101&mode=browser-full-screen&login=no"
+PLAYGROUND_POST_DENY_URL="https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2Fdknauss%2FAuthor-Identity%2Fcodex%2Fplayground-assets%2Fplayground%2Fpublic%2Foutput-demo.blueprint.json&url=%2F%3Fp%3D102&mode=browser-full-screen&login=no"
+PLAYGROUND_AI_TXT_URL="https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2Fdknauss%2FAuthor-Identity%2Fcodex%2Fplayground-assets%2Fplayground%2Fpublic%2Foutput-demo.blueprint.json&url=%2Fai.txt&mode=browser-full-screen&login=no"
 WORKTREE_DIR="$(mktemp -d /tmp/author-identity-playground-assets.XXXXXX)"
 
 cleanup() {
@@ -115,6 +119,12 @@ Published blueprint:
 
 Playground launch URL:
   $PLAYGROUND_URL
+
+Additional demo URLs:
+  feed: $PLAYGROUND_FEED_URL
+  per-author deny: $PLAYGROUND_AUTHOR_DENY_URL
+  per-post deny: $PLAYGROUND_POST_DENY_URL
+  ai.txt: $PLAYGROUND_AI_TXT_URL
 
 Pinned plugin source:
   tag $SOURCE_TAG -> $SOURCE_SHA
