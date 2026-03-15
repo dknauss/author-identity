@@ -231,7 +231,7 @@ The Byline identity plugin operates in the attribution layer. It should not pret
 
 The better a system is at attributing work to an author — which is exactly what this plugin is designed to do — the harder it becomes for that author to exercise a right to be forgotten. Rich structured identity metadata in feeds, JSON-LD schema, and fediverse tags creates exactly the kind of permanent, machine-readable, cross-platform chain from work to person that makes deletion or disassociation difficult. This is a political problem as much as a technical one.
 
-**Why permanence is a power question.** The right to be forgotten (GDPR Article 17 and analogues elsewhere) exists because a public record permanently tied to an identifiable individual is a tool of power — it can be wielded by the individual (to build reputation, claim credit, enforce IP) or against them (surveillance, harassment, legal liability, political persecution). The same structured metadata chain that lets a reporter get proper credit for investigative journalism also lets an authoritarian government identify, locate, and target the author of dissident writing. The authentication that would be needed to exercise deletion rights is the same authentication that would confirm identity to an adversary.
+**Why permanence is a power question.** The right to erasuse — "to be forgotten" ([GDPR Article 17](https://gdpr-info.eu/art-17-gdpr/)) and analogues elsewhere) exists because a public record permanently tied to an identifiable individual is a tool of power — it can be wielded by the individual (to build reputation, claim credit, enforce IP) or against them (surveillance, harassment, legal liability, political persecution). The same structured metadata chain that lets a reporter get proper credit for investigative journalism also lets an authoritarian government identify, locate, and target the author of dissident writing. The authentication that would be needed to exercise deletion rights is the same authentication that would confirm identity to an adversary.
 
 And it's not just about deleting the work. An author might want to keep published work accessible but sever it from their identity. A journalist who covered organized crime might need to become unfindable. A political dissident who published under their real name might need that name disconnected after a regime change. A person who transitions might want pre-transition bylines updated or unlinked. A whistleblower might need to retroactively anonymize their contributions. These aren't edge cases — they're the conditions under which the right to be forgotten was designed to operate.
 
@@ -293,7 +293,7 @@ This means the plugin's Atom implementation isn't just a parallel of the RSS2 im
 
 **The good.** Atom is an IETF Proposed Standard (RFC 4287), not a de facto spec controlled by one person (RSS 2.0's history with Dave Winer). The spec is stable — it hasn't changed since 2005, which in standards terms means it's mature, not dead. Every major feed reader supports it. WordPress generates it by default. Google historically preferred it (though Google Reader's death in 2013 was a blow to feeds generally). YouTube uses Atom for its channel feeds. Mastodon generates Atom feeds for user profiles. The spec is extensible via XML namespaces — the same mechanism Byline uses.
 
-**The bad.** iTunes dropped Atom support in 2023, requiring podcasts to use RSS 2.0. This is significant because podcasting drove much of the feed ecosystem's growth. RSS 2.0's market share (~67% vs. ~17%) means many publishers only generate RSS2 and don't bother with Atom. Some feed readers treat Atom as second-class. The Atom Publishing Protocol (AtomPub, RFC 5023), which was the CRUD API companion to Atom syndication, never achieved meaningful adoption — it was eclipsed by proprietary APIs and later by ActivityPub for the federation use case.
+**The bad.** iTunes dropped Atom support in 2023, requiring podcasts to use RSS 2.0. This is significant because podcasting drove much of the feed ecosystem's growth. RSS 2.0's market share (~67% vs. ~17%) means many publishers only generate RSS2 and don't bother with Atom. Some feed readers treat Atom as second-class. The Atom Publishing Protocol (AtomPub, [RFC 5023](https://datatracker.ietf.org/doc/html/rfc5023)), which was the CRUD API companion to Atom syndication, never achieved meaningful adoption — it was eclipsed by proprietary APIs and later by ActivityPub for the federation use case.
 
 **The strategic read.** Atom is not going to overtake RSS2 in market share. But it doesn't need to. For the Byline identity plugin's purposes, Atom is the format where the multi-author story is cleanest and most spec-compliant. The plugin should:
 
@@ -302,7 +302,7 @@ This means the plugin's Atom implementation isn't just a parallel of the RSS2 im
 3. **Make the Atom feed the reference implementation** in documentation and examples, because it's the format where multi-author identity is most naturally expressed.
 4. **Continue full RSS2 support** because that's where the users are, using Byline elements to compensate for RSS2's structural limitations.
 
-The net effect: Atom-consuming clients get rich multi-author attribution using both native Atom elements and Byline extensions. RSS2-consuming clients get equivalent data entirely through Byline extensions. Both produce the same information; Atom just expresses it more natively.
+**The net effect:** Atom-consuming clients get rich multi-author attribution using both native Atom elements and Byline extensions. RSS2-consuming clients get equivalent data entirely through Byline extensions. Both produce the same information; Atom just expresses it more natively.
 
 ## LLM discoverability and credit
 
@@ -331,7 +331,7 @@ The relevant schema structures:
 
 WordPress schema output today (via Yoast, Rank Math, etc.) handles single authors reasonably well but multi-author attribution poorly. A plugin that generates both Byline feed elements and JSON-LD Person/Article schema from the same normalized author data — the adapter pattern from the adoption strategy — would be more coherent than bolting together separate feed and schema plugins.
 
-The practical path: offer a JSON-LD output component that hooks into `wp_head` and produces Article + Person schema derived from the same adapter that feeds the Byline output. Filter every field so existing schema plugins can integrate rather than conflict. If Yoast or Rank Math is detected, offer a compatibility mode that extends their schema rather than replacing it.
+**The practical path:** offer a JSON-LD output component that hooks into `wp_head` and produces Article + Person schema derived from the same adapter that feeds the Byline output. Filter every field so existing schema plugins can integrate rather than conflict. If Yoast or Rank Math is detected, offer a compatibility mode that extends their schema rather than replacing it.
 
 ### Single source of truth
 
@@ -374,9 +374,9 @@ On a multi-author site, different authors may have different preferences about A
 
 A per-author or per-post metadata field for AI training consent, expressed in both feed metadata and HTML meta tags, would give publishers granular control. Implementation:
 
-- User meta field: `byline_ai_training_consent` with values `allow`, `deny`, `unset`.
-- Post meta field: `_byline_ai_consent` to override author-level preference per post.
-- Output: `<meta name="robots" content="noai, noimageai">` on HTML pages where consent is denied. TDMRep headers for the same. Feed items for opted-out authors could carry a rights element or be excluded from the feed entirely (configurable).
+- **User meta field:** `byline_ai_training_consent` with values `allow`, `deny`, `unset`.
+- **Post meta field:** `_byline_ai_consent` to override author-level preference per post.
+- **Output:** `<meta name="robots" content="noai, noimageai">` on HTML pages where consent is denied. TDMRep headers for the same. Feed items for opted-out authors could carry a rights element or be excluded from the feed entirely (configurable).
 
 This is genuinely novel. Nobody is doing per-author AI consent in structured metadata today. It would be an attention-getting feature for the journalism community, where this debate is live and urgent.
 
