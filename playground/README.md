@@ -8,6 +8,7 @@ This directory holds reproducible WordPress Playground assets for `byline-feed`.
   - primary stable demo target
   - showcases shipped outputs with deterministic injected author fixtures
   - now backs the public `Try in Playground` CTA through an immutable published blueprint
+  - refreshed with `playground/bin/publish-output-demo.sh`
 
 ## Later target
 

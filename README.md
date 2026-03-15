@@ -53,7 +53,7 @@ The current implementation focus is the `byline-feed` plugin:
 | Research | [docs/README.md](docs/README.md): Documentation tree index<br>[docs/research/README.md](docs/research/README.md): Curated research index with current vs exploratory tiers<br>[multi-author-matrix.md](docs/research/current/multi-author-matrix.md): Comparison of WordPress multi-author systems<br>[protocol-coverage-map.md](docs/research/current/protocol-coverage-map.md): Protocol coverage by output channel<br>[architecture.md](docs/research/current/architecture.md): HM Authorship architecture notes<br>[landscape.md](docs/research/current/landscape.md): Plugin ecosystem and historical lineage<br>[metadata-models-for-publishers.md](docs/research/current/metadata-models-for-publishers.md): WP-05 JSON-LD background and longer-term publication metadata context |
 | Playground | [playground/README.md](playground/README.md): Playground demo index<br>[playground/output-demo/README.md](playground/output-demo/README.md): Stable output-demo bundle for feeds, `fediverse:creator`, and JSON-LD |
 | Quality | [ASSESSMENT.md](docs/quality/ASSESSMENT.md): Project assessment and recommendations<br>[TEST_COVERAGE_MATRIX.md](docs/quality/TEST_COVERAGE_MATRIX.md): Coverage status and remaining gaps<br>[TDD_TESTING_STANDARD.md](docs/quality/TDD_TESTING_STANDARD.md): Testing workflow and definition of done |
-| Work Packages | [wp-01.md](Implementation%20Strategy/wp-01.md) to [wp-06.md](Implementation%20Strategy/wp-06.md): Detailed delivery specs by package<br>[gap-analysis.md](Implementation%20Strategy/gap-analysis.md): Audit of code against the specs<br>[implementation-spec.md](Implementation%20Strategy/implementation-spec.md): Supplemental strategy details and cross-cutting concerns |
+| Work Packages | [wp-01.md](Implementation%20Strategy/wp-01.md) to [wp-06.md](Implementation%20Strategy/wp-06.md): Detailed delivery specs by package<br>[gap-analysis.md](Implementation%20Strategy/gap-analysis.md): Audit of code against the specs<br>[implementation-spec.md](Implementation%20Strategy/implementation-spec.md): Supplemental strategy details and cross-cutting concerns<br>[code-review-plan.md](Implementation%20Strategy/code-review-plan.md): Post-Gate-A hardening backlog from source/test review |
 | Legacy | [Byline RSS Spec Adoption/](Byline%20RSS%20Spec%20Adoption/): Earlier planning and legacy positioning documents |
 
 ## Plugin status
@@ -150,7 +150,7 @@ The current Playground strategy is intentionally two-tiered:
 - [playground/output-demo/](playground/output-demo/) is the stable source-of-truth bundle for demonstrating shipped outputs
 - a later adapter-demo blueprint will showcase real Co-Authors Plus and PublishPress Authors integration without burdening the primary public demo
 
-[![Try in Playground](https://img.shields.io/badge/Try%20in-Playground-21759B?logo=wordpress&logoColor=white)](https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2Fdknauss%2FAuthor-Identity%2F037e2d2c7a4e53737caeb7436a3fbdbd30b86909%2Fplayground%2Fpublic%2Foutput-demo.blueprint.json&url=%2F%3Fp%3D1&mode=browser-full-screen&login=no)
+[![Try in Playground](https://img.shields.io/badge/Try%20in-Playground-21759B?logo=wordpress&logoColor=white)](https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2Fdknauss%2FAuthor-Identity%2Fcodex%2Fplayground-assets%2Fplayground%2Fpublic%2Foutput-demo.blueprint.json&url=%2F%3Fp%3D1&mode=browser-full-screen&login=no)
 
 Use the output-demo bundle locally with:
 
@@ -164,7 +164,13 @@ Build a shareable snapshot ZIP with:
 playground/bin/build-output-demo-snapshot.sh
 ```
 
-The public `Try in Playground` CTA uses an immutable published blueprint pinned to the `playground-output-demo` tag. Local snapshot ZIPs remain useful for offline sharing, archived demos, and reproducible local inspection.
+Refresh the published public demo assets with:
+
+```bash
+playground/bin/publish-output-demo.sh
+```
+
+The public `Try in Playground` CTA now targets the stable `codex/playground-assets` blueprint URL. Each refresh republishes that stable blueprint while pinning the installed plugin to a fresh immutable source tag for the current commit. Local snapshot ZIPs remain useful for offline sharing, archived demos, and reproducible local inspection.
 
 ## Governance
 

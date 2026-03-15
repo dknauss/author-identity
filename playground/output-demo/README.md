@@ -28,6 +28,13 @@ Right-click "View Frame Source" in Chrome for a clean view to test each feed URL
 
 Notes:
 - This is the source-of-truth bundle for the public Playground demo.
-- The public CTA points to an immutable published blueprint pinned to the `playground-output-demo` tag, not to a mutable branch install.
+- The public CTA points to the stable `codex/playground-assets` blueprint URL.
+- Each refresh republishes that stable blueprint while pinning plugin installation to a fresh immutable source tag for the current commit.
 - Local snapshot ZIPs built from this bundle are still useful for offline sharing and local archival demos.
 - A separate adapter-demo blueprint for Co-Authors Plus and PublishPress Authors is intentionally deferred.
+
+Public refresh command:
+
+```bash
+playground/bin/publish-output-demo.sh
+```
