@@ -33,6 +33,7 @@ function bootstrap(): void {
 	Feed_Atom\register_hooks();
 	Feed_JSON\register_hooks();
 	Fediverse\register_hooks();
+	Schema\register_hooks();
 	register_author_meta_hooks();
 
 	// Register perspective meta field.

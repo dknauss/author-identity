@@ -12,12 +12,12 @@ Current shipped output:
 - Atom Byline namespace and metadata
 - JSON Feed 1.1 output with `_byline` extensions
 - `fediverse:creator` meta tags on singular HTML views
+- JSON-LD Article + Person schema on singular HTML views
 - Perspective post meta and feed output
 - Public filters and actions for feed customization
 
 Not yet shipped:
 
-- JSON-LD output
 - rights / TDM / AI-consent output
 
 ## Output model
@@ -53,7 +53,7 @@ Optional fields:
 | `now_url` | string | `''` | Emitted as `byline:now` when non-empty |
 | `uses_url` | string | `''` | Emitted as `byline:uses` when non-empty |
 | `fediverse` | string | `''` | Emitted as `fediverse:creator` in HTML head when non-empty |
-| `ap_actor_url` | string | `''` | Not emitted in current feed outputs; supporting identity field for WP-04/WP-05 |
+| `ap_actor_url` | string | `''` | Extends JSON-LD `sameAs` when confidently resolved; never substitutes for `fediverse` |
 | `ai_consent` | string | `''` | Not emitted yet |
 
 Important current limitation:
@@ -79,6 +79,60 @@ Behavior:
 - handles are normalized to include a leading `@`
 - `profiles[]` and `ap_actor_url` do not substitute for the `fediverse` handle
 - per-author handle output can be overridden with `byline_feed_fediverse_handle`
+
+## JSON-LD output
+
+The plugin hooks `wp_head` and emits one `<script type="application/ld+json">` block on singular post views when schema output is enabled.
+
+Behavior:
+
+- emits `Article` schema with an ordered `author` array of `Person` objects
+- uses the same normalized author contract as the feed outputs
+- includes `profiles[]` in `sameAs`
+- includes `ap_actor_url` in `sameAs` only when that URL is already available from trusted adapter/meta resolution
+- disables its own schema output by default when known schema-owning SEO plugins are active:
+  - Yoast SEO
+  - Rank Math
+- schema output can be force-enabled or disabled with `byline_feed_schema_enabled`
+
+Example:
+
+```json
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "City budget passes council",
+  "datePublished": "2026-03-15T12:00:00+00:00",
+  "dateModified": "2026-03-15T12:00:00+00:00",
+  "url": "https://example.com/city-budget-passes-council/",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Jane Doe",
+      "url": "https://example.com/author/jane-doe/",
+      "description": "Reporter covering local government and housing.",
+      "image": "https://example.com/avatar/jane.jpg",
+      "sameAs": [
+        "https://example.com/@jane",
+        "https://example.social/users/jane"
+      ]
+    },
+    {
+      "@type": "Person",
+      "name": "Alex Smith"
+    }
+  ],
+  "publisher": {
+    "@type": "Organization",
+    "name": "Example Site",
+    "url": "https://example.com/",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://example.com/icon.png"
+    }
+  }
+}
+```
 
 ## RSS2 output
 
@@ -388,6 +442,9 @@ Invalid values are silently dropped from output.
 | `byline_feed_json_author_extension` | `( array $ext, object $author, ?WP_Post $post )` | Modify `_byline` author extension data in JSON Feed |
 | `byline_feed_json_item` | `( array $item, WP_Post $post )` | Modify a single JSON Feed item before output |
 | `byline_feed_json_feed` | `( array $feed )` | Modify the complete JSON Feed before encoding |
+| `byline_feed_schema_enabled` | `( bool $enabled, WP_Post $post )` | Enable or disable JSON-LD output for the current singular post |
+| `byline_feed_schema_person` | `( array $person, object $author )` | Modify one JSON-LD `Person` object |
+| `byline_feed_schema_article` | `( array $article, WP_Post $post )` | Modify the full JSON-LD `Article` object |
 
 ### Actions
 

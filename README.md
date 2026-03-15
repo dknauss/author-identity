@@ -12,10 +12,10 @@ Current shipped scope:
 - Byline output in RSS2, Atom, and JSON Feed
 - perspective storage and editor UI
 - `fediverse:creator` meta tag output for singular content
+- multi-author JSON-LD Article + Person output for singular content
 
 Next planned tranches:
 
-- WP-05 JSON-LD
 - HM Authorship adapter support
 - WP-06 rights and AI-consent output
 
@@ -54,8 +54,8 @@ The current implementation focus is the `byline-feed` plugin:
 
 | Status | Items |
 | --- | --- |
-| Implemented | adapter interface plus core, Co-Authors Plus, and PublishPress Authors adapters<br>RSS2, Atom, and JSON Feed Byline output, including `profile` / `now` / `uses` for linked WordPress users via plugin-owned meta<br>content perspective storage and editor UI<br>`fediverse:creator` meta tags for authors with configured fediverse handles<br>conservative `ap_actor_url` resolution for linked WordPress users when ActivityPub identity can be resolved<br>runtime validation for the normalized author contract<br>PHPUnit, PHPCS, and GitHub Actions CI scaffolding |
-| Not yet implemented | multi-author JSON-LD output<br>AI consent and rights output<br>Molongui and HM Authorship adapters |
+| Implemented | adapter interface plus core, Co-Authors Plus, and PublishPress Authors adapters<br>RSS2, Atom, JSON Feed, and JSON-LD output, including `profile` / `now` / `uses` for linked WordPress users via plugin-owned meta<br>content perspective storage and editor UI<br>`fediverse:creator` meta tags for authors with configured fediverse handles<br>conservative `ap_actor_url` resolution for linked WordPress users when ActivityPub identity can be resolved<br>runtime validation for the normalized author contract<br>PHPUnit, PHPCS, Playwright E2E, and GitHub Actions CI scaffolding |
+| Not yet implemented | AI consent and rights output<br>Molongui and HM Authorship adapters |
 | Primary references | [byline-feed/](byline-feed/)<br>[byline-feed/docs/output-reference.md](byline-feed/docs/output-reference.md)<br>[implementation-spec.md](Implementation%20Strategy/implementation-spec.md)<br>[wp-01.md](Implementation%20Strategy/wp-01.md) to [wp-06.md](Implementation%20Strategy/wp-06.md) |
 
 ## Plugin layout
@@ -79,6 +79,7 @@ byline-feed/
 |   |-- feed-atom.php
 |   |-- feed-json.php
 |   |-- fediverse.php
+|   |-- schema.php
 |   |-- author-meta.php
 |   `-- perspective.php
 |-- src/
@@ -96,6 +97,7 @@ byline-feed/
     |-- test-feed-atom.php
     |-- test-feed-json.php
     |-- test-feed-rss2.php
+    |-- test-schema.php
     `-- test-perspective.php
 ```
 
@@ -122,9 +124,9 @@ npm run build
 
 Development-tooling note:
 
-- the remaining open Dependabot alerts are moderate `webpack-dev-server` advisories inherited from `@wordpress/scripts`
-- they affect local development workflows around `npm run start`, not the shipped plugin runtime
-- current policy and exit criteria are documented in [SECURITY.md](SECURITY.md)
+- current npm advisory state is clean after targeted dependency overrides
+- `npm run start` still uses development-only tooling and should be treated separately from shipped plugin runtime behavior
+- current policy and maintenance expectations are documented in [SECURITY.md](SECURITY.md)
 
 ### CI
 

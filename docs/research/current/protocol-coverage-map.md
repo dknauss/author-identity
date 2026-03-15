@@ -118,7 +118,7 @@ Which protocols carry which identity signals. This is the core of the coverage m
 - **Channel:** HTML `<script type="application/ld+json">` in `wp_head`
 - **Author support:** `Person` type with `name`, `url`, `description`, `image`, `sameAs` (social profiles), `worksFor` (organization). `Article.author` accepts array for multi-author.
 - **Consumers:** Google (E-E-A-T ranking signals, Knowledge Panels, Rich Results), Bing, AI search systems.
-- **WordPress status:** Theme-dependent. SEO plugins (Yoast, Rank Math) provide single-author schema. Multi-author JSON-LD is rare. Byline Feed [WP-05](../../../Implementation%20Strategy/wp-05.md) will address.
+- **WordPress status:** Theme-dependent. SEO plugins (Yoast, Rank Math) provide single-author schema. Multi-author JSON-LD is still rare. Byline Feed [WP-05](../../../Implementation%20Strategy/wp-05.md) now addresses it with ordered multi-author `Article.author` output.
 
 #### fediverse:creator
 - **Standard:** Informal convention (Mastodon, July 2024)
@@ -126,7 +126,7 @@ Which protocols carry which identity signals. This is the core of the coverage m
 - **Purpose:** When a link is shared on Mastodon, the author's fediverse identity appears on the link preview card.
 - **Verification:** Author must add the publishing domain to their Mastodon "Author Attribution" allowlist. This is domain-based verification, stronger than pure declared metadata.
 - **Multi-author:** Mastodon currently displays only the first tag. PR #30846 adds multi-author API support; display support expected to follow.
-- **WordPress status:** No automated generation. Byline Feed [WP-04](../../../Implementation%20Strategy/wp-04.md) will output from user meta.
+- **WordPress status:** Not in core. Byline Feed [WP-04](../../../Implementation%20Strategy/wp-04.md) now outputs from user meta for singular content.
 
 #### OpenGraph
 - **Standard:** De facto (Facebook/Meta, ogp.me)

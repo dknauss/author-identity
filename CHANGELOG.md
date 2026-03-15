@@ -43,6 +43,8 @@ When cutting a release:
 
 - `byline-feed` now includes a runnable WordPress PHPUnit harness, build assets, and CI-backed verification
 - Adapter and feed layers now have CAP, PPA, Atom, RSS2, and author-contract coverage
+- `byline-feed` now emits multi-author JSON-LD Article + Person schema on singular content, with conservative Yoast/Rank Math coexistence rules
+- `byline-feed` now has browser E2E coverage for the perspective editor panel via `wp-env` + Playwright
 - Root documentation now reflects the current MVP-complete state of WP-01 through WP-03 rather than the earlier pre-CI audit snapshot
 
 ### Fixed

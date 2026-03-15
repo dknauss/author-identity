@@ -4,17 +4,19 @@ Persistent architectural decisions for the byline-feed plugin project. Read befo
 
 ## What this project is
 
-A WordPress plugin that normalizes author identity data from any multi-author plugin (Co-Authors Plus, PublishPress Authors, Molongui, HM Authorship, core WP) and routes it to multiple output channels: Byline RSS/Atom feeds, JSON-LD schema, fediverse:creator meta tags, TDM/AI consent headers. One adapter layer, many outputs.
+A WordPress plugin that normalizes author identity data from supported multi-author plugins (Co-Authors Plus, PublishPress Authors, core WP today; HM Authorship and Molongui later) and routes it to multiple output channels: Byline RSS/Atom/JSON Feed, JSON-LD schema, fediverse:creator meta tags, and later TDM/AI consent headers. One adapter layer, many outputs.
 
 The mental model: **WordPress is a Personal Data Server for authors.** The author's WP profile is their everything folder. The plugin makes that PDS speak the open web's formats. Output channels are reactive to the normalized author data — none of them own it.
 
 ## Active work packages
 
 MVP (wp.org submission target): WP-01, WP-02, WP-03
-Post-MVP active: WP-04, WP-05, WP-06
-Reserved/deferred: WP-07 (did:web:)
+Shipped post-MVP: WP-04, WP-05
+Next adapter tranche: HM Authorship
+Later roadmap: WP-06
+Reserved/deferred: WP-07 (`did:web:`)
 
-Gate A is complete. Keep WP-04 and WP-05 tightly scoped before moving to the next adapter tranche and WP-06. See `implementation-spec.md § Release gates`.
+Gate A is complete. WP-04 and WP-05 now ship. Keep them tightly scoped and maintained while moving next to the HM Authorship tranche, then WP-06. See `../Implementation Strategy/implementation-spec.md § Release gates`.
 
 ## Normalized author object — field constraints
 
@@ -34,11 +36,11 @@ This matters most in WP-05 (JSON-LD Person objects indexed by Google). A Gravata
 - Adapter resolution: check user meta for AP plugin's stored actor URL; construct it if AP plugin is active and meta is absent.
 - This plugin may surface `ap_actor_url` as supporting identity data for WP-04 and WP-05, but `fediverse:creator` tags are driven by the authored `fediverse` handle. Do not substitute one for the other.
 
-## did field — reserved, do not implement yet
+## did:web: — reserved future work, not in the current contract
 
-`did` field exists in the author object contract. MUST return empty string in all adapters until WP-07 ships. Do not use `id` as a substitute. Do not conflate with `ap_actor_url`. Different trust model entirely.
+`did:web:` is deferred. It is not part of the active normalized author object contract and must not be added opportunistically. Do not use `id` or `ap_actor_url` as a substitute. Different trust model entirely.
 
-WP-07 target: `did:web:` support — DID URI in JSON-LD `sameAs` and Byline feed, optional `/.well-known/did.json` endpoint. Scaffold deferred. See `author-identity-vision.md § did:web: as post-MVP bridge`.
+WP-07 target remains future work: possible `did:web:` support in JSON-LD `sameAs` and an optional `/.well-known/did.json` endpoint only after the current post-MVP roadmap ships and there is a concrete consumer.
 
 ## ActivityPub plugin jurisdiction boundary
 
@@ -55,15 +57,15 @@ No mechanism currently exists for our multi-author data to influence the AP plug
 
 ## Key cross-references
 
-- Architectural decisions in full: `author-identity-vision.md § WordPress as a Personal Data Server`
-- Author object contract: `implementation-spec.md § Normalized author object contract`
-- AP boundary detail: `known-gaps.md § Byline Feed plugin — integration boundaries`
-- Work package scaffolds: `wp-01.md` through `wp-06.md`
+- Architectural decisions in full: `../docs/vision/author-identity-vision.md § WordPress as a Personal Data Server`
+- Author object contract: `../Implementation Strategy/implementation-spec.md § Normalized author object contract`
+- AP boundary detail: `../docs/research/current/known-gaps.md § Byline Feed plugin — integration boundaries`
+- Work package scaffolds: `../Implementation Strategy/wp-01.md` through `../Implementation Strategy/wp-06.md`
 
 ## What not to do
 
 - Do not add fields to the normalized author object without classifying them as authored/derived/composite.
 - Do not use `id` as an AP actor URL or DID.
 - Do not output `ap_actor_url` in `attributedTo` — that is the AP plugin's field.
-- Do not implement WP-07 scope (did:web:, /.well-known/did.json) until WP-05 and WP-06 are shipped and gated.
-- Do not add Molongui or HM Authorship adapters until CAP and PPA adapters are proven in production (Gate B).
+- Do not implement WP-07 scope (`did:web:`, `/.well-known/did.json`) until HM Authorship and WP-06 are shipped and there is a concrete consumer.
+- Do not add Molongui before HM Authorship. HM Authorship is the next planned adapter tranche after the now-shipped WP-04/WP-05 work.

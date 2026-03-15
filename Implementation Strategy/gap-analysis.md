@@ -14,7 +14,7 @@
 | WP-02: RSS2, Atom & JSON Feed Output | All three output files | RSS2 + Atom + JSON Feed tests | Implemented | Automated coverage now exists for all three feed formats |
 | WP-03: Perspective Field | PHP + TSX present | PHPUnit + Playwright coverage | Implemented | Browser-verified in a self-contained `wp-env` harness |
 | WP-04: fediverse:creator | Output module + user meta/UI | Meta-tag, normalization, and profile-field tests | Implemented | Automated coverage exists; ActivityPub integration remains conservative |
-| WP-05: JSON-LD Schema | None | None | Not started | N/A |
+| WP-05: JSON-LD Schema | Output module present | Schema graph and coexistence tests | Implemented | Automated coverage exists; real SEO-plugin filter integration is intentionally conservative |
 | WP-06: Rights & AI Consent | None | None | Not started | N/A |
 
 ---
@@ -25,9 +25,7 @@ Files still planned by the implementation strategy that do not yet exist:
 
 | File | Work package | Impact |
 | --- | --- | --- |
-| `inc/schema.php` | WP-05 | No JSON-LD article/person graph output yet |
 | `inc/rights.php` | WP-06 | No rights / TDM / consent output yet |
-| `tests/phpunit/test-schema.php` | WP-05 | No automated coverage for JSON-LD output |
 | `tests/phpunit/test-rights.php` | WP-06 | No automated coverage for rights output |
 
 ---
@@ -36,16 +34,20 @@ Files still planned by the implementation strategy that do not yet exist:
 
 These are the meaningful remaining gaps after WP-04 completion.
 
-### 1. WP-05 and WP-06 remain unimplemented; WP-04 is now in place
+### 1. WP-06 remains unimplemented; WP-04 and WP-05 are now in place
 
-WP-04 is no longer a gap. The plugin now has:
+WP-04 and WP-05 are no longer gaps. The plugin now has:
 
 - plugin-owned user meta and profile UI for fediverse handles
 - `fediverse:creator` meta tag output on singular content
 - a conservative `ap_actor_url` resolution field for linked WordPress users
 - PHPUnit coverage for handle normalization, profile UI, and meta-tag rendering
+- JSON-LD `Article` + ordered `Person` schema on singular content
+- JSON-LD `sameAs` population from `profiles[]` plus optional `ap_actor_url`
+- conservative default suppression when known schema-owning SEO plugins are active
+- PHPUnit coverage for graph shape, author ordering, guest omission, and Yoast/Rank Math coexistence rules
 
-The remaining output-channel gaps are now WP-05 and WP-06.
+The remaining output-channel gap is now WP-06.
 
 `ap_actor_url` is now part of the official WP-04/WP-05 design boundary, but only as a cross-cutting field for those work packages. It is not a standalone roadmap item. `did:web:` remains vision-level future work and should not be treated as an active post-Gate-A deliverable.
 
@@ -78,7 +80,7 @@ Human Made Authorship should no longer be treated as a vague backlog item. It is
 
 The practical path is:
 
-1. ship WP-04 and WP-05 first
+1. keep WP-04 and WP-05 maintained
 2. then implement `Adapter_Authorship` in `byline-feed`
 3. reuse the old branch only as reference for detection, role mapping, and test scenarios
 
@@ -94,9 +96,9 @@ That tranche should be considered incomplete until it ships with:
 
 These are not code defects, but they affect execution strategy.
 
-### 6. Remaining security advisories are development-tooling only
+### 6. Development-tooling security posture is now clean, but still separate from runtime risk
 
-The high-severity npm advisories were resolved. The remaining open Dependabot alerts are moderate `webpack-dev-server` advisories inherited through the current `@wordpress/scripts` toolchain. They affect development tooling, not the shipped plugin runtime, and should be tracked as upstream risk unless the build stack is deliberately changed.
+The previously open npm advisories were resolved through targeted dependency updates and overrides. The important policy point remains: JavaScript development tooling should be evaluated separately from shipped plugin runtime behavior, and future npm advisories should not be treated as equivalent to a PHP runtime defect without checking the actual delivery path.
 
 ### 7. Release discipline now exists, but needs consistent use
 
@@ -110,7 +112,7 @@ The reorganized research set now makes a clearer distinction between current roa
 - persistent identifiers later (`ORCID`, `ROR`, `DOI`)
 - an eventual publication/organization model beyond just author bylines
 
-But they do not justify expanding the near-term plugin scope yet. Near-term execution still runs through WP-04, WP-05, HM Authorship support, and only then WP-06 before broader graph or identifier work.
+But they do not justify expanding the near-term plugin scope yet. Near-term execution now runs through HM Authorship support first, and only then WP-06 before broader graph or identifier work.
 
 Related scope rule:
 
@@ -121,7 +123,6 @@ Related scope rule:
 
 The remaining testing work is no longer "add more tests" in the abstract. The roadmap should keep naming the concrete testing tranches that matter:
 
-- WP-05 JSON-LD graph tests
 - HM Authorship adapter unit + integration coverage
 - real ActivityPub-plugin integration coverage for `ap_actor_url`
 - fediverse profile field browser coverage
@@ -157,10 +158,10 @@ The following items appeared in earlier audits but are now resolved:
 | --- | --- | --- |
 | **Current state** | #3 (Gate A complete) | MVP quality gate is satisfied; keep CI green and maintain release discipline |
 | **Post-Gate-A hardening** | #9 (specific testing roadmap) | Keep extending test depth without reopening Gate A |
-| **Next adapter tranche** | #4 (Authorship support) | Implement immediately after WP-05; prior art exists, but it must be ported into the standalone plugin rather than merged directly |
+| **Next adapter tranche** | #4 (Authorship support) | Implement immediately after the now-shipped WP-05 tranche; prior art exists, but it must be ported into the standalone plugin rather than merged directly |
 | **Later roadmap work** | #1 (WP-06) | Follow the HM Authorship tranche; this is the most policy-sensitive work and should not jump ahead of the cleaner next adapter tranche |
 | **Pre-1.0 spec alignment** | Multi-author-per-item divergence, JSON Feed structure divergence, terminology drift (`organization` / `publication` / `publisher`) | Resolve the known Byline-spec structural and terminology issues with the spec author before calling the plugin a stable 1.0 implementation |
-| **Next product work** | #1 (WP-05) | After WP-04, the main remaining roadmap value is in JSON-LD before the HM Authorship and WP-06 tranches |
+| **Next product work** | #4 (Authorship support) | With WP-05 shipped, the next roadmap value is the HM Authorship adapter tranche before WP-06 |
 | **Process hygiene** | #6, #7 (track dev-tooling advisories, use changelog consistently) | Keeps maintenance and release quality disciplined without blocking feature work |
 
 ---

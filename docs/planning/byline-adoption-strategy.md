@@ -200,16 +200,16 @@ Success signal:
 ### What not to say
 
 - do not pitch the project as if it still has no implementation
-- do not imply the plugin already ships WP-04/WP-05/WP-06
+- do not imply the plugin already ships WP-06
 - do not present `did:web:` or broader graph work as near-term roadmap
 - do not treat HM Authorship as either a must-have MVP dependency or as permanently out of scope
 
 ## Near-term adoption priorities
 
 1. Keep the current feed implementation stable and well-documented.
-2. Ship WP-04 and WP-05 with tests from day one.
+2. Keep WP-04 and WP-05 stable, documented, and well-tested.
 3. Continue upstream Byline-spec conversations using implementation evidence.
-4. Implement HM Authorship after WP-04/05.
+4. Implement HM Authorship after the now-shipped WP-04/WP-05 tranches.
 5. Revisit stable-release positioning only after the known spec divergences are addressed or consciously accepted.
 
 ## Related documents

@@ -8,7 +8,7 @@ Stable tag: 0.1.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Enriches RSS2, Atom, and JSON Feed output with structured author identity metadata following the Byline specification, and emits fediverse author-attribution meta tags for singular content.
+Enriches RSS2, Atom, and JSON Feed output with structured author identity metadata following the Byline specification, and emits fediverse author-attribution meta tags plus multi-author JSON-LD schema on singular content.
 
 == Description ==
 
@@ -24,6 +24,7 @@ The plugin currently supports:
 * Core WordPress fallback adapter
 * Content Perspective editorial field
 * `fediverse:creator` meta tags for authors with configured fediverse handles
+* Multi-author JSON-LD Article + Person output on singular views
 * Filter and action hooks for output customization
 
 Byline Feed is additive. It preserves core feed elements such as `<author>` and `<dc:creator>` and adds Byline metadata alongside them.
@@ -34,6 +35,7 @@ Byline Feed is additive. It preserves core feed elements such as `<author>` and 
 * Adds item-level `byline:author`, `byline:role`, and `byline:perspective` elements
 * Supports `byline:profile`, `byline:now`, and `byline:uses` from plugin-owned user meta
 * Emits `<meta name="fediverse:creator">` tags on singular views for authors with configured handles
+* Emits JSON-LD `Article` + ordered `Person` schema on singular post views
 * Auto-detects Co-Authors Plus, PublishPress Authors, or falls back to core WordPress
 * Adds Content Perspective and fediverse-handle fields in WordPress editing/profile UI
 * Validates normalized author data before output
@@ -57,7 +59,7 @@ Byline Feed is additive. It preserves core feed elements such as `<author>` and 
 
 = Does this replace my SEO plugin? =
 
-No. Byline Feed currently focuses on author identity in feeds and lightweight HTML head metadata. It does not replace a full SEO plugin. JSON-LD schema output is planned for a later work package.
+No. Byline Feed focuses on author identity and attribution output. It now emits its own JSON-LD Article + Person schema on singular content, but disables that output by default when known schema-owning SEO plugins such as Yoast SEO or Rank Math are active.
 
 = What is the Byline spec? =
 
@@ -91,4 +93,5 @@ Content Perspective is an editorial field that communicates the intent behind a 
 * RSS2, Atom, and JSON Feed Byline output.
 * Content Perspective field with block editor panel and classic editor support.
 * Fediverse-handle profile field and `fediverse:creator` meta tag output.
+* Multi-author JSON-LD Article + Person schema with conservative Yoast/Rank Math coexistence rules.
 * Test and CI baseline established for supported PHP and WordPress versions.

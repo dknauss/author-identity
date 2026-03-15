@@ -28,8 +28,9 @@ The plugin has three layers:
 ```
 ┌─────────────────────────────────────────────────┐
 │                  Output Layer                   │
-│  RSS2 · Atom · JSON-LD · fediverse:creator ·    │
-│  TDM headers · ai.txt · rights metadata         │
+│  RSS2 · Atom · JSON Feed · JSON-LD ·            │
+│  fediverse:creator · TDM headers · ai.txt ·     │
+│  rights metadata                                │
 ├─────────────────────────────────────────────────┤
 │              Normalized Author API              │
 │  byline_feed_get_authors( WP_Post ) : array     │
@@ -203,7 +204,9 @@ The plugin exposes the following public API for theme and plugin developers:
 - `byline_feed_json_author_extension` — modify the `_byline` extension object on a JSON Feed author entry. Receives `( $extension, $author_object )`.
 - `byline_feed_json_item` — modify a JSON Feed item before output. Receives `( $item, $post, $authors )`.
 - `byline_feed_json_feed` — modify the complete JSON Feed document before output. Receives `( $feed )`.
+- `byline_feed_schema_enabled` — enable or disable JSON-LD output for the current singular post. Receives `( $enabled, $post )`.
 - `byline_feed_schema_person` — modify the JSON-LD Person object. Receives `( $person_array, $author_object )`.
+- `byline_feed_schema_article` — modify the JSON-LD Article object. Receives `( $article_array, $post )`.
 - `byline_feed_ai_consent` — override AI consent per author per post. Receives `( $consent, $author_object, $post )`.
 - `byline_feed_fediverse_handle` — override fediverse handle per author. Receives `( $handle, $author_object )`.
 
@@ -271,6 +274,8 @@ byline-feed/
 │   ├── feed-rss2.php                   # RSS2 Byline output hooks
 │   ├── feed-atom.php                   # Atom Byline output hooks
 │   ├── feed-json.php                   # JSON Feed Byline output (standalone + plugin integration)
+│   ├── fediverse.php                   # WP-04 singular HTML head output
+│   ├── schema.php                      # WP-05 singular JSON-LD output
 │   ├── author-meta.php                 # Canonical author metadata (profile, now, uses) storage
 │   └── perspective.php                 # Perspective meta field registration
 │
@@ -286,6 +291,8 @@ byline-feed/
         ├── test-feed-rss2.php
         ├── test-feed-atom.php
         ├── test-feed-json.php
+        ├── test-fediverse.php
+        ├── test-schema.php
         └── test-perspective.php
 ```
 
@@ -294,11 +301,7 @@ Planned later-package additions:
 ```text
 byline-feed/inc/class-adapter-authorship.php   # HM Authorship adapter
 byline-feed/inc/class-adapter-molongui.php     # Molongui adapter
-byline-feed/inc/fediverse.php                  # WP-04
-byline-feed/inc/schema.php                     # WP-05
 byline-feed/inc/rights.php                     # WP-06
-byline-feed/tests/phpunit/test-fediverse.php   # WP-04
-byline-feed/tests/phpunit/test-schema.php      # WP-05
 byline-feed/tests/phpunit/test-rights.php      # WP-06
 ```
 
@@ -519,7 +522,7 @@ Based on the [gap analysis](gap-analysis.md) — what exists, what remains, and 
 | **wp.org submission** | — | Readme review, plugin check, screenshots, initial release | 1–2 days | Gate A |
 | | | | | |
 | **WP-04: fediverse:creator** | Implemented | Keep docs current and add deeper ActivityPub integration coverage only when the real plugin is in play | Ongoing maintenance | WP-01 |
-| **WP-05: JSON-LD schema** | 0% | Article+Person schema, sameAs from profiles, Yoast/Rank Math detection, tests | 4–5 days | WP-01 |
+| **WP-05: JSON-LD schema** | Implemented | Keep consumer docs current and add deeper real-plugin coexistence checks only when needed | Ongoing maintenance | WP-01 |
 | **WP-06: AI consent** | 0% | Per-author/per-post consent, resolution logic, HTML/header output, ai.txt, user/post UI, audit logging, tests | 6–8 days | WP-01 |
 | **Gate B': adapter-proven expansion** | — | WP-04 + WP-05 + HM Authorship shipped | After Gate A | WP-04/05 + HM Authorship |
 | **Gate D: rights expansion** | — | WP-06 HTML/header signals after B'; feed-level rights after Gate C | After Gate B' / Gate C | WP-06 |
@@ -531,8 +534,8 @@ Based on the [gap analysis](gap-analysis.md) — what exists, what remains, and 
 | **Gate A: MVP quality** | Complete |
 | **wp.org submission ready** | Gate A + readme review + plugin check + screenshots: 1–2 days |
 | **WP-04: fediverse:creator** | Implemented |
-| **WP-05: JSON-LD schema** | +4–5 days from current state |
-| **HM Authorship adapter** | +2–3 days after WP-05 |
+| **WP-05: JSON-LD schema** | Implemented |
+| **HM Authorship adapter** | +2–3 days from current state |
 | **WP-06: AI consent** | +6–8 days after HM Authorship |
 | **Gate B': adapter-proven expansion** | After WP-04 + WP-05 + HM Authorship |
 | **Gate D: rights expansion** | After WP-06 HTML/header signals; feed-level rights still wait for Gate C |
