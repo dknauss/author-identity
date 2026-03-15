@@ -4,10 +4,11 @@ const { getFixturePostId, login } = require( './helpers' );
 test( 'user profile ai consent field saves and persists', async ( {
 	page,
 } ) => {
-	await login( page );
-	await page.goto( '/wp-admin/profile.php' );
+	await login( page, '/wp-admin/profile.php' );
 
-	const consentField = page.locator( '#byline-feed-ai-consent' );
+	const consentField = page.locator(
+		'select[name="byline_feed_ai_consent"]'
+	);
 
 	await expect( consentField ).toBeVisible();
 	await consentField.selectOption( 'deny' );
@@ -27,12 +28,14 @@ test( 'classic editor ai consent metabox saves and persists', async ( {
 } ) => {
 	const postId = getFixturePostId();
 
-	await login( page );
-	await page.goto(
+	await login(
+		page,
 		`/wp-admin/post.php?post=${ postId }&action=edit&byline_force_classic=1`
 	);
 
-	const consentField = page.locator( '#byline-feed-ai-consent' );
+	const consentField = page.locator(
+		'select[name="byline_feed_ai_consent"]'
+	);
 
 	await expect( consentField ).toBeVisible();
 	await consentField.selectOption( 'deny' );

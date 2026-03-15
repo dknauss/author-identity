@@ -257,6 +257,11 @@ jobs:
       - name: Clone Human Made Authorship
         run: git clone --depth 1 --branch develop https://github.com/dknauss/authorship.git /tmp/plugins/authorship
 
+      - name: Install Authorship asset-loader dependency
+        run: |
+          mkdir -p /tmp/plugins/authorship/lib
+          git clone --depth 1 https://github.com/humanmade/asset-loader.git /tmp/plugins/authorship/lib/asset-loader
+
       - name: Run PHPUnit with Human Made Authorship
         run: vendor/bin/phpunit
         env:

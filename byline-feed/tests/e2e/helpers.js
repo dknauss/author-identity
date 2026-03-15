@@ -14,16 +14,20 @@ function getFixturePostId() {
 	return fs.readFileSync( postIdFile, 'utf8' ).trim();
 }
 
-async function login( page ) {
-	await page.goto( '/wp-login.php' );
-	await page
-		.getByLabel( /username or email address/i )
-		.fill( process.env.WP_E2E_USER || 'admin' );
-	await page
-		.getByLabel( /^password$/i )
-		.fill( process.env.WP_E2E_PASSWORD || 'password' );
-	await page.getByRole( 'button', { name: /log in/i } ).click();
-	await expect( page ).toHaveURL( /\/wp-admin/ );
+async function login( page, targetPath = '/wp-admin/' ) {
+	await page.goto( targetPath );
+
+	if ( page.url().includes( '/wp-login.php' ) ) {
+		await page
+			.getByLabel( /username or email address/i )
+			.fill( process.env.WP_E2E_USER || 'admin' );
+		await page
+			.getByLabel( /^password$/i )
+			.fill( process.env.WP_E2E_PASSWORD || 'password' );
+		await page.getByRole( 'button', { name: /log in/i } ).click();
+	}
+
+	await expect( page ).toHaveURL( /\/wp-admin\// );
 }
 
 async function dismissWelcomeGuide( page ) {
