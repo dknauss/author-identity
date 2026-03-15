@@ -6,11 +6,12 @@ Use release notes to disclose substantial AI assistance without confusing author
 
 For each real release:
 
-1. Create or update the matching version section in [CHANGELOG.md](CHANGELOG.md).
-2. Summarize only the externally meaningful changes in the GitHub release notes.
-3. Reuse the changelog categories where practical (`Added`, `Changed`, `Fixed`, `Security`, `Docs`).
-4. Include the AI-assistance note below when AI materially affected the shipped release.
-5. Do not imply AI ownership; keep accountability with the human maintainer.
+1. Build the distributable plugin zip with `byline-feed/bin/build-plugin-zip.sh`.
+2. Create or update the matching version section in [CHANGELOG.md](CHANGELOG.md).
+3. Summarize only the externally meaningful changes in the GitHub release notes.
+4. Reuse the changelog categories where practical (`Added`, `Changed`, `Fixed`, `Security`, `Docs`).
+5. Include the AI-assistance note below when AI materially affected the shipped release.
+6. Do not imply AI ownership; keep accountability with the human maintainer.
 
 ## Recommended note
 

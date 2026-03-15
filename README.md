@@ -178,6 +178,11 @@ playground/bin/publish-output-demo.sh
 
 The public `Try in Playground` CTA now targets the stable `codex/playground-assets` blueprint URL. Each refresh republishes that stable blueprint while pinning the installed plugin to a fresh immutable source tag for the current commit. Local snapshot ZIPs remain useful for offline sharing, archived demos, and reproducible local inspection.
 
+## Current RC
+
+- Pre-release: [Byline Feed 0.1.0-rc1](https://github.com/dknauss/Author-Identity/releases/tag/v0.1.0-rc1)
+- Feedback and stabilization: [issue #17](https://github.com/dknauss/Author-Identity/issues/17)
+
 ## Governance
 
 | File | Purpose |
@@ -192,6 +197,7 @@ The public `Try in Playground` CTA now targets the stable `codex/playground-asse
 
 Release discipline:
 
+- build the distributable plugin zip with `byline-feed/bin/build-plugin-zip.sh`
 - update `CHANGELOG.md` when shipping real releases
 - draft public release notes using `RELEASE_NOTES.md`
 - include the AI-assistance disclosure note in release notes when AI materially affected the release

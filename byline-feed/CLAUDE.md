@@ -11,12 +11,13 @@ The mental model: **WordPress is a Personal Data Server for authors.** The autho
 ## Active work packages
 
 MVP (wp.org submission target): WP-01, WP-02, WP-03
-Shipped post-MVP: WP-04, WP-05
-Next adapter tranche: HM Authorship
-Later roadmap: WP-06
+Shipped post-MVP: WP-04, WP-05, HM Authorship
+Current shipped rights slice: initial WP-06 advisory signaling
+Current focus: release-candidate stabilization
+Later roadmap: additional WP-06 work as justified by real consumer need
 Reserved/deferred: WP-07 (`did:web:`)
 
-Gate A is complete. WP-04 and WP-05 now ship. Keep them tightly scoped and maintained while moving next to the HM Authorship tranche, then WP-06. See `../Implementation Strategy/implementation-spec.md § Release gates`.
+Gate A is complete. WP-04, WP-05, HM Authorship, and the initial WP-06 advisory-signals slice now ship. Stabilize the current release candidate before expanding WP-06 further. See `../Implementation Strategy/implementation-spec.md § Release gates`.
 
 ## Normalized author object — field constraints
 
