@@ -13,7 +13,7 @@ Current shipped output:
 - JSON Feed 1.1 output with `_byline` extensions
 - `fediverse:creator` meta tags on singular HTML views
 - JSON-LD Article + Person schema on singular HTML views
-- initial WP-06 rights signals on singular/content-policy routes
+- initial rights signals on singular/content-policy routes
 - Perspective post meta and feed output
 - Public filters and actions for feed customization
 
@@ -57,7 +57,7 @@ Optional fields:
 | `uses_url` | string | `''` | Emitted as `byline:uses` when non-empty |
 | `fediverse` | string | `''` | Emitted as `fediverse:creator` in HTML head when non-empty |
 | `ap_actor_url` | string | `''` | Extends JSON-LD `sameAs` when confidently resolved; never substitutes for `fediverse` |
-| `ai_consent` | string | `''` | Used in WP-06 consent resolution and rights signaling |
+| `ai_consent` | string | `''` | Used in consent resolution and rights signaling |
 
 Important current limitation:
 
@@ -85,7 +85,7 @@ Behavior:
 
 ## Rights output
 
-The plugin now ships an initial WP-06 slice for advisory AI-consent signaling.
+The plugin now ships an initial advisory AI-consent signaling slice.
 
 Current behavior:
 
@@ -113,7 +113,7 @@ Current limitations:
 - these are advisory machine-readable signals, not enforcement
 - no feed-level rights metadata is emitted yet
 - no consent audit log is emitted or stored yet
-- block-editor UI for WP-06 is not shipped yet
+- block-editor UI for rights signaling is not shipped yet
 
 ## JSON-LD output
 

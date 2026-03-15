@@ -66,7 +66,7 @@ No. Byline Feed focuses on author identity and attribution output. It now emits 
 
 = Does this block AI crawlers? =
 
-No. The WP-06 output currently emits advisory machine-readable consent signals such as `robots` meta, `TDMRep` headers, and `ai.txt`. These signals may be ignored by crawlers and should not be described as enforcement.
+No. The current rights output emits advisory machine-readable consent signals such as `robots` meta, `TDMRep` headers, and `ai.txt`. These signals may be ignored by crawlers and should not be described as enforcement.
 
 = What is the Byline spec? =
 
