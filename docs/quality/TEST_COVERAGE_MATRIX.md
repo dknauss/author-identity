@@ -29,6 +29,9 @@
 | CAP adapter — mixed user/guest authors | **Covered** | `test-adapter-cap.php` | Normalization covered for both WP user and guest author objects. |
 | CAP adapter — guest author detection | **Covered** | `test-adapter-cap.php` | Guest objects map to `role=guest`, `is_guest=true`, and `user_id=0`. |
 | CAP adapter — author ordering | **Partial** | `test-adapter-cap.php` | Normalization covered; `get_coauthors()` ordering path still needs a function-level integration test. |
+| HM Authorship adapter — ordered user resolution | **Covered** | `test-adapter-authorship.php`, `test-integration-authorship.php` | Ordered `WP_User` arrays and live-plugin integration are covered. |
+| HM Authorship adapter — guest author mapping | **Covered** | `test-adapter-authorship.php`, `test-integration-authorship.php` | Guest-author-role users map to `role=guest`, `is_guest=true`, while preserving real `user_id` and plugin-owned meta. |
+| HM Authorship adapter — linked user metadata | **Covered** | `test-adapter-authorship.php`, `test-integration-authorship.php` | `url`, `now_url`, `uses_url`, `fediverse`, and `ai_consent` fields are exposed from the linked user context. |
 | PPA adapter — term meta resolution | **Covered** | `test-adapter-ppa.php` | Term meta description/avatar mapping verified. |
 | PPA adapter — linked user fallback | **Covered** | `test-adapter-ppa.php` | Fallback to linked user profile when term meta is missing is verified. |
 | PPA adapter — guest author handling | **Covered** | `test-adapter-ppa.php` | Guest object mapping (`role=guest`, no user-linked fields) is verified. |
@@ -78,12 +81,11 @@
 
 ## Priority backlog (highest impact first)
 
-1. **Add HM Authorship adapter tests when that tranche starts.** Unit normalization + real-plugin integration coverage should land together.
-2. **Add `test-rights.php` when WP-06 starts.** Treat rights/consent coverage as part of the work package from day one, after the HM Authorship tranche.
-3. **Add real ActivityPub-plugin integration checks for `ap_actor_url`.** The current WP-04/WP-05 suite intentionally keeps actor resolution conservative and only partially covered.
-4. **Add browser coverage for the fediverse profile field.** The save/normalization logic is covered in PHPUnit, but the user-profile UI is not yet covered in a browser run.
-5. **Add browser coverage for the classic editor perspective metabox.** Lower priority than the block editor path, but still useful as fallback hardening.
-6. **Optional later hardening:** add deeper Byline spec-conformance and round-trip parsing tests for feed output.
+1. **Add `test-rights.php` when WP-06 starts.** Treat rights/consent coverage as part of the work package from day one.
+2. **Add real ActivityPub-plugin integration checks for `ap_actor_url`.** The current WP-04/WP-05 suite intentionally keeps actor resolution conservative and only partially covered.
+3. **Add browser coverage for the fediverse profile field.** The save/normalization logic is covered in PHPUnit, but the user-profile UI is not yet covered in a browser run.
+4. **Add browser coverage for the classic editor perspective metabox.** Lower priority than the block editor path, but still useful as fallback hardening.
+5. **Optional later hardening:** add deeper Byline spec-conformance and round-trip parsing tests for feed output.
 
 ## Quality target
 

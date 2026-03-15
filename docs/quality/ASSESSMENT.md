@@ -4,15 +4,15 @@
 
 The Byline Feed plugin addresses a real interoperability gap: WordPress sites with multiple authors often publish feeds that lose structured attribution. Gate A is now complete. The current plugin has the feed MVP foundation in place: adapter normalization, RSS2/Atom/JSON Feed Byline output, perspective support, PHPUnit coverage, PHPCS enforcement, and GitHub Actions CI.
 
-The project is no longer deciding whether the MVP is viable. The main question is execution order after Gate A:
+The project is no longer deciding whether the MVP is viable. The main question is execution order after the current adapter/output baseline:
 
-1. keep WP-05 maintained as a shipped output channel
-2. add HM Authorship as the next adapter tranche
-3. approach WP-06 with tighter scope discipline than the earlier feed work required
+1. keep WP-04 and WP-05 maintained as shipped output channels
+2. start WP-06 without inflating it into a general-purpose policy framework
+3. keep future adapter expansion disciplined after the HM Authorship tranche
 
 ## Scope and key components
 
-- **Adapter layer:** Detects Co-Authors Plus, PublishPress Authors, or core WordPress and normalizes author data into a common contract.
+- **Adapter layer:** Detects PublishPress Authors, HM Authorship, Co-Authors Plus, or core WordPress and normalizes author data into a common contract.
 - **Feed output:** RSS2, Atom, and JSON Feed enriched with Byline metadata — feed-level contributor registries, item-level author refs, roles, and perspective.
 - **Perspective meta field:** Per-post editorial intent with block editor support and feed output.
 - **fediverse:creator output:** HTML meta tags for Mastodon-style author attribution on singular content. `ap_actor_url` is a supporting cross-cutting design field for this and WP-05, not a separate roadmap item.
@@ -39,7 +39,7 @@ Output channels:
 
 | Area | Status |
 | --- | --- |
-| Adapter layer (WP-01) | Implemented, tested, and CI-verified |
+| Adapter layer (WP-01) | Implemented, tested, and CI-verified across core, CAP, PPA, and HM Authorship |
 | Feed output (WP-02) | Implemented for RSS2, Atom, and JSON Feed with automated coverage |
 | Perspective field (WP-03) | Implemented, covered in PHPUnit and Playwright, and manually verified on the local Studio site |
 | fediverse:creator (WP-04) | Implemented with PHPUnit coverage and user-profile field support |
@@ -63,14 +63,14 @@ That means the earlier CAP/PPA discrepancy for linked-user `url` normalization i
 ## Key risks
 
 1. **Post-Gate-A scope drift.** The vision is broader than the active roadmap. Without discipline, WP-05/06 can turn into premature identity-framework work instead of focused output features.
-2. **Upstream plugin drift.** CAP and PPA now have dedicated CI coverage against installed upstream plugins, but future adapter tranches (HM Authorship, Molongui if added) will need the same level of real-plugin validation.
-3. **Unsupported-plugin behavior.** Live verification showed that sites using unsupported multi-author plugins can still have a mismatch between core author strings and Byline output. That is expected today, but it argues for explicit backlog tracking and a clean HM Authorship tranche.
+2. **Upstream plugin drift.** CAP, PPA, and HM Authorship now have dedicated CI coverage against installed upstream plugins, but future adapter tranches such as Molongui will need the same level of real-plugin validation.
+3. **Unsupported-plugin behavior.** Live verification showed that sites using unsupported multi-author plugins can still have a mismatch between core author strings and Byline output. That remains expected today and argues for explicit backlog tracking of later adapter work.
 4. **WP-06 complexity.** Rights and consent remain the most stateful and policy-sensitive part of the roadmap.
 5. **Pre-1.0 spec divergence.** Multi-author item structure, JSON Feed structure, and terminology drift remain unresolved upstream issues.
 
 ## Recommendations
 
-1. **Keep HM Authorship next.** It is the strongest next adapter tranche after WP-05 and should ship with real-plugin tests from the start.
+1. **Treat HM Authorship as shipped and verified.** Keep its integration tests in the normal CI path so upstream drift is caught early.
 2. **Keep WP-04/WP-05 maintenance factual and conservative.** The handle-based meta tags and JSON-LD schema now ship; deeper ActivityPub federation alignment still belongs to the separate upstream integration conversation.
 3. **Keep UI hardening targeted.** The block-editor perspective path is now browser-covered; the remaining UI backlog is the fediverse profile field and classic-editor metabox fallback.
 4. **Expand tests and docs in lockstep.** New output channels should land with their test files and consumer docs rather than being documented later.

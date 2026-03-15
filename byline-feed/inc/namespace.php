@@ -45,8 +45,9 @@ function bootstrap(): void {
  *
  * Priority order:
  * 1. PublishPress Authors — publishpress-specific API/class present.
- * 2. Co-Authors Plus      — function_exists( 'get_coauthors' )
- * 3. Core WordPress       — always available (fallback)
+ * 2. Human Made Authorship — Authorship\get_authors()
+ * 3. Co-Authors Plus       — function_exists( 'get_coauthors' )
+ * 4. Core WordPress        — always available (fallback)
  *
  * @return Adapter
  */
@@ -63,6 +64,8 @@ function byline_feed_get_adapter(): Adapter {
 		|| class_exists( 'MultipleAuthors\\Classes\\Objects\\Author' )
 	) {
 		$adapter = new Adapter_PPA();
+	} elseif ( function_exists( 'Authorship\\get_authors' ) ) {
+		$adapter = new Adapter_Authorship();
 	} elseif ( function_exists( 'get_coauthors' ) ) {
 		$adapter = new Adapter_CAP();
 	} else {

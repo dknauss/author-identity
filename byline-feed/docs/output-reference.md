@@ -22,11 +22,12 @@ Not yet shipped:
 
 ## Output model
 
-The plugin normalizes author data from one of three sources:
+The plugin normalizes author data from one of four sources:
 
 - core WordPress
 - Co-Authors Plus
 - PublishPress Authors
+- HM Authorship
 
 All output layers consume the same normalized author contract.
 

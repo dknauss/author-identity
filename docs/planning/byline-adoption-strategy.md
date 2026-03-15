@@ -19,18 +19,18 @@ The project is no longer in a speculative pre-launch phase.
 
 Current shipped baseline:
 
-- core WordPress, Co-Authors Plus, and PublishPress Authors adapters
+- core WordPress, Co-Authors Plus, PublishPress Authors, and HM Authorship adapters
 - RSS2, Atom, and JSON Feed output
 - perspective storage and editor UI
+- `fediverse:creator` output (WP-04)
+- JSON-LD output (WP-05)
 - contract validation, PHPUnit coverage, PHPCS, and GitHub Actions CI
 - live verification against real local feeds
 
 What is still not shipped:
 
-- `fediverse:creator` output (WP-04)
-- JSON-LD output (WP-05)
 - rights and AI-consent output (WP-06)
-- HM Authorship and Molongui adapters
+- Molongui adapter
 
 Adoption therefore has two tracks:
 
@@ -58,14 +58,14 @@ These are the sites that can emit Byline data now or soonest:
 | Core WordPress sites | Baseline supply of single-author feeds | Supported |
 | Co-Authors Plus sites | Large legacy multi-author install base | Supported |
 | PublishPress Authors sites | Large active multi-author install base | Supported |
-| HM Authorship sites | Cleaner upstream API, high-capability users | Next adapter tranche after WP-04/05 |
+| HM Authorship sites | Cleaner upstream API, high-capability users | Supported |
 | Molongui sites | Additional multi-author reach | Backlog after higher-value work |
 
 This implies the immediate supply-side focus is not "support every authorship plugin." It is:
 
-- keep core/CAP/PPA stable
-- ship the next value-driving output channels
-- then add HM Authorship as the next adapter tranche
+- keep core/CAP/PPA/HM stable
+- ship the remaining planned output tranche
+- defer later adapter expansion until it clears the same validation bar
 
 ### 2. Feed reader and spec stakeholders
 
@@ -107,18 +107,18 @@ The feed MVP should remain the reference implementation for Byline in WordPress:
 
 ### Ship adjacent outputs that have consumers now
 
-The next product sequence remains:
+The next product sequence now is:
 
-1. WP-04 `fediverse:creator`
-2. WP-05 JSON-LD
-3. HM Authorship adapter tranche
-4. WP-06 rights and AI-consent work
+1. maintain WP-04 `fediverse:creator`
+2. maintain WP-05 JSON-LD
+3. WP-06 rights and AI-consent work
+4. later adapter expansion such as Molongui
 
 This order is deliberate.
 
-- WP-04 and WP-05 expand utility without waiting for Byline reader support
-- HM Authorship then extends adapter reach using a cleaner upstream model
-- WP-06 remains valuable but is the most policy-sensitive and stateful work
+- WP-04 and WP-05 already expand utility without waiting for Byline reader support
+- HM Authorship now extends adapter reach using a cleaner upstream model
+- WP-06 remains the next valuable but most policy-sensitive and stateful work
 
 ### Keep the identity model disciplined
 
@@ -174,15 +174,15 @@ Success signal:
 
 - the project is valuable to publishers even before reader-side Byline support arrives
 
-### Workstream 4: next adapter tranche
+### Workstream 4: supported-adapter credibility
 
-HM Authorship is the next adapter tranche after WP-04/05, not because of broad install count, but because:
+HM Authorship is now part of the supported adapter baseline, not the next planned tranche, because:
 
 - it has a clean upstream `Authorship\get_authors( WP_Post )` API
 - it represents a high-capability WordPress publishing environment
 - existing prior art already exists in the separate `authorship` repo
 
-This should be framed as an implementation-quality expansion, not a mass-adoption play.
+This should now be framed as implementation-quality credibility, not a mass-adoption play.
 
 Success signal:
 
@@ -209,7 +209,7 @@ Success signal:
 1. Keep the current feed implementation stable and well-documented.
 2. Keep WP-04 and WP-05 stable, documented, and well-tested.
 3. Continue upstream Byline-spec conversations using implementation evidence.
-4. Implement HM Authorship after the now-shipped WP-04/WP-05 tranches.
+4. Start WP-06 with explicit scope discipline and tests from day one.
 5. Revisit stable-release positioning only after the known spec divergences are addressed or consciously accepted.
 
 ## Related documents

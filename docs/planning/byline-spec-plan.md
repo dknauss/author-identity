@@ -101,8 +101,8 @@ The active post-Gate-A sequence is:
 
 1. WP-04 `fediverse:creator`
 2. WP-05 JSON-LD
-3. HM Authorship adapter tranche
-4. WP-06 rights and AI consent
+3. WP-06 rights and AI consent
+4. later adapter expansion such as Molongui
 
 This spec-plan document should not override that order.
 
@@ -114,7 +114,7 @@ Its role is narrower:
 
 ## HM Authorship in this context
 
-HM Authorship still matters to the Byline story, but not because it changes the feed roadmap immediately.
+HM Authorship still matters to the Byline story, but it no longer changes the roadmap as a future tranche because it now ships in the plugin.
 
 It matters because:
 
@@ -122,7 +122,7 @@ It matters because:
 - its data model maps closely to the normalized author contract
 - it is likely the least awkward later adapter target
 
-That makes it a strong next adapter tranche after WP-04/WP-05. It does not make Authorship the center of the current spec plan.
+That makes it a useful supported integration and a good validation source for the normalized contract. It still does not make Authorship the center of the current spec plan.
 
 ### Why Authorship remains strategically useful
 

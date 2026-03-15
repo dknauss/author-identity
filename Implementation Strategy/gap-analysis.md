@@ -10,7 +10,7 @@
 
 | Work Package | Code exists | Tests exist | Status | Quality |
 | --- | --- | --- | --- | --- |
-| WP-01: Scaffold & Adapters | All planned files | Core, CAP, PPA, contract tests | Implemented | CI-verified |
+| WP-01: Scaffold & Adapters | All planned files | Core, CAP, PPA, HM, contract tests | Implemented | CI-verified |
 | WP-02: RSS2, Atom & JSON Feed Output | All three output files | RSS2 + Atom + JSON Feed tests | Implemented | Automated coverage now exists for all three feed formats |
 | WP-03: Perspective Field | PHP + TSX present | PHPUnit + Playwright coverage | Implemented | Browser-verified in a self-contained `wp-env` harness |
 | WP-04: fediverse:creator | Output module + user meta/UI | Meta-tag, normalization, and profile-field tests | Implemented | Automated coverage exists; ActivityPub integration remains conservative |
@@ -68,27 +68,22 @@ The MVP feed layer (RSS2 + Atom + JSON Feed), adapter layer, perspective field, 
 
 Gate A is the MVP quality gate for real-world testing and wp.org readiness. It is not the same thing as stable 1.0 spec conformance.
 
-### 4. Next adapter tranche after WP-04/05: Authorship support
+### 4. HM Authorship support is now implemented; next roadmap gap is WP-06
 
 Live verification on `single-site-local.local` confirmed that `byline-feed` correctly emits multi-author Byline output when PublishPress Authors is active. Separate verification on an `authorship`-based site showed that unsupported multi-author plugins can still produce a mismatch between core feed author strings and Byline output.
 
-Human Made Authorship should no longer be treated as a vague backlog item. It is the next concrete adapter tranche after WP-04 and WP-05:
+Human Made Authorship is no longer a planned tranche. It now ships as a supported adapter with:
 
-- the upstream plugin exposes a clean `Authorship\get_authors( WP_Post )` API returning ordered `WP_User` objects
-- there is already prior art in the separate `authorship` repo's `byline-feed` branch
-- but that branch is an older inline feed emitter, not code that should be merged directly into the standalone plugin
+- `Adapter_Authorship` in the plugin
+- unit normalization coverage
+- real-plugin integration coverage in CI
+- a real adapter-detection path between PPA and CAP
 
-The practical path is:
+What remains after that tranche is:
 
-1. keep WP-04 and WP-05 maintained
-2. then implement `Adapter_Authorship` in `byline-feed`
-3. reuse the old branch only as reference for detection, role mapping, and test scenarios
-
-That tranche should be considered incomplete until it ships with:
-
-- adapter unit tests against the normalized contract
-- integration tests against the real Authorship plugin
-- live feed verification on a site running Authorship
+- WP-06 rights / AI-consent work
+- future adapter expansion such as Molongui
+- continued live verification against supported upstream plugins
 
 ---
 
@@ -123,7 +118,6 @@ Related scope rule:
 
 The remaining testing work is no longer "add more tests" in the abstract. The roadmap should keep naming the concrete testing tranches that matter:
 
-- HM Authorship adapter unit + integration coverage
 - real ActivityPub-plugin integration coverage for `ap_actor_url`
 - fediverse profile field browser coverage
 - classic editor metabox browser coverage
@@ -170,10 +164,10 @@ The following items appeared in earlier audits but are now resolved:
 | --- | --- | --- |
 | **Current state** | #3 (Gate A complete) | MVP quality gate is satisfied; keep CI green and maintain release discipline |
 | **Post-Gate-A hardening** | #8, #9 (specific testing roadmap and staged Playground demos) | Keep extending verification depth and demo quality without reopening Gate A |
-| **Next adapter tranche** | #4 (Authorship support) | Implement immediately after the now-shipped WP-05 tranche; prior art exists, but it must be ported into the standalone plugin rather than merged directly |
-| **Later roadmap work** | #1 (WP-06) | Follow the HM Authorship tranche; this is the most policy-sensitive work and should not jump ahead of the cleaner next adapter tranche |
+| **Current next roadmap work** | #1 (WP-06) | With HM Authorship shipped, the next substantive product tranche is rights / AI-consent output |
+| **Later adapter work** | Molongui and any other unsupported multi-author plugins | Lower priority than WP-06 and should meet the same real-plugin validation bar HM now has |
 | **Pre-1.0 spec alignment** | Multi-author-per-item divergence, JSON Feed structure divergence, terminology drift (`organization` / `publication` / `publisher`) | Resolve the known Byline-spec structural and terminology issues with the spec author before calling the plugin a stable 1.0 implementation |
-| **Next product work** | #4 (Authorship support) | With WP-05 shipped, the next roadmap value is the HM Authorship adapter tranche before WP-06 |
+| **Next product work** | #1 (WP-06) | The adapter/output baseline is now core + CAP + PPA + HM plus WP-04/WP-05; the remaining planned output tranche is rights / AI consent |
 | **Process hygiene** | #5, #6 (track dev-tooling advisories, use changelog consistently) | Keeps maintenance and release quality disciplined without blocking feature work |
 
 ---

@@ -34,6 +34,7 @@ require_once BYLINE_FEED_PLUGIN_DIR . 'inc/interface-adapter.php';
 require_once BYLINE_FEED_PLUGIN_DIR . 'inc/class-adapter-core.php';
 require_once BYLINE_FEED_PLUGIN_DIR . 'inc/class-adapter-cap.php';
 require_once BYLINE_FEED_PLUGIN_DIR . 'inc/class-adapter-ppa.php';
+require_once BYLINE_FEED_PLUGIN_DIR . 'inc/class-adapter-authorship.php';
 
 // Load output layers.
 require_once BYLINE_FEED_PLUGIN_DIR . 'inc/feed-common.php';

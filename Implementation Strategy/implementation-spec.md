@@ -88,15 +88,15 @@ On `plugins_loaded`, the plugin checks for active multi-author plugins and loads
 Priority 1: PublishPress Authors — function_exists( 'publishpress_authors_get_post_authors' )
                                    OR function_exists( 'get_post_authors' )
                                    OR class_exists( 'MultipleAuthors\\Classes\\Objects\\Author' )
-Priority 2: Co-Authors Plus      — function_exists( 'get_coauthors' )
-Priority 3: Core WordPress       — always available (fallback)
+Priority 2: Human Made Authorship — function_exists( 'Authorship\\get_authors' )
+Priority 3: Co-Authors Plus       — function_exists( 'get_coauthors' )
+Priority 4: Core WordPress        — always available (fallback)
 ```
 
 The active adapter is filterable: `apply_filters( 'byline_feed_adapter', $adapter_instance )`.
 
 Planned future adapter tranches:
 
-- HM Authorship — after WP-04 and WP-05
 - Molongui Authorship — later backlog work
 
 ## Work package sequence
@@ -137,12 +137,11 @@ Gate B ─── Real-world adoption ──────────────�
            operator feedback collected.
 
 Gate B' ── Adapter-proven expansion (after B) ───────────────────────
-           WP-04 (fediverse:creator) and WP-05 (JSON-LD schema)
-           ship first, followed by HM Authorship as the next
-           adapter tranche. This proves the normalized contract
-           across both new output channels and a cleaner upstream
-           author model before moving into the policy-heavy
-           rights/consent work.
+           WP-04 (fediverse:creator), WP-05 (JSON-LD schema),
+           and HM Authorship are all shipped. This proves the
+           normalized contract across both new output channels
+           and a cleaner upstream author model before moving into
+           the policy-heavy rights/consent work.
 
 Gate C ─── Reader-side signal ───────────────────────────────────────
            At least one feed reader maintainer indicates
@@ -166,11 +165,11 @@ That yields a more disciplined order:
 
 - **WP-04 (fediverse:creator):** Mastodon's author attribution feature launched July 2024 specifically for journalism. The infrastructure is deployed and waiting for publishers to emit the tags. No feed reader involvement needed.
 - **WP-05 (JSON-LD schema):** Google already parses Article + Person schema. Multi-author schema support across the WordPress ecosystem is weak. This delivers E-E-A-T value on day one.
-- **HM Authorship adapter:** It is the cleanest next adapter tranche and strengthens the core thesis of the plugin itself: normalize author data once, then route it everywhere.
-- **WP-06 (HTML/header signals):** `nosnippet`, `tdm-reservation`/`tdm-policy` headers, `robots.txt` token rules, and `ai.txt` do have deployed consumers, but they are more policy-sensitive and stateful than the next adapter tranche.
+- **HM Authorship adapter:** It is now shipped and validates the adapter thesis against a cleaner upstream author model than CAP/PPA.
+- **WP-06 (HTML/header signals):** `nosnippet`, `tdm-reservation`/`tdm-policy` headers, `robots.txt` token rules, and `ai.txt` do have deployed consumers, but they are more policy-sensitive and stateful than the completed adapter tranche.
 - **WP-06 (feed-level rights):** Feed-level rights metadata (`cc:license` for explicit license declarations and any dedicated deny-policy extension) is the piece that genuinely depends on readers parsing Byline data. It gates on C.
 
-Waiting for reader-side signal before shipping fediverse:creator tags and JSON-LD schema would mean sitting on proven infrastructure to protect against a risk (Byline spec adoption) that those features don't share. But moving into WP-06 before HM Authorship would skip a lower-risk, higher-coherence adapter tranche in favor of the roadmap's most stateful work. The split gates keep feed-level rights contingent on reader-side demand while preserving a tighter near-term execution order.
+Waiting for reader-side signal before shipping fediverse:creator tags and JSON-LD schema would mean sitting on proven infrastructure to protect against a risk (Byline spec adoption) that those features don't share. Shipping HM Authorship before WP-06 validated the same normalized contract against a cleaner upstream author model. The split gates still keep feed-level rights contingent on reader-side demand while preserving a tighter near-term execution order.
 
 ## Explicitly not in scope
 
@@ -301,6 +300,7 @@ byline-feed/
 │   ├── class-adapter-core.php          # Core WordPress fallback adapter
 │   ├── class-adapter-cap.php           # Co-Authors Plus adapter
 │   ├── class-adapter-ppa.php           # PublishPress Authors adapter
+│   ├── class-adapter-authorship.php    # HM Authorship adapter
 │   ├── feed-common.php                 # Shared XML output helpers (output_person, esc_xml_value)
 │   ├── feed-rss2.php                   # RSS2 Byline output hooks
 │   ├── feed-atom.php                   # Atom Byline output hooks
@@ -318,6 +318,7 @@ byline-feed/
         ├── test-adapter-core.php
         ├── test-adapter-cap.php
         ├── test-adapter-ppa.php
+        ├── test-adapter-authorship.php
         ├── test-author-contract.php
         ├── test-feed-rss2.php
         ├── test-feed-atom.php
@@ -330,7 +331,6 @@ byline-feed/
 Planned later-package additions:
 
 ```text
-byline-feed/inc/class-adapter-authorship.php   # HM Authorship adapter
 byline-feed/inc/class-adapter-molongui.php     # Molongui adapter
 byline-feed/inc/rights.php                     # WP-06
 byline-feed/tests/phpunit/test-rights.php      # WP-06
@@ -341,7 +341,7 @@ byline-feed/tests/phpunit/test-rights.php      # WP-06
 Work packages 01 + 02 + 03 constitute the MVP:
 
 1. Plugin activates without errors on PHP 7.4+ / WP 6.0+.
-2. Plugin auto-detects Co-Authors Plus, PublishPress Authors, or falls back to core.
+2. Plugin auto-detects PublishPress Authors, HM Authorship, Co-Authors Plus, or falls back to core.
 3. RSS2 feeds include valid `xmlns:byline` namespace declaration.
 4. RSS2 feeds include `<byline:contributors>` with `<byline:person>` for each author in the feed.
 5. RSS2 feed items include `<byline:author ref="..."/>` and `<byline:role>` for attributed authors.
@@ -372,7 +372,7 @@ The plugin now has a CI pipeline. The remaining question is coverage depth, not 
 - **PHPUnit:** Run via the WordPress test harness (`bin/install-wp-tests.sh`).
 - **PHPCS:** WordPress coding standards check (already configured in `composer.json`).
 - **Node build:** `npm ci && npm run build` to verify `perspective-panel.tsx` compiles.
-- **Integration test jobs:** Separate CI jobs that install Co-Authors Plus and PublishPress Authors as test dependencies, then run the adapter and feed output tests against real plugin APIs (see § Adapter validation below).
+- **Integration test jobs:** Separate CI jobs that install Co-Authors Plus, PublishPress Authors, and HM Authorship as test dependencies, then run the adapter and feed output tests against real plugin APIs (see § Adapter validation below).
 
 The CI workflow now exists and every PR should continue to pass it. The next step is to deepen it with integration scenarios rather than rebuilding the basics.
 
@@ -382,14 +382,14 @@ The CI workflow now exists and every PR should continue to pass it. The next ste
 
 **Applies to:** WP-01, and indirectly every work package that consumes adapter output.
 
-The CAP and PPA adapters are now tested against real plugin installations in CI. The next adapter-validation tranche is HM Authorship. Its `Authorship\get_authors( WP_Post )` API returns ordered `WP_User` objects, which is a cleaner upstream contract than CAP/PPA. There is already prior art in the separate `authorship` repo's `byline-feed` branch, but that code should be treated as reference material rather than merged directly because it predates the standalone plugin's normalized contract, JSON Feed support, and canonical author metadata fields.
+The CAP, PPA, and HM Authorship adapters are now tested against real plugin installations in CI. HM Authorship's `Authorship\get_authors( WP_Post )` API returns ordered `WP_User` objects, which is a cleaner upstream contract than CAP/PPA and now serves as a third real-plugin validation path for the normalized contract.
 
 **Integration test strategy:**
 
-- **CI matrix jobs** (see § CI above) that install specific versions of CAP, PPA, and eventually HM Authorship before running tests:
+- **CI matrix jobs** (see § CI above) that install specific versions of CAP, PPA, and HM Authorship before running tests:
   - Co-Authors Plus: latest stable from wp.org.
   - PublishPress Authors: latest stable from wp.org (free tier).
-  - Human Made Authorship: local checkout or pinned git ref once the adapter tranche begins.
+  - Human Made Authorship: pinned git checkout of the active upstream branch in CI.
   - Neither installed: core fallback path.
 - **Adapter edge-case tests** (expand `test-adapter-cap.php` and `test-adapter-ppa.php`):
   - Mixed author sets: WP users + guest authors in the same post.
@@ -555,7 +555,7 @@ Based on the [gap analysis](gap-analysis.md) — what exists, what remains, and 
 | **WP-04: fediverse:creator** | Implemented | Keep docs current and add deeper ActivityPub integration coverage only when the real plugin is in play | Ongoing maintenance | WP-01 |
 | **WP-05: JSON-LD schema** | Implemented | Keep consumer docs current and add deeper real-plugin coexistence checks only when needed | Ongoing maintenance | WP-01 |
 | **WP-06: AI consent** | 0% | Per-author/per-post consent, resolution logic, HTML/header output, ai.txt, user/post UI, audit logging, tests | 6–8 days | WP-01 |
-| **Gate B': adapter-proven expansion** | — | WP-04 + WP-05 + HM Authorship shipped | After Gate A | WP-04/05 + HM Authorship |
+| **Gate B': adapter-proven expansion** | Complete | WP-04 + WP-05 + HM Authorship shipped | After Gate A | WP-04/05 + HM Authorship |
 | **Gate D: rights expansion** | — | WP-06 HTML/header signals after B'; feed-level rights after Gate C | After Gate B' / Gate C | WP-06 |
 
 ### Milestone timeline
@@ -566,9 +566,9 @@ Based on the [gap analysis](gap-analysis.md) — what exists, what remains, and 
 | **wp.org submission ready** | Gate A + readme review + plugin check + screenshots: 1–2 days |
 | **WP-04: fediverse:creator** | Implemented |
 | **WP-05: JSON-LD schema** | Implemented |
-| **HM Authorship adapter** | +2–3 days from current state |
-| **WP-06: AI consent** | +6–8 days after HM Authorship |
-| **Gate B': adapter-proven expansion** | After WP-04 + WP-05 + HM Authorship |
+| **HM Authorship adapter** | Implemented |
+| **WP-06: AI consent** | +6–8 days from current state |
+| **Gate B': adapter-proven expansion** | Complete |
 | **Gate D: rights expansion** | After WP-06 HTML/header signals; feed-level rights still wait for Gate C |
 
 ### Caveats

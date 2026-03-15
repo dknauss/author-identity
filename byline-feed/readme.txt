@@ -21,6 +21,7 @@ The plugin currently supports:
 * RSS2, Atom, and JSON Feed Byline output
 * Co-Authors Plus adapter
 * PublishPress Authors adapter
+* HM Authorship adapter
 * Core WordPress fallback adapter
 * Content Perspective editorial field
 * `fediverse:creator` meta tags for authors with configured fediverse handles
@@ -36,7 +37,7 @@ Byline Feed is additive. It preserves core feed elements such as `<author>` and 
 * Supports `byline:profile`, `byline:now`, and `byline:uses` from plugin-owned user meta
 * Emits `<meta name="fediverse:creator">` tags on singular views for authors with configured handles
 * Emits JSON-LD `Article` + ordered `Person` schema on singular post views
-* Auto-detects Co-Authors Plus, PublishPress Authors, or falls back to core WordPress
+* Auto-detects PublishPress Authors, HM Authorship, Co-Authors Plus, or falls back to core WordPress
 * Adds Content Perspective and fediverse-handle fields in WordPress editing/profile UI
 * Validates normalized author data before output
 * Works without requiring a specific multi-author plugin
@@ -45,13 +46,14 @@ Byline Feed is additive. It preserves core feed elements such as `<author>` and 
 
 * Co-Authors Plus
 * PublishPress Authors
+* HM Authorship
 * Core WordPress
 
 == Installation ==
 
 1. Upload the `byline-feed` folder to `/wp-content/plugins/`, or install it through the WordPress admin once published.
 2. Activate the plugin through the Plugins screen in WordPress.
-3. If you use Co-Authors Plus or PublishPress Authors, keep that plugin active.
+3. If you use Co-Authors Plus, PublishPress Authors, or HM Authorship, keep that plugin active.
 4. Optionally add a fediverse handle such as `@you@example.social` to the user profile of each linked author who should receive fediverse attribution.
 5. Visit your RSS2, Atom, or JSON feed and inspect the output for Byline elements.
 
@@ -79,7 +81,7 @@ See `byline-feed/docs/output-reference.md` in the project repository for current
 
 = Which multi-author plugins are supported? =
 
-Co-Authors Plus and PublishPress Authors are supported directly. If neither is active, Byline Feed uses core WordPress author data.
+Co-Authors Plus, PublishPress Authors, and HM Authorship are supported directly. If none of them are active, Byline Feed uses core WordPress author data.
 
 = What is Content Perspective? =
 
@@ -89,7 +91,7 @@ Content Perspective is an editorial field that communicates the intent behind a 
 
 = 0.1.0 =
 * Initial development release.
-* Adapter layer with Co-Authors Plus, PublishPress Authors, and core WordPress support.
+* Adapter layer with Co-Authors Plus, PublishPress Authors, HM Authorship, and core WordPress support.
 * RSS2, Atom, and JSON Feed Byline output.
 * Content Perspective field with block editor panel and classic editor support.
 * Fediverse-handle profile field and `fediverse:creator` meta tag output.

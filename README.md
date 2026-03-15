@@ -13,7 +13,7 @@ This repository ("Author Identity") houses the **[Byline Feed](byline-feed/)** W
 
 Current shipped scope:
 
-- normalized author resolution for core WordPress, Co-Authors Plus, and PublishPress Authors
+- normalized author resolution for core WordPress, Co-Authors Plus, PublishPress Authors, and HM Authorship
 - Byline output in RSS2, Atom, and JSON Feed
 - perspective storage and editor UI
 - `fediverse:creator` meta tag output for singular content
@@ -21,8 +21,8 @@ Current shipped scope:
 
 Next planned tranches:
 
-- HM Authorship adapter support
 - WP-06 rights and AI-consent output
+- Molongui adapter support
 
 Longer-range identity work such as `did:web:` remains in the vision/research layer, not the active roadmap.
 
@@ -60,8 +60,8 @@ The current implementation focus is the `byline-feed` plugin:
 
 | Status | Items |
 | --- | --- |
-| Implemented | adapter interface plus core, Co-Authors Plus, and PublishPress Authors adapters<br>RSS2, Atom, JSON Feed, and JSON-LD output, including `profile` / `now` / `uses` for linked WordPress users via plugin-owned meta<br>content perspective storage and editor UI<br>`fediverse:creator` meta tags for authors with configured fediverse handles<br>conservative `ap_actor_url` resolution for linked WordPress users when ActivityPub identity can be resolved<br>runtime validation for the normalized author contract<br>PHPUnit, PHPCS, Playwright E2E, and GitHub Actions CI scaffolding |
-| Not yet implemented | AI consent and rights output<br>Molongui and HM Authorship adapters |
+| Implemented | adapter interface plus core, Co-Authors Plus, PublishPress Authors, and HM Authorship adapters<br>RSS2, Atom, JSON Feed, and JSON-LD output, including `profile` / `now` / `uses` for linked WordPress users via plugin-owned meta<br>content perspective storage and editor UI<br>`fediverse:creator` meta tags for authors with configured fediverse handles<br>conservative `ap_actor_url` resolution for linked WordPress users when ActivityPub identity can be resolved<br>runtime validation for the normalized author contract<br>PHPUnit, PHPCS, Playwright E2E, and GitHub Actions CI scaffolding |
+| Not yet implemented | AI consent and rights output<br>Molongui adapter |
 | Primary references | [byline-feed/](byline-feed/)<br>[byline-feed/docs/output-reference.md](byline-feed/docs/output-reference.md)<br>[implementation-spec.md](Implementation%20Strategy/implementation-spec.md)<br>[wp-01.md](Implementation%20Strategy/wp-01.md) to [wp-06.md](Implementation%20Strategy/wp-06.md) |
 
 ## Plugin layout
@@ -79,6 +79,7 @@ byline-feed/
 |   |-- class-adapter-core.php
 |   |-- class-adapter-cap.php
 |   |-- class-adapter-ppa.php
+|   |-- class-adapter-authorship.php
 |   |-- namespace.php
 |   |-- feed-common.php
 |   |-- feed-rss2.php
@@ -98,13 +99,15 @@ byline-feed/
     |-- test-adapter-core.php
     |-- test-adapter-cap.php
     |-- test-adapter-ppa.php
+    |-- test-adapter-authorship.php
     |-- test-author-contract.php
     |-- test-fediverse.php
     |-- test-feed-atom.php
     |-- test-feed-json.php
     |-- test-feed-rss2.php
     |-- test-schema.php
-    `-- test-perspective.php
+    |-- test-perspective.php
+    `-- test-integration-authorship.php
 ```
 
 ## Development and verification
