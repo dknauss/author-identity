@@ -4,7 +4,7 @@ Tags: rss, atom, byline, author, attribution, feeds
 Requires at least: 6.0
 Tested up to: 6.7
 Requires PHP: 7.4
-Stable tag: 0.1.0
+Stable tag: trunk
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -94,8 +94,8 @@ Content Perspective is an editorial field that communicates the intent behind a 
 
 == Changelog ==
 
-= 0.1.0 =
-* Initial development release.
+= 0.1.0-rc1 =
+* First release candidate.
 * Adapter layer with Co-Authors Plus, PublishPress Authors, HM Authorship, and core WordPress support.
 * RSS2, Atom, and JSON Feed Byline output.
 * Content Perspective field with block editor panel and classic editor support.
