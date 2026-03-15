@@ -52,13 +52,13 @@ Output channels:
 
 Live verification on `single-site-local.local` now confirms that the same two-author post emits the same multi-author Byline shape in RSS2 and Atom under both PublishPress Authors and Co-Authors Plus.
 
-That parity result is not total across every output field, though. In the same local verification run:
+The same local verification run also confirmed the linked-user URL parity fix:
 
 - RSS2 and Atom matched on repeated `byline:author` / `byline:role` pairs
 - JSON Feed stayed structurally consistent across both adapters
-- Co-Authors Plus currently normalized linked WordPress-user authors with an empty `url` field where PublishPress Authors preserved `user_url`
+- Co-Authors Plus now falls back to linked-user `user_url` when the CAP `website` field is empty
 
-That means CAP currently omits `author.url` in JSON Feed and can also omit `Person.url` in JSON-LD for linked users. The difference is adapter-specific normalization, not a feed-renderer mismatch.
+That means the earlier CAP/PPA discrepancy for linked-user `url` normalization is resolved for the tested local case. The remaining adapter work is now about future plugin support and upstream drift, not this specific CAP parity bug.
 
 ## Key risks
 

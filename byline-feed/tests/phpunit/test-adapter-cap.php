@@ -85,6 +85,30 @@ class Test_Adapter_CAP extends WP_UnitTestCase {
 		$this->assertSame( 'https://example.com/jane/uses', $author->uses_url );
 	}
 
+	public function test_normalize_falls_back_to_linked_user_url_when_cap_website_is_empty(): void {
+		$user_id = self::factory()->user->create(
+			array(
+				'role'          => 'author',
+				'display_name'  => 'Fallback User',
+				'user_nicename' => 'fallback-user',
+				'user_url'      => 'https://example.com/fallback-user',
+			)
+		);
+
+		$coauthor = (object) array(
+			'type'          => 'wpuser',
+			'ID'            => $user_id,
+			'user_nicename' => 'fallback-user',
+			'display_name'  => 'Fallback User',
+			'description'   => 'Fallback user description.',
+			'website'       => '',
+		);
+
+		$author = $this->invoke_normalize( $coauthor );
+
+		$this->assertSame( 'https://example.com/fallback-user', $author->url );
+	}
+
 	public function test_normalize_maps_guest_author_fields(): void {
 		$coauthor = (object) array(
 			'type'          => 'guest-author',

@@ -43,6 +43,11 @@ class Adapter_CAP implements Adapter {
 		$is_guest = ( $coauthor->type ?? 'wpuser' ) === 'guest-author';
 		$user_id  = $is_guest ? 0 : ( $coauthor->ID ?? 0 );
 		$user     = $user_id ? get_userdata( $user_id ) : null;
+		$url      = isset( $coauthor->website ) && is_string( $coauthor->website ) ? $coauthor->website : '';
+
+		if ( '' === $url && $user instanceof \WP_User ) {
+			$url = $user->user_url;
+		}
 
 		$role = $is_guest ? 'guest' : get_byline_role_from_user( $user );
 
@@ -70,7 +75,7 @@ class Adapter_CAP implements Adapter {
 			'id'           => $coauthor->user_nicename ?? '',
 			'display_name' => $coauthor->display_name ?? '',
 			'description'  => $coauthor->description ?? '',
-			'url'          => $coauthor->website ?? '',
+			'url'          => $url,
 			'avatar_url'   => get_avatar_url( $coauthor->ID ?? 0 ),
 			'user_id'      => $user_id,
 			'role'         => $role,

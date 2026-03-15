@@ -53,6 +53,7 @@ When cutting a release:
 - CI runner setup for WordPress tests by installing Subversion in the workflow
 - PHP 7.4 / 8.0 reflection compatibility in adapter tests
 - Broken internal Markdown links after doc moves
+- Co-Authors Plus linked-user URL normalization now falls back to WordPress `user_url` when the CAP `website` field is empty
 
 ### Security
 

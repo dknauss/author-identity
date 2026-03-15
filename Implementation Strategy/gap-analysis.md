@@ -90,46 +90,21 @@ That tranche should be considered incomplete until it ships with:
 - integration tests against the real Authorship plugin
 - live feed verification on a site running Authorship
 
-### 5. CAP and PPA now have live XML parity, but CAP still drops linked-user URLs
-
-Live verification on the same two-author post under both PublishPress Authors and Co-Authors Plus confirms that RSS2 and Atom currently emit the same multi-author Byline structure:
-
-- repeated `byline:author ref`
-- repeated `byline:role`
-- preserved author order
-
-JSON Feed also stayed structurally consistent across both adapters. However, the normalized author objects were not identical:
-
-- PublishPress Authors preserved `user_url` for the `admin` user
-- Co-Authors Plus normalized the same linked user with an empty `url`
-
-Root cause in current code:
-
-- [class-adapter-ppa.php](../byline-feed/inc/class-adapter-ppa.php) reads linked-user URLs from `$user->user_url`
-- [class-adapter-cap.php](../byline-feed/inc/class-adapter-cap.php) reads `$coauthor->website`, which was empty for the live CAP `WP_User` objects on this site
-
-Impact:
-
-- CAP can currently omit `author.url` in JSON Feed for linked WordPress users
-- CAP can currently omit `Person.url` in JSON-LD for the same users
-
-This is an adapter-normalization issue, not an RSS2/Atom renderer issue.
-
 ---
 
 ## Structural notes
 
 These are not code defects, but they affect execution strategy.
 
-### 6. Development-tooling security posture is now clean, but still separate from runtime risk
+### 5. Development-tooling security posture is now clean, but still separate from runtime risk
 
 The previously open npm advisories were resolved through targeted dependency updates and overrides. The important policy point remains: JavaScript development tooling should be evaluated separately from shipped plugin runtime behavior, and future npm advisories should not be treated as equivalent to a PHP runtime defect without checking the actual delivery path.
 
-### 7. Release discipline now exists, but needs consistent use
+### 6. Release discipline now exists, but needs consistent use
 
 The repository now has `CHANGELOG.md`, `RELEASE_NOTES.md`, issue templates, a PR template, and contributor guidance. The remaining gap is procedural: future releases should consistently update the changelog and apply the release-note convention when AI assistance materially shaped the release.
 
-### 8. Research backlog: semantic-publishing rationale is stronger than immediate scope
+### 7. Research backlog: semantic-publishing rationale is stronger than immediate scope
 
 The reorganized research set now makes a clearer distinction between current roadmap inputs and exploratory semantic-publishing work. The exploratory documents strengthen the long-term rationale for:
 
@@ -144,7 +119,7 @@ Related scope rule:
 - `ap_actor_url` is in-scope as a concrete WP-04/WP-05 design field.
 - `did:web:` remains deferred future identity work until the current output roadmap ships and there is a concrete consumer for DID-based identity.
 
-### 9. Testing roadmap should stay specific, not generic
+### 8. Testing roadmap should stay specific, not generic
 
 The remaining testing work is no longer "add more tests" in the abstract. The roadmap should keep naming the concrete testing tranches that matter:
 
@@ -164,6 +139,7 @@ The following items appeared in earlier audits but are now resolved:
 - GitHub Actions CI exists and runs PHPCS, PHPUnit, and the Node build.
 - CAP, PPA, RSS2, Atom, and author-contract tests exist and pass in CI.
 - CAP and PPA integration CI jobs download real plugins from wordpress.org and test against live APIs.
+- Live CAP and PPA verification on the same two-author post now has linked-user URL parity for the tested local case; CAP falls back to `user_url` when `website` is empty.
 - JSON Feed now has automated coverage for document shape, author deduplication, per-item roles, perspective output, omission behavior, and feed metadata.
 - The perspective UI has been manually verified on the local Studio site, which surfaced and corrected an editor asset enqueue bug.
 - The block editor perspective panel now has committed Playwright coverage via a self-contained `wp-env` harness.
@@ -182,12 +158,12 @@ The following items appeared in earlier audits but are now resolved:
 | Priority | Gaps | Rationale |
 | --- | --- | --- |
 | **Current state** | #3 (Gate A complete) | MVP quality gate is satisfied; keep CI green and maintain release discipline |
-| **Post-Gate-A hardening** | #9 (specific testing roadmap) | Keep extending test depth without reopening Gate A |
+| **Post-Gate-A hardening** | #8 (specific testing roadmap) | Keep extending test depth without reopening Gate A |
 | **Next adapter tranche** | #4 (Authorship support) | Implement immediately after the now-shipped WP-05 tranche; prior art exists, but it must be ported into the standalone plugin rather than merged directly |
 | **Later roadmap work** | #1 (WP-06) | Follow the HM Authorship tranche; this is the most policy-sensitive work and should not jump ahead of the cleaner next adapter tranche |
 | **Pre-1.0 spec alignment** | Multi-author-per-item divergence, JSON Feed structure divergence, terminology drift (`organization` / `publication` / `publisher`) | Resolve the known Byline-spec structural and terminology issues with the spec author before calling the plugin a stable 1.0 implementation |
 | **Next product work** | #4 (Authorship support) | With WP-05 shipped, the next roadmap value is the HM Authorship adapter tranche before WP-06 |
-| **Process hygiene** | #6, #7 (track dev-tooling advisories, use changelog consistently) | Keeps maintenance and release quality disciplined without blocking feature work |
+| **Process hygiene** | #5, #6 (track dev-tooling advisories, use changelog consistently) | Keeps maintenance and release quality disciplined without blocking feature work |
 
 ---
 
