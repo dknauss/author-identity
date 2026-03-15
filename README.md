@@ -11,25 +11,6 @@ Structured author identity that travels with the work across feeds, search, the 
 
 This repository ("Author Identity") houses the **[Byline Feed](byline-feed/)** WordPress plugin, which implements the [Byline extension vocabulary](https://bylinespec.org) plus additional author-identity output channels. A normalized author-data layer in WordPress drives multiple outputs.
 
-Current shipped scope:
-
-- normalized author resolution for core WordPress, Co-Authors Plus, PublishPress Authors, and HM Authorship
-- Byline output in RSS2, Atom, and JSON Feed
-- perspective storage and editor UI
-- `fediverse:creator` meta tag output for singular content
-- multi-author JSON-LD Article + Person output for singular content
-- initial WP-06 rights signaling: per-author and per-post AI consent, `robots` meta for denied posts, `TDMRep` headers, and `ai.txt`
-
-Next planned tranches:
-
-- additional WP-06 rights work:
-  - feed-level rights metadata
-  - audit logging
-  - richer editor UI
-- Molongui adapter support
-
-Longer-range identity work such as `did:web:` remains in the vision/research layer, not the active roadmap.
-
 **The mental model:** WordPress is a Personal Data Server for authors. The author's WP profile is their everything folder. The plugin makes that PDS speak the open web's formats. Output channels are reactive to the normalized author data — none of them own it.
 
 ## What this repository contains
@@ -47,6 +28,25 @@ The current implementation focus is the `byline-feed` plugin:
 - Expose content perspective metadata for feed consumers.
 - Preserve standard feed elements so Byline output remains additive.
 - Prepare the next output and adapter tranches without expanding the active roadmap into broader identity-framework work.
+
+## Current shipped scope:
+
+- normalized author resolution for core WordPress, Co-Authors Plus, PublishPress Authors, and HM Authorship
+- Byline output in RSS2, Atom, and JSON Feed
+- perspective storage and editor UI
+- `fediverse:creator` meta tag output for singular content
+- multi-author JSON-LD Article + Person output for singular content
+- initial rights signaling: per-author and per-post AI consent, `robots` meta for denied posts, `TDMRep` headers, and `ai.txt`
+
+## Next planned tranches:
+
+- additional rights work:
+  - feed-level rights metadata
+  - audit logging
+  - richer editor UI
+- Molongui adapter support
+
+Longer-range identity work such as `did:web:` remains in the vision/research layer, not the active roadmap.
 
 ## Documentation map
 
