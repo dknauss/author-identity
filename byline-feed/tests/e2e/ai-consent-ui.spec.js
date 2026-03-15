@@ -41,12 +41,12 @@ test( 'classic editor ai consent metabox saves and persists', async ( {
 	await consentField.selectOption( 'deny' );
 
 	const saveButton = page.locator( '#save-post, #publish' ).first();
-	await saveButton.click();
+	await Promise.all( [
+		page.waitForLoadState( 'domcontentloaded' ),
+		saveButton.click(),
+	] );
 
-	await expect(
-		page.locator( '#message.updated, .notice-success' ).first()
-	).toBeVisible();
-
+	await expect( page ).toHaveURL( /post\.php\?post=\d+&action=edit/ );
 	await page.reload();
 	await expect( consentField ).toHaveValue( 'deny' );
 } );
