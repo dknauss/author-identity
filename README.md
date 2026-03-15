@@ -2,6 +2,13 @@
 
 Structured author identity that travels with the work across feeds, search, the fediverse, and AI from one source of truth in WordPress.
 
+## What this repository contains
+
+This repository has two related parts:
+
+1. A documentation set defining the vision, protocol landscape, implementation strategy, and quality gates for portable author identity in WordPress.
+2. A WordPress plugin, [byline-feed](byline-feed/), that implements the MVP portion of that strategy.
+
 ## What this project is
 
 A WordPress plugin that normalizes author identity data from any multi-author plugin (Co-Authors Plus, PublishPress Authors, Molongui, HM Authorship, core WP) and routes it to multiple output channels: Byline RSS/Atom feeds, JSON-LD schema, `fediverse:creator` meta tags, TDM/AI consent headers. One adapter layer, many outputs.
