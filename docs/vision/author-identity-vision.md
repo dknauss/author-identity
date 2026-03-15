@@ -4,11 +4,11 @@
 
 Your byline should travel with your work — your name, your credentials, your perspective, your rights — everywhere it goes. Feeds, search engines, the fediverse, AI systems. One plugin, one source of truth, every output channel.
 
-Right now, when your article leaves your site, it gets stripped down to a name and a URL. Your analysis looks identical to a press release in a feed reader. Your co-author disappears. Your "don't train on this" preference is invisible. Your fediverse identity is disconnected from your publishing identity.
+Right now, when your article leaves your site, it gets stripped down to a name and a URL. This is context collapse at the source. A long-form blog post or peer-reviewed, multi-author, technical research article looks identical to a press release in a feed reader. Your co-authors, their rank, and relationships disappear. Your "don't train on this" preference is invisible. Your fediverse identity is disconnected from your publishing identity.
 
 We fix that. A WordPress plugin that takes the author data you already have — from Co-Authors Plus, PublishPress Authors, or plain WordPress — and pushes structured identity into RSS feeds (via the Byline spec), HTML schema (for search and AI), and fediverse metadata (via `fediverse:creator`). With content perspective labels so readers know if they're reading reporting or opinion, and per-author rights signals so your consent preferences are machine-readable.
 
-Forty thousand multi-author WordPress sites. Zero structured identity in their feeds today. We go first.
+At least forty thousand multi-author WordPress sites exist at this time. There is zero structured identity in their feeds today. We fix that in a way that's aligned with existing and emerging standards that are the foundation for the open web's federated future.
 
 ## Purpose
 
