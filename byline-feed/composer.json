@@ -14,8 +14,8 @@
 	},
 	"scripts": {
 		"test": "phpunit --configuration=phpunit.xml.dist",
-		"lint": "phpcs --standard=WordPress --extensions=php --ignore=vendor,node_modules,build,tests .",
-		"lint:fix": "phpcbf --standard=WordPress --extensions=php --ignore=vendor,node_modules,build,tests ."
+		"lint": "phpcs --standard=WordPress --extensions=php --ignore=vendor,node_modules,build,dist,tests .",
+		"lint:fix": "phpcbf --standard=WordPress --extensions=php --ignore=vendor,node_modules,build,dist,tests ."
 	},
 	"config": {
 		"platform": {

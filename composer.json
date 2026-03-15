@@ -1,0 +1,16 @@
+{
+	"name": "dknauss/author-identity",
+	"description": "Repository-level Composer wrappers for Author Identity project verification tasks.",
+	"type": "project",
+	"license": "GPL-2.0-or-later",
+	"scripts": {
+		"lint": "composer --working-dir=byline-feed lint",
+		"test:integration": "bash byline-feed/bin/run-integration-tests.sh",
+		"analyse:phpstan": [
+			"@php -r \"fwrite(STDERR, 'PHPStan is not configured for this repository yet; tracked as future tooling work.\\\\n');\""
+		],
+		"analyse:psalm": [
+			"@php -r \"fwrite(STDERR, 'Psalm is not configured for this repository yet; tracked as future tooling work.\\\\n');\""
+		]
+	}
+}
