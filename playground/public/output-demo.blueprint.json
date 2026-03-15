@@ -2,7 +2,7 @@
   "$schema": "https://playground.wordpress.net/blueprint-schema.json",
   "meta": {
     "title": "Byline Feed Output Demo",
-    "description": "Installs Byline Feed from the immutable playground-output-demo tag and injects deterministic multi-author output on the default WordPress sample post and feeds.",
+    "description": "Installs Byline Feed from a pinned source tag and injects deterministic multi-author output on the default WordPress sample post and feeds.",
     "author": "Dan Knauss"
   },
   "landingPage": "/?p=1",
@@ -19,7 +19,7 @@
       "pluginData": {
         "resource": "git:directory",
         "url": "https://github.com/dknauss/Author-Identity",
-        "ref": "playground-output-demo",
+        "ref": "playground-output-demo-source-3ceabcf637d3",
         "refType": "tag",
         "path": "byline-feed"
       },
