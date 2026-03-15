@@ -1,5 +1,9 @@
 # Author Identity Vision
 
+[![CI](https://github.com/dknauss/Author-Identity/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/dknauss/Author-Identity/actions/workflows/ci.yml)
+[![License: GPL-2.0-or-later](https://img.shields.io/badge/License-GPL%202.0%2B-blue.svg)](LICENSE)
+[![PHP 7.4+](https://img.shields.io/badge/PHP-7.4%2B-777BB4?logo=php&logoColor=white)](byline-feed/composer.json)
+
 Structured author identity that travels with the work across feeds, search, the fediverse, and AI from one source of truth in WordPress.
 
 ## What this project is
