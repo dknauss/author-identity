@@ -86,34 +86,50 @@
 
 ### P2 — Medium priority
 
-#### 10. Unit: JSON Feed filter coverage
+#### 10. Future design: ActivityPub-aware fediverse identity source model
+
+**Problem:** The current `fediverse:creator` output only uses an explicit stored fediverse handle. That is correct for the current release, but it creates unnecessary manual setup for sites where the ActivityPub plugin already exposes a trustworthy local user actor identity.
+
+**Recommendation:** Move future fediverse attribution to a source-based model:
+
+- `auto` = derive from local ActivityPub identity when confidently resolvable
+- `manual` = use explicit stored handle
+- `none` = emit nothing
+
+Do **not** solve this by copying ActivityPub-derived handles into stored user meta and locking that copied value. Keep derived identity derived, and keep manual override separate.
+
+**Design reference:** See [fediverse-identity-design.md](../docs/planning/fediverse-identity-design.md).
+
+**Why backlog, not current release:** This is a UX and identity-model refinement, not a stability fix. It should follow RC stabilization and should ship with explicit PHPUnit + browser coverage.
+
+#### 11. Unit: JSON Feed filter coverage
 
 **Current state:** `byline_feed_json_author_extension` and `byline_feed_json_feed` filters are cleaned up in tearDown but never exercised in tests. Only `byline_feed_json_item` is tested.
 **Plan:** Add tests in `test-feed-json.php` for the two untested filters.
 
-#### 11. Unit: special characters in author fields
+#### 12. Unit: special characters in author fields
 
 **Current state:** No test verifies that special characters, HTML entities, or unicode in author names/descriptions survive feed output without causing XML parse errors or JSON encoding failures.
 **Plan:** Add a test per feed format (RSS2, Atom, JSON) with an author whose `display_name` contains `<`, `&`, `"`, and unicode characters (e.g., emoji, CJK). Assert the feed remains well-formed.
 
-#### 12. Unit: role mapping completeness
+#### 13. Unit: role mapping completeness
 
 **Current state:** Only `editor` and `author` WordPress roles are tested for mapping to Byline roles. Admin, subscriber, and contributor are untested.
 **Plan:** Add a parameterized test (or loop) in `test-adapter-core.php` covering all standard WordPress roles.
 
-#### 13. Unit: REST API meta round-trip
+#### 14. Unit: REST API meta round-trip
 
 **Current state:** Meta registration for REST is verified (the schema key exists), but no test makes an actual REST request to read/write author meta.
 **Plan:** Add a test in `test-author-meta.php` that uses `rest_do_request()` to GET user meta and verify the fediverse field is returned with correct shape.
 
 ### P3 — Low priority
 
-#### 14. Feed schema compliance
+#### 15. Feed schema compliance
 
 **Current state:** XML well-formedness is tested via `simplexml_load_string()`, but neither RSS2 nor Atom output is validated against the actual Byline extension schema. JSON Feed is checked with `assertJson()` but not against the JSON Feed 1.1 spec.
 **Plan:** Consider adding a schema validation step (XSD for XML feeds, JSON Schema for JSON Feed) as a separate CI check or test helper.
 
-#### 15. Schema plugin coexistence beyond Yoast
+#### 16. Schema plugin coexistence beyond Yoast
 
 **Current state:** Yoast coexistence is covered. Rank Math detection exists in code, but dedicated coexistence tests remain thin, and other schema plugins are not covered.
 **Plan:** Add coexistence tests for Rank Math and SEOPress class names. Low urgency — the filter override mechanism works generically.
