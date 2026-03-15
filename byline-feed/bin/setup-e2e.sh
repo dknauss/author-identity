@@ -5,6 +5,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PLUGIN_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
 TMP_DIR="${PLUGIN_DIR}/.tmp"
 POST_ID_FILE="${TMP_DIR}/e2e-post-id"
+MU_PLUGIN_FILE='/var/www/html/wp-content/mu-plugins/byline-feed-e2e-tools.php'
 
 mkdir -p "${TMP_DIR}"
 
@@ -16,6 +17,24 @@ npx @wordpress/env start
 npx @wordpress/env run cli wp plugin activate byline-feed --allow-root
 npx @wordpress/env run cli wp option update permalink_structure '/%postname%/' --allow-root
 npx @wordpress/env run cli wp user update admin --user_pass='password' --allow-root
+npx @wordpress/env run cli bash -lc "mkdir -p /var/www/html/wp-content/mu-plugins" --allow-root
+npx @wordpress/env run cli bash -lc "cat > '${MU_PLUGIN_FILE}' <<'PHP'
+<?php
+/**
+ * Byline Feed E2E helpers.
+ */
+
+add_filter(
+	'use_block_editor_for_post',
+	static function ( \$use_block_editor ) {
+		if ( isset( \$_GET['byline_force_classic'] ) && '1' === (string) \$_GET['byline_force_classic'] ) {
+			return false;
+		}
+
+		return \$use_block_editor;
+	}
+);
+PHP" --allow-root
 
 POST_ID="$(
 	npx @wordpress/env run cli wp eval '
@@ -37,6 +56,8 @@ if [[ -z "${POST_ID}" ]]; then
 fi
 
 npx @wordpress/env run cli wp post meta delete "${POST_ID}" _byline_perspective --allow-root >/dev/null 2>&1 || true
+npx @wordpress/env run cli wp post meta delete "${POST_ID}" _byline_ai_consent --allow-root >/dev/null 2>&1 || true
+npx @wordpress/env run cli wp user meta delete admin byline_feed_ai_consent --allow-root >/dev/null 2>&1 || true
 
 printf '%s\n' "${POST_ID}" > "${POST_ID_FILE}"
 echo "E2E fixture post: ${POST_ID}"
