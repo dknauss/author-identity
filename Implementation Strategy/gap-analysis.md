@@ -90,6 +90,31 @@ That tranche should be considered incomplete until it ships with:
 - integration tests against the real Authorship plugin
 - live feed verification on a site running Authorship
 
+### 5. CAP and PPA now have live XML parity, but CAP still drops linked-user URLs
+
+Live verification on the same two-author post under both PublishPress Authors and Co-Authors Plus confirms that RSS2 and Atom currently emit the same multi-author Byline structure:
+
+- repeated `byline:author ref`
+- repeated `byline:role`
+- preserved author order
+
+JSON Feed also stayed structurally consistent across both adapters. However, the normalized author objects were not identical:
+
+- PublishPress Authors preserved `user_url` for the `admin` user
+- Co-Authors Plus normalized the same linked user with an empty `url`
+
+Root cause in current code:
+
+- [class-adapter-ppa.php](../byline-feed/inc/class-adapter-ppa.php) reads linked-user URLs from `$user->user_url`
+- [class-adapter-cap.php](../byline-feed/inc/class-adapter-cap.php) reads `$coauthor->website`, which was empty for the live CAP `WP_User` objects on this site
+
+Impact:
+
+- CAP can currently omit `author.url` in JSON Feed for linked WordPress users
+- CAP can currently omit `Person.url` in JSON-LD for the same users
+
+This is an adapter-normalization issue, not an RSS2/Atom renderer issue.
+
 ---
 
 ## Structural notes

@@ -48,6 +48,18 @@ Output channels:
 | CI/CD | Present and passing on supported PHP/WP matrix combinations |
 | Documentation | Strong project/governance docs; consumer output reference exists and now covers feeds plus HTML-head outputs |
 
+## Live adapter verification note
+
+Live verification on `single-site-local.local` now confirms that the same two-author post emits the same multi-author Byline shape in RSS2 and Atom under both PublishPress Authors and Co-Authors Plus.
+
+That parity result is not total across every output field, though. In the same local verification run:
+
+- RSS2 and Atom matched on repeated `byline:author` / `byline:role` pairs
+- JSON Feed stayed structurally consistent across both adapters
+- Co-Authors Plus currently normalized linked WordPress-user authors with an empty `url` field where PublishPress Authors preserved `user_url`
+
+That means CAP currently omits `author.url` in JSON Feed and can also omit `Person.url` in JSON-LD for linked users. The difference is adapter-specific normalization, not a feed-renderer mismatch.
+
 ## Key risks
 
 1. **Post-Gate-A scope drift.** The vision is broader than the active roadmap. Without discipline, WP-05/06 can turn into premature identity-framework work instead of focused output features.
