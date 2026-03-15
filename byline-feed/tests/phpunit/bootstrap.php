@@ -11,10 +11,22 @@ if ( file_exists( $composer_autoload ) ) {
 	require_once $composer_autoload;
 }
 
-// WordPress test suite location — set via environment or use default.
+// WordPress test suite location — set via environment or use the first known
+// local install path that exists.
 $_tests_dir = getenv( 'WP_TESTS_DIR' );
 if ( ! $_tests_dir ) {
-	$_tests_dir = rtrim( sys_get_temp_dir(), '/\\' ) . '/wordpress-tests-lib';
+	$candidate_dirs = array(
+		'/tmp/byline-wp-tests',
+		'/tmp/wordpress-tests-lib',
+		rtrim( sys_get_temp_dir(), '/\\' ) . '/wordpress-tests-lib',
+	);
+
+	foreach ( $candidate_dirs as $candidate_dir ) {
+		if ( file_exists( $candidate_dir . '/includes/functions.php' ) ) {
+			$_tests_dir = $candidate_dir;
+			break;
+		}
+	}
 }
 
 // Verify the test suite exists.
