@@ -50,6 +50,9 @@ wp-config.php
 # Local development caches
 byline-feed/.npm-cache/
 byline-feed/.phpunit.result.cache
+byline-feed/.tmp/
+byline-feed/test-results/
+byline-feed/playwright-report/
 
 # macOS Finder metadata
 .DS_Store

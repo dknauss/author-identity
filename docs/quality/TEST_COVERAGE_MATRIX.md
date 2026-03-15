@@ -17,6 +17,7 @@
 | Node build | **Covered** | CI job runs `npm run build` and the local build command is defined. |
 | PHPCS automation | **Covered** | `composer lint` configured with correct excludes. CI job runs PHPCS with `cs2pr` formatter. |
 | Composer test script | **Covered** | `composer test` points to `phpunit --configuration=phpunit.xml.dist`. |
+| Browser E2E harness | **Covered** | `playwright.config.js`, `.wp-env.json`, and `tests/e2e/perspective-panel.spec.js` provide a self-contained editor test path. |
 
 ## Core domains — MVP (WP-01/02/03)
 
@@ -55,7 +56,7 @@
 | Perspective — invalid value rejected | **Covered** | `test-perspective.php` | Returns empty string. |
 | Perspective — filter override | **Covered** | `test-perspective.php` | Filter can replace value. |
 | Perspective — empty when unset | **Covered** | `test-perspective.php` | No meta returns empty. |
-| Perspective — block editor panel | **Gap** | No test | Asset builds successfully, but there is still no browser or integration test for editor behavior. |
+| Perspective — block editor panel | **Covered** | `tests/e2e/perspective-panel.spec.js` | Playwright + `wp-env` verifies panel render, selection, save, and persistence after reload. |
 
 ## Core domains — Post-MVP (WP-04/05/06)
 
@@ -77,12 +78,13 @@
 
 ## Priority backlog (highest impact first)
 
-1. **Add browser or end-to-end coverage for the perspective panel.** This is the main remaining shipped-scope verification gap.
-2. **Add `test-schema.php` when WP-05 starts.** Cover graph shape, multi-author output, `ap_actor_url` handling, and coexistence with other schema providers.
-3. **Add HM Authorship adapter tests when that tranche starts.** Unit normalization + real-plugin integration coverage should land together.
-4. **Add `test-rights.php` when WP-06 starts.** Treat rights/consent coverage as part of the work package from day one, after the HM Authorship tranche.
-5. **Add real ActivityPub-plugin integration checks for `ap_actor_url`.** The current WP-04 suite intentionally keeps actor resolution conservative and only partially covered.
-6. **Optional later hardening:** add deeper Byline spec-conformance and round-trip parsing tests for feed output.
+1. **Add `test-schema.php` when WP-05 starts.** Cover graph shape, multi-author output, `ap_actor_url` handling, and coexistence with other schema providers.
+2. **Add HM Authorship adapter tests when that tranche starts.** Unit normalization + real-plugin integration coverage should land together.
+3. **Add `test-rights.php` when WP-06 starts.** Treat rights/consent coverage as part of the work package from day one, after the HM Authorship tranche.
+4. **Add real ActivityPub-plugin integration checks for `ap_actor_url`.** The current WP-04 suite intentionally keeps actor resolution conservative and only partially covered.
+5. **Add browser coverage for the fediverse profile field.** The save/normalization logic is covered in PHPUnit, but the user-profile UI is not yet covered in a browser run.
+6. **Add browser coverage for the classic editor perspective metabox.** Lower priority than the block editor path, but still useful as fallback hardening.
+7. **Optional later hardening:** add deeper Byline spec-conformance and round-trip parsing tests for feed output.
 
 ## Quality target
 

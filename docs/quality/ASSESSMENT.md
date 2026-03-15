@@ -41,7 +41,7 @@ Output channels:
 | --- | --- |
 | Adapter layer (WP-01) | Implemented, tested, and CI-verified |
 | Feed output (WP-02) | Implemented for RSS2, Atom, and JSON Feed with automated coverage |
-| Perspective field (WP-03) | Implemented, built locally, covered in feed tests, and manually verified |
+| Perspective field (WP-03) | Implemented, covered in PHPUnit and Playwright, and manually verified on the local Studio site |
 | fediverse:creator (WP-04) | Implemented with PHPUnit coverage and user-profile field support |
 | JSON-LD schema (WP-05) | Not started |
 | AI consent (WP-06) | Not started |
@@ -61,7 +61,7 @@ Output channels:
 1. **Start WP-05 with a tight boundary.** Treat `ap_actor_url` as a WP-04/WP-05 design field, but keep `did:web:` and broader identity anchoring out of the active roadmap.
 2. **Keep HM Authorship next.** It is the strongest next adapter tranche after WP-05 and should ship with real-plugin tests from the start.
 3. **Keep WP-04 maintenance factual and conservative.** The handle-based meta tags ship today; deeper ActivityPub federation alignment still belongs to the separate upstream integration conversation.
-4. **Add editor-level verification.** Browser or end-to-end checks for the perspective UI would close the last major shipped-scope verification gap.
+4. **Keep UI hardening targeted.** The block-editor perspective path is now browser-covered; the remaining UI backlog is the fediverse profile field and classic-editor metabox fallback.
 5. **Expand tests and docs in lockstep.** New output channels should land with their test files and consumer docs rather than being documented later.
 6. **Keep using the new governance files.** `CHANGELOG.md`, `RELEASE_NOTES.md`, templates, and contributor guidance only matter if they become part of normal release practice.
 

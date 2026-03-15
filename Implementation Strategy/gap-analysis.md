@@ -12,7 +12,7 @@
 | --- | --- | --- | --- | --- |
 | WP-01: Scaffold & Adapters | All planned files | Core, CAP, PPA, contract tests | Implemented | CI-verified |
 | WP-02: RSS2, Atom & JSON Feed Output | All three output files | RSS2 + Atom + JSON Feed tests | Implemented | Automated coverage now exists for all three feed formats |
-| WP-03: Perspective Field | PHP + TSX present | PHPUnit coverage for feed output | Implemented | Built locally, needs ongoing editor QA |
+| WP-03: Perspective Field | PHP + TSX present | PHPUnit + Playwright coverage | Implemented | Browser-verified in a self-contained `wp-env` harness |
 | WP-04: fediverse:creator | Output module + user meta/UI | Meta-tag, normalization, and profile-field tests | Implemented | Automated coverage exists; ActivityPub integration remains conservative |
 | WP-05: JSON-LD Schema | None | None | Not started | N/A |
 | WP-06: Rights & AI Consent | None | None | Not started | N/A |
@@ -49,14 +49,14 @@ The remaining output-channel gaps are now WP-05 and WP-06.
 
 `ap_actor_url` is now part of the official WP-04/WP-05 design boundary, but only as a cross-cutting field for those work packages. It is not a standalone roadmap item. `did:web:` remains vision-level future work and should not be treated as an active post-Gate-A deliverable.
 
-### 2. WP-03 has manual editor verification, but no automated editor coverage
+### 2. WP-03 now has automated block-editor coverage; remaining UI hardening is narrower
 
-The perspective feature has now been manually verified on the local Studio site: the editor asset enqueues, the saved value persists, and the saved perspective reaches feed output. However, block-editor behavior is still not covered by browser or end-to-end tests. Regressions in panel registration, UI labels, or save behavior would still be caught manually rather than by CI.
+The perspective feature has now been manually verified on the local Studio site and covered by a committed Playwright test that runs against a self-contained `wp-env` environment. Regressions in panel registration, UI labels, save behavior, and post-reload persistence are now caught automatically.
 
-This should now be tracked as a specific post-Gate-A hardening item:
+The remaining UI hardening items are now narrower and lower priority:
 
-- add browser-level or end-to-end coverage for the perspective panel
-- verify panel registration, value persistence, and post-save behavior in the editor UI
+- add browser coverage for the fediverse profile field
+- add browser coverage for the classic editor perspective metabox fallback
 
 ### 3. Gate A status
 
@@ -121,10 +121,11 @@ Related scope rule:
 
 The remaining testing work is no longer "add more tests" in the abstract. The roadmap should keep naming the concrete testing tranches that matter:
 
-- WP-03 editor end-to-end coverage
 - WP-05 JSON-LD graph tests
 - HM Authorship adapter unit + integration coverage
 - real ActivityPub-plugin integration coverage for `ap_actor_url`
+- fediverse profile field browser coverage
+- classic editor metabox browser coverage
 - optional later spec-conformance and round-trip parsing tests for Byline output
 
 ---
@@ -139,6 +140,7 @@ The following items appeared in earlier audits but are now resolved:
 - CAP and PPA integration CI jobs download real plugins from wordpress.org and test against live APIs.
 - JSON Feed now has automated coverage for document shape, author deduplication, per-item roles, perspective output, omission behavior, and feed metadata.
 - The perspective UI has been manually verified on the local Studio site, which surfaced and corrected an editor asset enqueue bug.
+- The block editor perspective panel now has committed Playwright coverage via a self-contained `wp-env` harness.
 - Atom now has filter parity with RSS2 (renamed to `byline_feed_atom_entry_xml`).
 - Feed layer code duplication resolved — shared `output_person()` in `feed-common.php` (R-1).
 - Atom filter naming resolved — format-specific filter names (R-2).
@@ -154,7 +156,7 @@ The following items appeared in earlier audits but are now resolved:
 | Priority | Gaps | Rationale |
 | --- | --- | --- |
 | **Current state** | #3 (Gate A complete) | MVP quality gate is satisfied; keep CI green and maintain release discipline |
-| **Post-Gate-A hardening** | #2 (WP-03 editor automation), #9 (specific testing roadmap) | Close the main shipped-scope verification gap without reopening Gate A |
+| **Post-Gate-A hardening** | #9 (specific testing roadmap) | Keep extending test depth without reopening Gate A |
 | **Next adapter tranche** | #4 (Authorship support) | Implement immediately after WP-05; prior art exists, but it must be ported into the standalone plugin rather than merged directly |
 | **Later roadmap work** | #1 (WP-06) | Follow the HM Authorship tranche; this is the most policy-sensitive work and should not jump ahead of the cleaner next adapter tranche |
 | **Pre-1.0 spec alignment** | Multi-author-per-item divergence, JSON Feed structure divergence, terminology drift (`organization` / `publication` / `publisher`) | Resolve the known Byline-spec structural and terminology issues with the spec author before calling the plugin a stable 1.0 implementation |

@@ -5,9 +5,15 @@
 	"private": true,
 	"scripts": {
 		"build": "wp-scripts build src/perspective-panel.tsx --output-path=build",
-		"start": "wp-scripts start src/perspective-panel.tsx --output-path=build"
+		"start": "wp-scripts start src/perspective-panel.tsx --output-path=build",
+		"env:start": "npx @wordpress/env start",
+		"env:stop": "npx @wordpress/env stop",
+		"env:setup": "bash bin/setup-e2e.sh",
+		"test:e2e": "bash bin/run-e2e.sh",
+		"test:e2e:headed": "PLAYWRIGHT_HEADLESS=0 bash bin/run-e2e.sh"
 	},
 	"devDependencies": {
+		"@playwright/test": "^1.58.2",
 		"@wordpress/scripts": "^31.6.0",
 		"@types/wordpress__plugins": "^6.0.0",
 		"@types/wordpress__components": "^23.8.0"
