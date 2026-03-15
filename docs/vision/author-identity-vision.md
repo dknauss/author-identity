@@ -489,7 +489,8 @@ The reasons for neglect go beyond inertia. As trwnh (a prominent AP contributor)
 
 A "NextGen ActivityPub Social API" effort was proposed on SocialHub in November 2024 by Steve Bate, aiming to bring C2S to feature parity with the Mastodon Client API through a set of FEPs. The approach includes a façade that proxies the Mastodon API while exposing a standard C2S interface, plus a reference client implementation. Pixelfed's dansup expressed interest in adding C2S support to the Loops short video platform. The effort is at the discussion and prototyping stage.
 
-Sources: socialhub.activitypub.rocks/t/nextgen-activitypub-social-api/4733, socialhub.activitypub.rocks/t/the-activitypub-client-api/3186, socialhub.activitypub.rocks/t/activitypub-client-to-server-faq/1941.
+> [!NOTE]
+>**Sources:** socialhub.activitypub.rocks/t/nextgen-activitypub-social-api/4733, socialhub.activitypub.rocks/t/the-activitypub-client-api/3186, socialhub.activitypub.rocks/t/activitypub-client-to-server-faq/1941.
 
 ### Why C2S matters for WordPress publishing
 
@@ -507,7 +508,8 @@ The editorial concern (who wrote this, how should it be attributed) is cleanly s
 
 This model was explored by the LAUTI community calendar project, where Bonfire Networks suggested implementing C2S instead of S2S precisely because it's simpler for a publishing application that wants to connect to an existing AP actor rather than becoming its own federation node.
 
-Source: socialhub.activitypub.rocks/t/possible-c2s-implementation-in-lauti/8173.
+> [!NOTE]
+>**Source:** socialhub.activitypub.rocks/t/possible-c2s-implementation-in-lauti/8173.
 
 ### Multi-author attribution via C2S
 
@@ -557,7 +559,7 @@ For this project, C2S is a **forward-looking architectural consideration**, not 
 
 However, the adapter pattern (normalized author data flowing to multiple output channels) should be designed so that a C2S output channel is architecturally natural to add. If C2S revives — and the NextGen Social API effort, the LAUTI exploration, and Pixelfed/Loops interest suggest there is energy in that direction — WordPress multi-author content would be one of the strongest use cases for it. The publishing model (create structured content, post to outbox, let the server handle delivery) is exactly what C2S was designed for, even if the social networking model (timelines, search, streaming) is not.
 
-The strategic play: build Components 1-5 using today's infrastructure (feeds, HTML meta tags, JSON-LD, `fediverse:creator`), but keep the normalized author data interface clean enough that a C2S adapter can slot in alongside the feed adapter, the schema adapter, and the `fediverse:creator` adapter when the time is right.
+**The strategic play:** build Components 1-5 using today's infrastructure (feeds, HTML meta tags, JSON-LD, `fediverse:creator`), but keep the normalized author data interface clean enough that a C2S adapter can slot in alongside the feed adapter, the schema adapter, and the `fediverse:creator` adapter when the time is right.
 
 ## Naming and positioning
 
