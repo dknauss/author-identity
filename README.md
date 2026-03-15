@@ -22,7 +22,10 @@ Current shipped scope:
 
 Next planned tranches:
 
-- WP-06 rights and AI-consent output
+- additional WP-06 rights work:
+  - feed-level rights metadata
+  - audit logging
+  - richer editor UI
 - Molongui adapter support
 
 Longer-range identity work such as `did:web:` remains in the vision/research layer, not the active roadmap.
@@ -54,6 +57,7 @@ The current implementation focus is the `byline-feed` plugin:
 | Research | [docs/README.md](docs/README.md): Documentation tree index<br>[docs/research/README.md](docs/research/README.md): Curated research index with current vs exploratory tiers<br>[multi-author-matrix.md](docs/research/current/multi-author-matrix.md): Comparison of WordPress multi-author systems<br>[protocol-coverage-map.md](docs/research/current/protocol-coverage-map.md): Protocol coverage by output channel<br>[architecture.md](docs/research/current/architecture.md): HM Authorship architecture notes<br>[landscape.md](docs/research/current/landscape.md): Plugin ecosystem and historical lineage<br>[metadata-models-for-publishers.md](docs/research/current/metadata-models-for-publishers.md): WP-05 JSON-LD background and longer-term publication metadata context |
 | Playground | [playground/README.md](playground/README.md): Playground demo index<br>[playground/output-demo/README.md](playground/output-demo/README.md): Stable output-demo bundle for feeds, `fediverse:creator`, and JSON-LD |
 | Quality | [ASSESSMENT.md](docs/quality/ASSESSMENT.md): Project assessment and recommendations<br>[TEST_COVERAGE_MATRIX.md](docs/quality/TEST_COVERAGE_MATRIX.md): Coverage status and remaining gaps<br>[TDD_TESTING_STANDARD.md](docs/quality/TDD_TESTING_STANDARD.md): Testing workflow and definition of done |
+| Release | [RELEASE_CHECKLIST.md](docs/quality/RELEASE_CHECKLIST.md): Short operational checklist for packaging and publishing a Byline Feed release |
 | Work Packages | [wp-01.md](Implementation%20Strategy/wp-01.md) to [wp-06.md](Implementation%20Strategy/wp-06.md): Detailed delivery specs by package<br>[gap-analysis.md](Implementation%20Strategy/gap-analysis.md): Audit of code against the specs<br>[implementation-spec.md](Implementation%20Strategy/implementation-spec.md): Supplemental strategy details and cross-cutting concerns<br>[code-review-plan.md](Implementation%20Strategy/code-review-plan.md): Post-Gate-A hardening backlog from source/test review |
 | Legacy | [Byline RSS Spec Adoption/](Byline%20RSS%20Spec%20Adoption/): Earlier planning and legacy positioning documents |
 
