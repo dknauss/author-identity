@@ -42,7 +42,7 @@ test( 'classic editor ai consent metabox saves and persists', async ( {
 
 	const saveButton = page.locator( '#save-post, #publish' ).first();
 	await Promise.all( [
-		page.waitForLoadState( 'domcontentloaded' ),
+		page.waitForNavigation( { waitUntil: 'domcontentloaded' } ),
 		saveButton.click(),
 	] );
 
