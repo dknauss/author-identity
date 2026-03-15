@@ -310,3 +310,40 @@ jobs:
 
       - name: Build assets
         run: npm run build
+
+  e2e:
+    name: E2E — Playwright
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: byline-feed
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Set up Node
+        uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: byline-feed/package-lock.json
+
+      - name: Install Node dependencies
+        run: npm ci
+
+      - name: Install Playwright browser dependencies
+        run: npx playwright install --with-deps chromium
+
+      - name: Run Playwright E2E suite
+        run: npm run test:e2e
+
+      - name: Upload Playwright artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-artifacts
+          path: |
+            byline-feed/playwright-report
+            byline-feed/test-results
+          if-no-files-found: ignore

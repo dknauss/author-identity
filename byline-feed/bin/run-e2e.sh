@@ -8,4 +8,4 @@ cd "${PLUGIN_DIR}"
 
 bash bin/setup-e2e.sh
 npx playwright install chromium
-npx playwright test
+npx playwright test "$@"
