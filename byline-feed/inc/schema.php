@@ -9,6 +9,7 @@ namespace Byline_Feed\Schema;
 
 use WP_Post;
 use function Byline_Feed\byline_feed_get_authors;
+use function Byline_Feed\byline_feed_get_perspective;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -158,6 +159,19 @@ function get_article_schema_for_post( WP_Post $post ): array {
 		'publisher'     => get_publisher_schema(),
 	);
 
+	// Add bylinePerspective as Article-level additionalProperty when WP-03 meta is set.
+	$perspective = byline_feed_get_perspective( $post );
+
+	if ( '' !== $perspective ) {
+		$article['additionalProperty'] = array(
+			array(
+				'@type' => 'PropertyValue',
+				'name'  => 'bylinePerspective',
+				'value' => $perspective,
+			),
+		);
+	}
+
 	/**
 	 * Filters the full JSON-LD Article object before output.
 	 *
@@ -199,6 +213,29 @@ function get_person_schema( object $author ): array {
 
 	if ( ! empty( $same_as ) ) {
 		$person['sameAs'] = $same_as;
+	}
+
+	// additionalProperty: bylineRole and aiTrainingConsent (omitted if empty).
+	$additional = array();
+
+	if ( isset( $author->role ) && is_string( $author->role ) && '' !== $author->role ) {
+		$additional[] = array(
+			'@type' => 'PropertyValue',
+			'name'  => 'bylineRole',
+			'value' => $author->role,
+		);
+	}
+
+	if ( isset( $author->ai_consent ) && is_string( $author->ai_consent ) && '' !== $author->ai_consent ) {
+		$additional[] = array(
+			'@type' => 'PropertyValue',
+			'name'  => 'aiTrainingConsent',
+			'value' => $author->ai_consent,
+		);
+	}
+
+	if ( ! empty( $additional ) ) {
+		$person['additionalProperty'] = $additional;
 	}
 
 	/**

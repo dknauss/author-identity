@@ -378,4 +378,236 @@ class Test_Schema extends WP_UnitTestCase {
 			$schema['author'][0]['sameAs']
 		);
 	}
+
+	public function test_person_includes_byline_role_as_additional_property(): void {
+		$post_id = self::factory()->post->create(
+			array(
+				'post_status' => 'publish',
+				'post_title'  => 'Schema Role Test',
+			)
+		);
+
+		add_filter(
+			'byline_feed_authors',
+			static function ( array $authors, WP_Post $post ) use ( $post_id ): array {
+				if ( $post_id !== $post->ID ) {
+					return $authors;
+				}
+
+				return array(
+					(object) array(
+						'id'           => 'role-author',
+						'display_name' => 'Role Author',
+						'role'         => 'creator',
+					),
+				);
+			},
+			10,
+			2
+		);
+
+		$schema = $this->decode_schema_output( $this->capture_schema_output( get_permalink( $post_id ) ) );
+
+		$this->assertArrayHasKey( 'additionalProperty', $schema['author'][0] );
+
+		$role_prop = null;
+		foreach ( $schema['author'][0]['additionalProperty'] as $prop ) {
+			if ( 'bylineRole' === $prop['name'] ) {
+				$role_prop = $prop;
+				break;
+			}
+		}
+
+		$this->assertNotNull( $role_prop, 'bylineRole PropertyValue should be present' );
+		$this->assertSame( 'PropertyValue', $role_prop['@type'] );
+		$this->assertSame( 'creator', $role_prop['value'] );
+	}
+
+	public function test_person_includes_ai_training_consent_as_additional_property(): void {
+		$post_id = self::factory()->post->create(
+			array(
+				'post_status' => 'publish',
+				'post_title'  => 'Schema Consent Test',
+			)
+		);
+
+		add_filter(
+			'byline_feed_authors',
+			static function ( array $authors, WP_Post $post ) use ( $post_id ): array {
+				if ( $post_id !== $post->ID ) {
+					return $authors;
+				}
+
+				return array(
+					(object) array(
+						'id'           => 'consent-author',
+						'display_name' => 'Consent Author',
+						'ai_consent'   => 'deny',
+					),
+				);
+			},
+			10,
+			2
+		);
+
+		$schema = $this->decode_schema_output( $this->capture_schema_output( get_permalink( $post_id ) ) );
+
+		$consent_prop = null;
+		foreach ( $schema['author'][0]['additionalProperty'] as $prop ) {
+			if ( 'aiTrainingConsent' === $prop['name'] ) {
+				$consent_prop = $prop;
+				break;
+			}
+		}
+
+		$this->assertNotNull( $consent_prop, 'aiTrainingConsent PropertyValue should be present' );
+		$this->assertSame( 'PropertyValue', $consent_prop['@type'] );
+		$this->assertSame( 'deny', $consent_prop['value'] );
+	}
+
+	public function test_person_omits_additional_property_when_role_and_consent_empty(): void {
+		$post_id = self::factory()->post->create(
+			array(
+				'post_status' => 'publish',
+				'post_title'  => 'Schema No Props',
+			)
+		);
+
+		add_filter(
+			'byline_feed_authors',
+			static function ( array $authors, WP_Post $post ) use ( $post_id ): array {
+				if ( $post_id !== $post->ID ) {
+					return $authors;
+				}
+
+				return array(
+					(object) array(
+						'id'           => 'plain-author',
+						'display_name' => 'Plain Author',
+						'role'         => '',
+						'ai_consent'   => '',
+					),
+				);
+			},
+			10,
+			2
+		);
+
+		$schema = $this->decode_schema_output( $this->capture_schema_output( get_permalink( $post_id ) ) );
+
+		$this->assertArrayNotHasKey( 'additionalProperty', $schema['author'][0] );
+	}
+
+	public function test_article_includes_byline_perspective_as_additional_property(): void {
+		$post_id = self::factory()->post->create(
+			array(
+				'post_status' => 'publish',
+				'post_title'  => 'Schema Perspective Test',
+			)
+		);
+
+		update_post_meta( $post_id, '_byline_perspective', 'analysis' );
+
+		add_filter(
+			'byline_feed_authors',
+			static function ( array $authors, WP_Post $post ) use ( $post_id ): array {
+				if ( $post_id !== $post->ID ) {
+					return $authors;
+				}
+
+				return array(
+					(object) array(
+						'id'           => 'perspective-author',
+						'display_name' => 'Perspective Author',
+					),
+				);
+			},
+			10,
+			2
+		);
+
+		$schema = $this->decode_schema_output( $this->capture_schema_output( get_permalink( $post_id ) ) );
+
+		$this->assertArrayHasKey( 'additionalProperty', $schema );
+
+		$perspective_prop = null;
+		foreach ( $schema['additionalProperty'] as $prop ) {
+			if ( 'bylinePerspective' === $prop['name'] ) {
+				$perspective_prop = $prop;
+				break;
+			}
+		}
+
+		$this->assertNotNull( $perspective_prop, 'bylinePerspective PropertyValue should be present on Article' );
+		$this->assertSame( 'PropertyValue', $perspective_prop['@type'] );
+		$this->assertSame( 'analysis', $perspective_prop['value'] );
+	}
+
+	public function test_article_omits_perspective_when_meta_not_set(): void {
+		$post_id = self::factory()->post->create(
+			array(
+				'post_status' => 'publish',
+				'post_title'  => 'Schema No Perspective',
+			)
+		);
+
+		add_filter(
+			'byline_feed_authors',
+			static function ( array $authors, WP_Post $post ) use ( $post_id ): array {
+				if ( $post_id !== $post->ID ) {
+					return $authors;
+				}
+
+				return array(
+					(object) array(
+						'id'           => 'no-perspective-author',
+						'display_name' => 'No Perspective Author',
+					),
+				);
+			},
+			10,
+			2
+		);
+
+		$schema = $this->decode_schema_output( $this->capture_schema_output( get_permalink( $post_id ) ) );
+
+		$this->assertArrayNotHasKey( 'additionalProperty', $schema );
+	}
+
+	public function test_person_includes_both_role_and_consent_in_additional_property(): void {
+		$post_id = self::factory()->post->create(
+			array(
+				'post_status' => 'publish',
+				'post_title'  => 'Schema Both Props',
+			)
+		);
+
+		add_filter(
+			'byline_feed_authors',
+			static function ( array $authors, WP_Post $post ) use ( $post_id ): array {
+				if ( $post_id !== $post->ID ) {
+					return $authors;
+				}
+
+				return array(
+					(object) array(
+						'id'           => 'full-author',
+						'display_name' => 'Full Author',
+						'role'         => 'editor',
+						'ai_consent'   => 'allow',
+					),
+				);
+			},
+			10,
+			2
+		);
+
+		$schema = $this->decode_schema_output( $this->capture_schema_output( get_permalink( $post_id ) ) );
+
+		$this->assertCount( 2, $schema['author'][0]['additionalProperty'] );
+
+		$names = array_column( $schema['author'][0]['additionalProperty'], 'name' );
+		$this->assertContains( 'bylineRole', $names );
+		$this->assertContains( 'aiTrainingConsent', $names );
+	}
 }
