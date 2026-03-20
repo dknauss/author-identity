@@ -223,6 +223,7 @@ function render_json_feed(): void {
 		array(
 			'numberposts' => $posts_per_feed,
 			'post_status' => 'publish',
+			'post_type'   => get_post_types( array( 'public' => true ) ),
 		)
 	);
 

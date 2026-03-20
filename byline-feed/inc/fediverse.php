@@ -61,11 +61,16 @@ function get_handles_for_post( WP_Post $post ): array {
 		/**
 		 * Filters a fediverse handle before meta-tag output.
 		 *
+		 * Filtered values are re-normalized to ensure valid handle format.
+		 *
 		 * @param string $handle Normalized fediverse handle or empty string.
 		 * @param object $author Normalized author object.
 		 */
 		$handle = apply_filters( 'byline_feed_fediverse_handle', $handle, $author );
-		$handle = normalize_byline_feed_fediverse( $handle );
+
+		if ( is_string( $handle ) && '' !== $handle ) {
+			$handle = normalize_byline_feed_fediverse( $handle );
+		}
 
 		if ( '' === $handle || in_array( $handle, $handles, true ) ) {
 			continue;

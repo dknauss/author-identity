@@ -170,7 +170,7 @@ function enqueue_editor_assets(): void {
 		return;
 	}
 
-	$asset = require $asset_file;
+	$asset = require_once $asset_file;
 
 	wp_enqueue_script(
 		'byline-feed-perspective-panel',

@@ -23,7 +23,7 @@ function output_person( object $author ): void {
 	$xml .= "\t\t\t\t<byline:name>" . esc_xml_value( $author->display_name ) . "</byline:name>\n";
 
 	if ( ! empty( $author->description ) ) {
-		$context = mb_substr( wp_strip_all_tags( $author->description ), 0, 280 );
+		$context = mb_substr( wp_strip_all_tags( $author->description ), 0, 280, 'UTF-8' );
 		$xml    .= "\t\t\t\t<byline:context>" . esc_xml_value( $context ) . "</byline:context>\n";
 	}
 
