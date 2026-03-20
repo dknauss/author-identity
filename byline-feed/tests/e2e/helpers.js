@@ -14,6 +14,21 @@ function getFixturePostId() {
 	return fs.readFileSync( postIdFile, 'utf8' ).trim();
 }
 
+function getPublishedPostId() {
+	const postIdFile = path.join(
+		__dirname,
+		'../../.tmp/e2e-published-post-id'
+	);
+
+	if ( ! fs.existsSync( postIdFile ) ) {
+		throw new Error(
+			'Missing E2E published post ID. Run `npm run env:setup` first.'
+		);
+	}
+
+	return fs.readFileSync( postIdFile, 'utf8' ).trim();
+}
+
 async function login( page, targetPath = '/wp-admin/' ) {
 	await page.goto( targetPath );
 
@@ -74,6 +89,7 @@ async function openPerspectivePanel( page ) {
 module.exports = {
 	dismissWelcomeGuide,
 	getFixturePostId,
+	getPublishedPostId,
 	login,
 	openPerspectivePanel,
 };

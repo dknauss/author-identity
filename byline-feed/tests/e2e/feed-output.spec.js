@@ -1,5 +1,5 @@
 const { test, expect } = require( '@playwright/test' );
-const { getFixturePostId } = require( './helpers' );
+const { getFixturePostId, getPublishedPostId } = require( './helpers' );
 
 test( 'RSS2 feed contains byline namespace and contributors block', async ( {
 	page,
@@ -42,7 +42,7 @@ test( 'JSON Feed is valid JSON with _byline extension at feed level', async ( {
 test( 'fixture post contains JSON-LD Article schema with Person author', async ( {
 	page,
 } ) => {
-	const postId = getFixturePostId();
+	const postId = getPublishedPostId();
 
 	await page.goto( `/?p=${ postId }` );
 
@@ -91,7 +91,7 @@ test( 'fixture post contains JSON-LD Article schema with Person author', async (
 test( 'fixture post fediverse:creator meta tag is present when handle is set', async ( {
 	page,
 } ) => {
-	const postId = getFixturePostId();
+	const postId = getPublishedPostId();
 
 	await page.goto( `/?p=${ postId }` );
 

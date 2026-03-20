@@ -16,6 +16,7 @@ npx @wordpress/env start
 
 npx @wordpress/env run cli wp plugin activate byline-feed --allow-root
 npx @wordpress/env run cli wp option update permalink_structure '/%postname%/' --allow-root
+npx @wordpress/env run cli wp rewrite flush --allow-root
 npx @wordpress/env run cli wp user update admin --user_pass='password' --allow-root
 npx @wordpress/env run cli bash -lc "mkdir -p /var/www/html/wp-content/mu-plugins" --allow-root
 npx @wordpress/env run cli bash -lc "cat > '${MU_PLUGIN_FILE}' <<'PHP'
@@ -36,6 +37,7 @@ add_filter(
 );
 PHP" --allow-root
 
+# Draft fixture post for perspective-panel editor tests.
 POST_ID="$(
 	npx @wordpress/env run cli wp eval '
 		$post = get_page_by_path( "byline-perspective-e2e", OBJECT, "post" );
@@ -60,4 +62,35 @@ npx @wordpress/env run cli wp post meta delete "${POST_ID}" _byline_ai_consent -
 npx @wordpress/env run cli wp user meta delete admin byline_feed_ai_consent --allow-root >/dev/null 2>&1 || true
 
 printf '%s\n' "${POST_ID}" > "${POST_ID_FILE}"
-echo "E2E fixture post: ${POST_ID}"
+echo "E2E fixture post (draft): ${POST_ID}"
+
+# Published fixture post for feed-output and schema tests.
+PUBLISHED_POST_ID_FILE="${TMP_DIR}/e2e-published-post-id"
+
+PUB_POST_ID="$(
+	npx @wordpress/env run cli wp eval '
+		$posts = get_posts( array(
+			"name"        => "byline-feed-output-e2e",
+			"post_type"   => "post",
+			"post_status" => "publish",
+			"numberposts" => 1,
+		) );
+		if ( ! empty( $posts ) ) {
+			echo $posts[0]->ID;
+		}
+	' --allow-root | tr -d '\r'
+)"
+
+if [[ -z "${PUB_POST_ID}" ]]; then
+	PUB_POST_ID="$(npx @wordpress/env run cli wp post create \
+		--post_type=post \
+		--post_status=publish \
+		--post_title='Byline Feed Output E2E' \
+		--post_name='byline-feed-output-e2e' \
+		--post_content='Feed output fixture content for E2E testing.' \
+		--porcelain \
+		--allow-root | tr -d '\r')"
+fi
+
+printf '%s\n' "${PUB_POST_ID}" > "${PUBLISHED_POST_ID_FILE}"
+echo "E2E fixture post (published): ${PUB_POST_ID}"
