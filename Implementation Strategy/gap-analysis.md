@@ -14,7 +14,7 @@
 | WP-02: RSS2, Atom & JSON Feed Output | All three output files | RSS2 + Atom + JSON Feed tests | Implemented | Automated coverage now exists for all three feed formats |
 | WP-03: Perspective Field | PHP + TSX present | PHPUnit + Playwright coverage | Implemented | Browser-verified in a self-contained `wp-env` harness |
 | WP-04: fediverse:creator | Output module + user meta/UI | Meta-tag, normalization, and profile-field tests | Implemented | Automated coverage exists; ActivityPub integration remains conservative |
-| WP-05: JSON-LD Schema | Output module present | Schema graph and coexistence tests | Implemented | Automated coverage exists; real SEO-plugin filter integration is intentionally conservative |
+| WP-05: JSON-LD Schema | Standalone mode only | Schema graph and coexistence tests | Partially implemented | Mode C (standalone) works; Mode A (Yoast enrichment) and Mode B (Rank Math enrichment) are designed in `wp-05.md` but not coded — `schema-yoast.php` and `schema-rankmath.php` do not exist. Standalone Person objects also missing `bylineRole`, `bylinePerspective`, and `aiTrainingConsent` fields. See `known-gaps.md § WP-05 implementation gap`. |
 | WP-06: Rights & AI Consent | Initial slice present | Rights tests present | Partially implemented | HTML/header/`ai.txt` signals covered; feed-level rights and audit logging remain |
 
 ---
@@ -34,20 +34,24 @@ Files still planned by the implementation strategy that do not yet exist:
 
 These are the meaningful remaining gaps after WP-04 completion.
 
-### 1. WP-06 is now partially implemented; WP-04 and WP-05 are fully in place
+### 1. WP-05 is partially implemented; WP-06 is partially implemented; WP-04 is fully in place
 
-WP-04 and WP-05 are no longer gaps. The plugin now has:
+WP-04 is no longer a gap. The plugin now has:
 
 - plugin-owned user meta and profile UI for fediverse handles
 - `fediverse:creator` meta tag output on singular content
 - a conservative `ap_actor_url` resolution field for linked WordPress users
 - PHPUnit coverage for handle normalization, profile UI, and meta-tag rendering
+
+WP-05 standalone schema output (Mode C) works:
+
 - JSON-LD `Article` + ordered `Person` schema on singular content
 - JSON-LD `sameAs` population from `profiles[]` plus optional `ap_actor_url`
-- conservative default suppression when known schema-owning SEO plugins are active
 - PHPUnit coverage for graph shape, author ordering, guest omission, and Yoast/Rank Math coexistence rules
 
-The remaining output-channel gap is the rest of WP-06: feed-level rights metadata, audit logging, and richer UI/editor integration.
+**WP-05 Modes A and B are not implemented.** The WP-05 spec describes three modes — Yoast enrichment via `wpseo_schema_article`/`wpseo_schema_person_data` filters (Mode A), Rank Math enrichment via `rank_math/json_ld` (Mode B), and standalone output (Mode C). Only Mode C exists. The current code detects Yoast/Rank Math and disables output rather than enriching their graph. The files `schema-yoast.php` and `schema-rankmath.php` do not exist. The standalone `get_person_schema()` also omits `bylineRole`, `bylinePerspective`, and `aiTrainingConsent` fields specified in the WP-05 `byline_feed_build_person_object()` scaffold. See `known-gaps.md § WP-05 implementation gap` for full detail.
+
+The remaining WP-06 gap is: feed-level rights metadata, audit logging, and richer UI/editor integration.
 
 `ap_actor_url` is now part of the official WP-04/WP-05 design boundary, but only as a cross-cutting field for those work packages. It is not a standalone roadmap item. `did:web:` remains vision-level future work and should not be treated as an active post-Gate-A deliverable.
 
@@ -163,11 +167,12 @@ The following items appeared in earlier audits but are now resolved:
 | Priority | Gaps | Rationale |
 | --- | --- | --- |
 | **Current state** | #3 (Gate A complete) | MVP quality gate is satisfied; keep CI green and maintain release discipline |
+| **Immediate hardening** | P1 source fixes (code-review-plan.md items 1–4) | Low-risk fixes that close known correctness issues in shipped code |
+| **Current next roadmap work** | #1 (WP-05 Modes A/B + standalone field enrichment) | The Yoast/Rank Math enrichment paths are the highest-impact unbuilt work — they determine whether byline data reaches NLWeb agents on 13M Yoast installs |
 | **Post-Gate-A hardening** | #8, #9 (specific testing roadmap and staged Playground demos) | Keep extending verification depth and demo quality without reopening Gate A |
-| **Current next roadmap work** | #1 (WP-06 continuation) | The first rights slice is in place; the remaining tranche is feed-level rights metadata, audit logging, and richer UI |
-| **Later adapter work** | Molongui and any other unsupported multi-author plugins | Lower priority than WP-06 and should meet the same real-plugin validation bar HM now has |
+| **WP-06 continuation** | #1 (feed-level rights, audit logging, block editor consent UI) | The first rights slice is in place; remaining tranche follows WP-05 completion |
+| **Later adapter work** | Molongui and any other unsupported multi-author plugins | Lower priority than WP-05/WP-06 and should meet the same real-plugin validation bar HM now has |
 | **Pre-1.0 spec alignment** | Multi-author-per-item divergence, JSON Feed structure divergence, terminology drift (`organization` / `publication` / `publisher`) | Resolve the known Byline-spec structural and terminology issues with the spec author before calling the plugin a stable 1.0 implementation |
-| **Next product work** | #1 (WP-06 continuation) | The adapter/output baseline is now core + CAP + PPA + HM plus WP-04/WP-05 and an initial rights slice; remaining WP-06 work is the next product step |
 | **Process hygiene** | #5, #6 (track dev-tooling advisories, use changelog consistently) | Keeps maintenance and release quality disciplined without blocking feature work |
 
 ---
