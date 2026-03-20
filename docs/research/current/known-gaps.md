@@ -277,12 +277,14 @@ The normalized author object contract (see `implementation-spec.md`) includes `a
 These are code-level findings from the full source review. See
 `Implementation Strategy/code-review-plan.md` for the complete prioritized backlog.
 
-### P1 — Moderate issues (open)
+### P1 — Moderate issues (resolved)
 
-- **`feed-json.php`:** `get_posts()` called without explicit `post_type`, silently excluding public CPTs from JSON Feed.
-- **`fediverse.php`:** Duplicate handle normalization — `normalize_byline_feed_fediverse()` called twice on the same handle.
-- **`feed-common.php`:** `mb_substr()` omits encoding parameter (should specify `'UTF-8'`).
-- **`perspective.php`:** Uses `require` instead of `require_once` for asset file inclusion.
+All four P1 items were resolved in the current codebase prior to the 2026-03-20 review:
+
+- **`feed-json.php`:** ✅ `get_posts()` now includes `'post_type' => get_post_types( array( 'public' => true ) )` (line 226).
+- **`fediverse.php`:** ✅ The double normalization (lines 59 and 72) is intentional — pre-filter normalization for the input value, post-filter normalization as a safety net for filtered values. Not a bug.
+- **`feed-common.php`:** ✅ `mb_substr()` now specifies `'UTF-8'` encoding parameter (line 26).
+- **`perspective.php`:** ✅ Uses `require_once` for asset file inclusion (line 173). Safe because `enqueue_block_editor_assets` fires once per request.
 
 ### P2 — Defensive improvements (open)
 
@@ -295,11 +297,11 @@ These are code-level findings from the full source review. See
 
 See `Implementation Strategy/code-review-plan.md` for the complete prioritized backlog.
 
-### P1 — High priority (open)
+### P1 — High priority (partially resolved)
 
-- **Feed output E2E tests.** The `wp-env` + Playwright harness exists but only covers the perspective panel. No browser-level tests verify that RSS2, Atom, JSON Feed, fediverse:creator, or JSON-LD actually appear on served pages.
-- **Empty authors array.** No test for graceful handling when no author can be resolved (deleted user, `post_author = 0` with no adapter match).
-- **PPA integration test parity.** CAP integration tests cover WP users, guests, multi-author, and contract shape. PPA integration tests are thinner — missing guest author handling, multi-author posts, and user meta in PPA context.
+- **Feed output E2E tests.** ✅ `tests/e2e/feed-output.spec.js` now covers RSS2 namespace+contributors, Atom namespace, JSON Feed `_byline` extension, JSON-LD Article+Person schema on singular posts, and `fediverse:creator` meta tags. All 5 tests pass against a live Local site (single-instance.local, 2026-03-20).
+- **Empty authors array.** (open) No test for graceful handling when no author can be resolved (deleted user, `post_author = 0` with no adapter match).
+- **PPA integration test parity.** (open) CAP integration tests cover WP users, guests, multi-author, and contract shape. PPA integration tests are thinner — missing guest author handling, multi-author posts, and user meta in PPA context.
 
 ### P2 — Medium priority (open)
 

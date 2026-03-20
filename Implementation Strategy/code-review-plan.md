@@ -8,35 +8,29 @@
 
 ## Source fixes
 
-### P1 — Moderate issues
+### P1 — Moderate issues (all resolved)
 
-#### 1. feed-json.php: add explicit post_type to get_posts()
+All four P1 source issues have been resolved in the current codebase. Verified 2026-03-20.
 
-**File:** `inc/feed-json.php` (~line 222)
-**Problem:** `get_posts()` is called without an explicit `post_type` parameter. WordPress defaults to `'post'` only, which will silently exclude custom post types that should appear in the JSON Feed.
-**Fix:** Add `'post_type' => get_post_types( array( 'public' => true ) )` or match the post types used by the RSS2 and Atom feed queries.
-**Test:** Verify JSON Feed includes a CPT post when a public CPT is registered.
+#### 1. feed-json.php: ✅ post_type now explicit
 
-#### 2. fediverse.php: remove duplicate handle normalization
+**File:** `inc/feed-json.php` (line 226)
+**Resolution:** `get_posts()` now includes `'post_type' => get_post_types( array( 'public' => true ) )`.
 
-**File:** `inc/fediverse.php` (lines ~59 and ~68)
-**Problem:** `normalize_byline_feed_fediverse()` is called twice on the same handle — once when reading meta and again before output. The second call is redundant.
-**Fix:** Remove the redundant call. Keep the one closest to output.
-**Test:** Existing fediverse tests should continue to pass unchanged.
+#### 2. fediverse.php: ✅ double normalization is correct
 
-#### 3. feed-common.php: specify UTF-8 encoding in mb_substr
+**File:** `inc/fediverse.php` (lines 59 and 72)
+**Resolution:** Re-reviewed — the two `normalize_byline_feed_fediverse()` calls serve different purposes. Line 59 normalizes the adapter's output. Line 72 re-normalizes after the `byline_feed_fediverse_handle` filter, which may return a non-normalized string. Both are necessary. Not a bug.
 
-**File:** `inc/feed-common.php` (line ~26)
-**Problem:** `mb_substr( wp_strip_all_tags( $author->description ), 0, 280 )` omits the encoding parameter. WordPress usually defaults to UTF-8, but explicit is safer.
-**Fix:** Change to `mb_substr( ..., 0, 280, 'UTF-8' )`.
-**Test:** No new test needed; existing feed tests cover description truncation.
+#### 3. feed-common.php: ✅ UTF-8 encoding specified
 
-#### 4. perspective.php: use require_once instead of require
+**File:** `inc/feed-common.php` (line 26)
+**Resolution:** `mb_substr( ..., 0, 280, 'UTF-8' )` already includes the encoding parameter.
 
-**File:** `inc/perspective.php` (line ~173)
-**Problem:** Asset file inclusion uses `require` instead of `require_once`. Safe today because the function is only called once, but `require_once` prevents double-inclusion if the enqueue hook fires twice.
-**Fix:** Change `require` to `require_once`.
-**Test:** No new test needed.
+#### 4. perspective.php: ✅ uses require_once
+
+**File:** `inc/perspective.php` (line 173)
+**Resolution:** Already uses `require_once`. The `enqueue_block_editor_assets` hook fires once per request, so this is safe.
 
 ### P2 — Defensive improvements
 
@@ -58,17 +52,16 @@
 
 ### P1 — High priority
 
-#### 7. E2E: feed output tests
+#### 7. E2E: feed output tests ✅ (resolved)
 
-**Current state:** The `wp-env` + Playwright harness exists and currently covers the perspective panel only. There is still no browser-level coverage for feed output, schema, or fediverse output.
-**Plan:** Add at least:
-- RSS2 feed loads and contains `<byline:contributors>` block
-- Atom feed loads and contains Byline namespace elements
-- JSON Feed endpoint returns valid JSON with `_byline` extensions
-- HTML head contains `fediverse:creator` meta tag on a singular post
-- HTML head contains JSON-LD `Article` + `Person` schema on a singular post
+**Resolution:** `tests/e2e/feed-output.spec.js` now covers all five planned assertions in a single spec file:
+- RSS2 feed loads and contains `xmlns:byline` namespace and `byline:contributors` block ✅
+- Atom feed loads and contains Byline namespace elements ✅
+- JSON Feed endpoint returns valid JSON with `_byline` extension at feed level ✅
+- HTML head contains JSON-LD `Article` + `Person` schema on a singular post ✅
+- HTML head contains `fediverse:creator` meta tag when author has a handle set ✅
 
-**Files:** `tests/e2e/feed-output.spec.js`, `tests/e2e/fediverse.spec.js`, `tests/e2e/schema.spec.js`
+All 5 tests verified passing against live Local site (single-instance.local, 2026-03-20). Tests also run against `wp-env` via `npm run test:e2e`.
 
 #### 8. Unit: empty authors array
 
@@ -138,8 +131,7 @@ Do **not** solve this by copying ActivityPub-derived handles into stored user me
 
 ## Execution notes
 
-- All P1 source fixes (items 1–4) can be done in a single commit.
-- P2 source fixes (items 5–6) can be a second commit.
-- Test items are independent of each other and can be done in any order.
-- E2E tests (item 7) build on the existing `wp-env` + Playwright harness. Source fixes do not.
+- All P1 source fixes (items 1–4) are resolved. No commit needed.
+- P2 source fixes (items 5–6) can be a standalone commit.
+- E2E feed output tests (item 7) are resolved. The remaining test items (8–16) are independent and can be done in any order.
 - None of these items change the plugin's public API or output format.

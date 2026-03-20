@@ -167,7 +167,7 @@ The following items appeared in earlier audits but are now resolved:
 | Priority | Gaps | Rationale |
 | --- | --- | --- |
 | **Current state** | #3 (Gate A complete) | MVP quality gate is satisfied; keep CI green and maintain release discipline |
-| **Immediate hardening** | P1 source fixes (code-review-plan.md items 1–4) | Low-risk fixes that close known correctness issues in shipped code |
+| **Immediate hardening** | ~~P1 source fixes~~ ✅ resolved; P1 E2E feed-output tests ✅ resolved | All P1 source issues and feed-output E2E coverage verified 2026-03-20 |
 | **Current next roadmap work** | #1 (WP-05 Modes A/B + standalone field enrichment) | The Yoast/Rank Math enrichment paths are the highest-impact unbuilt work — they determine whether byline data reaches NLWeb agents on 13M Yoast installs |
 | **Post-Gate-A hardening** | #8, #9 (specific testing roadmap and staged Playground demos) | Keep extending verification depth and demo quality without reopening Gate A |
 | **WP-06 continuation** | #1 (feed-level rights, audit logging, block editor consent UI) | The first rights slice is in place; remaining tranche follows WP-05 completion |
