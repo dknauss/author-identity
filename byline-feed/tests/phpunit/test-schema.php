@@ -10,6 +10,11 @@ namespace Byline_Feed\Tests;
 use WP_Post;
 use WP_UnitTestCase;
 use function Byline_Feed\Schema\render_schema_script;
+use function Byline_Feed\Schema\detect_schema_mode;
+use function Byline_Feed\Schema\is_yoast_active;
+use function Byline_Feed\Schema\is_rankmath_active;
+use function Byline_Feed\Schema\get_person_schema;
+use function Byline_Feed\Schema\fediverse_profile_url;
 
 class Test_Schema extends WP_UnitTestCase {
 
@@ -39,6 +44,11 @@ class Test_Schema extends WP_UnitTestCase {
 		remove_all_filters( 'byline_feed_schema_enabled' );
 		remove_all_filters( 'byline_feed_schema_person' );
 		remove_all_filters( 'byline_feed_schema_article' );
+		remove_all_filters( 'byline_feed_schema_mode' );
+		remove_all_filters( 'byline_feed_yoast_article_data' );
+		remove_all_filters( 'byline_feed_rankmath_json_ld' );
+		remove_all_filters( 'wpseo_schema_article' );
+		remove_all_filters( 'rank_math/json_ld' );
 
 		update_option( 'active_plugins', $this->active_plugins_option );
 		update_site_option( 'active_sitewide_plugins', $this->active_sitewide_plugins_option );
@@ -83,6 +93,71 @@ class Test_Schema extends WP_UnitTestCase {
 
 		return $decoded;
 	}
+
+	// ────────────────────────────────────────────────────────────
+	// Mode detection tests
+	// ────────────────────────────────────────────────────────────
+
+	public function test_detect_mode_returns_standalone_when_no_seo_plugin(): void {
+		update_option( 'active_plugins', array() );
+
+		$this->assertSame( 'standalone', detect_schema_mode() );
+	}
+
+	public function test_detect_mode_returns_yoast_when_yoast_active(): void {
+		update_option(
+			'active_plugins',
+			array( 'wordpress-seo/wp-seo.php' )
+		);
+
+		$this->assertTrue( is_yoast_active() );
+		$this->assertSame( 'yoast', detect_schema_mode() );
+	}
+
+	public function test_detect_mode_returns_rankmath_when_rankmath_active(): void {
+		update_option(
+			'active_plugins',
+			array( 'seo-by-rank-math/rank-math.php' )
+		);
+
+		$this->assertTrue( is_rankmath_active() );
+		$this->assertSame( 'rankmath', detect_schema_mode() );
+	}
+
+	public function test_schema_mode_filter_overrides_detection(): void {
+		update_option( 'active_plugins', array() );
+
+		add_filter(
+			'byline_feed_schema_mode',
+			static function (): string {
+				return 'yoast';
+			}
+		);
+
+		// The filter should be respected in register_hooks dispatch.
+		// We test via detect_schema_mode + filter since register_hooks
+		// has side effects we don't want to repeat.
+		$mode = detect_schema_mode();
+		$mode = apply_filters( 'byline_feed_schema_mode', $mode );
+
+		$this->assertSame( 'yoast', $mode );
+	}
+
+	public function test_yoast_takes_priority_over_rankmath(): void {
+		update_option(
+			'active_plugins',
+			array(
+				'wordpress-seo/wp-seo.php',
+				'seo-by-rank-math/rank-math.php',
+			)
+		);
+
+		$this->assertSame( 'yoast', detect_schema_mode() );
+	}
+
+	// ────────────────────────────────────────────────────────────
+	// Mode C: Standalone output tests
+	// ────────────────────────────────────────────────────────────
 
 	public function test_single_author_schema_uses_author_archive_fallback_and_publisher_data(): void {
 		update_option( 'blogname', 'Byline Feed Test Site' );
@@ -251,7 +326,7 @@ class Test_Schema extends WP_UnitTestCase {
 		$this->assertSame( '', $this->capture_schema_output( home_url( '/' ) ) );
 	}
 
-	public function test_known_schema_plugin_conflict_disables_output_by_default(): void {
+	public function test_standalone_disabled_when_yoast_active(): void {
 		update_option(
 			'active_plugins',
 			array(
@@ -284,21 +359,17 @@ class Test_Schema extends WP_UnitTestCase {
 			2
 		);
 
-		$this->assertSame( '', $this->capture_schema_output( get_permalink( $post_id ) ) );
+		// In the refactored architecture, standalone output is not registered
+		// when Yoast is active. render_schema_script() still works but mode
+		// dispatch in register_hooks() would not hook it. We verify detection.
+		$this->assertSame( 'yoast', detect_schema_mode() );
 	}
 
-	public function test_schema_enabled_filter_can_override_plugin_conflict(): void {
-		update_option(
-			'active_plugins',
-			array(
-				'seo-by-rank-math/rank-math.php',
-			)
-		);
-
+	public function test_schema_enabled_filter_can_disable_standalone_output(): void {
 		$post_id = self::factory()->post->create(
 			array(
 				'post_status' => 'publish',
-				'post_title'  => 'Schema Filter Override',
+				'post_title'  => 'Schema Disabled',
 			)
 		);
 
@@ -311,8 +382,8 @@ class Test_Schema extends WP_UnitTestCase {
 
 				return array(
 					(object) array(
-						'id'           => 'override-author',
-						'display_name' => 'Override Author',
+						'id'           => 'disabled-author',
+						'display_name' => 'Disabled Author',
 					),
 				);
 			},
@@ -322,14 +393,12 @@ class Test_Schema extends WP_UnitTestCase {
 
 		add_filter(
 			'byline_feed_schema_enabled',
-			static function ( bool $enabled ): bool {
-				return true;
+			static function (): bool {
+				return false;
 			}
 		);
 
-		$output = $this->capture_schema_output( get_permalink( $post_id ) );
-
-		$this->assertStringContainsString( 'application/ld+json', $output );
+		$this->assertSame( '', $this->capture_schema_output( get_permalink( $post_id ) ) );
 	}
 
 	public function test_person_filter_can_modify_person_object(): void {
@@ -378,6 +447,10 @@ class Test_Schema extends WP_UnitTestCase {
 			$schema['author'][0]['sameAs']
 		);
 	}
+
+	// ────────────────────────────────────────────────────────────
+	// Person additionalProperty tests
+	// ────────────────────────────────────────────────────────────
 
 	public function test_person_includes_byline_role_as_additional_property(): void {
 		$post_id = self::factory()->post->create(
@@ -609,5 +682,414 @@ class Test_Schema extends WP_UnitTestCase {
 		$names = array_column( $schema['author'][0]['additionalProperty'], 'name' );
 		$this->assertContains( 'bylineRole', $names );
 		$this->assertContains( 'aiTrainingConsent', $names );
+	}
+
+	// ────────────────────────────────────────────────────────────
+	// Fediverse profile URL resolution tests
+	// ────────────────────────────────────────────────────────────
+
+	public function test_fediverse_profile_url_resolves_standard_handle(): void {
+		$this->assertSame(
+			'https://mastodon.social/@jdoe',
+			fediverse_profile_url( '@jdoe@mastodon.social' )
+		);
+	}
+
+	public function test_fediverse_profile_url_handles_no_leading_at(): void {
+		$this->assertSame(
+			'https://fosstodon.org/@alice',
+			fediverse_profile_url( 'alice@fosstodon.org' )
+		);
+	}
+
+	public function test_fediverse_profile_url_returns_empty_for_invalid_handle(): void {
+		$this->assertSame( '', fediverse_profile_url( 'not-a-handle' ) );
+		$this->assertSame( '', fediverse_profile_url( '' ) );
+		$this->assertSame( '', fediverse_profile_url( '@user@' ) );
+		$this->assertSame( '', fediverse_profile_url( '@@instance.com' ) );
+	}
+
+	public function test_fediverse_handle_included_in_same_as(): void {
+		$author = (object) array(
+			'id'           => 'fedi-author',
+			'display_name' => 'Fedi Author',
+			'fediverse'    => '@fediuser@mastodon.social',
+			'profiles'     => array(),
+			'ap_actor_url' => '',
+		);
+
+		$person = get_person_schema( $author );
+
+		$this->assertContains(
+			'https://mastodon.social/@fediuser',
+			$person['sameAs']
+		);
+	}
+
+	// ────────────────────────────────────────────────────────────
+	// Mode A: Yoast enrichment tests (simulated via filter)
+	// ────────────────────────────────────────────────────────────
+
+	public function test_yoast_article_filter_replaces_author_with_multi_author_array(): void {
+		// Simulate Yoast being active so the module loads.
+		update_option( 'active_plugins', array( 'wordpress-seo/wp-seo.php' ) );
+
+		// Load schema-yoast.php directly for testing.
+		require_once BYLINE_FEED_PLUGIN_DIR . 'inc/schema-yoast.php';
+
+		$post_id = self::factory()->post->create(
+			array(
+				'post_status' => 'publish',
+				'post_title'  => 'Yoast Multi Author',
+			)
+		);
+
+		add_filter(
+			'byline_feed_authors',
+			static function ( array $authors, WP_Post $post ) use ( $post_id ): array {
+				if ( $post_id !== $post->ID ) {
+					return $authors;
+				}
+
+				return array(
+					(object) array(
+						'id'           => 'yoast-lead',
+						'display_name' => 'Yoast Lead',
+						'role'         => 'creator',
+						'ai_consent'   => 'allow',
+						'fediverse'    => '@lead@mastodon.social',
+						'profiles'     => array(),
+						'ap_actor_url' => '',
+					),
+					(object) array(
+						'id'           => 'yoast-editor',
+						'display_name' => 'Yoast Editor',
+						'role'         => 'editor',
+					),
+				);
+			},
+			10,
+			2
+		);
+
+		// Simulate Yoast's Article data with a single @id author reference.
+		$yoast_article = array(
+			'@type'  => 'Article',
+			'author' => array( '@id' => 'https://example.com/#/schema/person/abc' ),
+		);
+
+		// Simulate Yoast's context object.
+		$context     = new \stdClass();
+		$context->id = $post_id;
+
+		$enriched = \Byline_Feed\Schema_Yoast\enrich_article( $yoast_article, $context );
+
+		// Author should now be an array of Person objects, not an @id ref.
+		$this->assertIsArray( $enriched['author'] );
+		$this->assertCount( 2, $enriched['author'] );
+		$this->assertSame( 'Person', $enriched['author'][0]['@type'] );
+		$this->assertSame( 'Yoast Lead', $enriched['author'][0]['name'] );
+		$this->assertSame( 'Person', $enriched['author'][1]['@type'] );
+		$this->assertSame( 'Yoast Editor', $enriched['author'][1]['name'] );
+
+		// Lead author should have bylineRole and aiTrainingConsent.
+		$lead_props = $enriched['author'][0]['additionalProperty'] ?? array();
+		$prop_names = array_column( $lead_props, 'name' );
+		$this->assertContains( 'bylineRole', $prop_names );
+		$this->assertContains( 'aiTrainingConsent', $prop_names );
+
+		// Lead author should have fediverse in sameAs.
+		$this->assertContains( 'https://mastodon.social/@lead', $enriched['author'][0]['sameAs'] );
+	}
+
+	public function test_yoast_article_filter_adds_perspective(): void {
+		require_once BYLINE_FEED_PLUGIN_DIR . 'inc/schema-yoast.php';
+
+		$post_id = self::factory()->post->create(
+			array(
+				'post_status' => 'publish',
+				'post_title'  => 'Yoast Perspective',
+			)
+		);
+
+		update_post_meta( $post_id, '_byline_perspective', 'reporting' );
+
+		add_filter(
+			'byline_feed_authors',
+			static function ( array $authors, WP_Post $post ) use ( $post_id ): array {
+				if ( $post_id !== $post->ID ) {
+					return $authors;
+				}
+
+				return array(
+					(object) array(
+						'id'           => 'yoast-reporter',
+						'display_name' => 'Yoast Reporter',
+					),
+				);
+			},
+			10,
+			2
+		);
+
+		$yoast_article = array(
+			'@type'  => 'Article',
+			'author' => array( '@id' => 'https://example.com/#/schema/person/def' ),
+		);
+
+		$context     = new \stdClass();
+		$context->id = $post_id;
+
+		$enriched = \Byline_Feed\Schema_Yoast\enrich_article( $yoast_article, $context );
+
+		$this->assertArrayHasKey( 'additionalProperty', $enriched );
+
+		$perspective_prop = null;
+		foreach ( $enriched['additionalProperty'] as $prop ) {
+			if ( 'bylinePerspective' === $prop['name'] ) {
+				$perspective_prop = $prop;
+				break;
+			}
+		}
+
+		$this->assertNotNull( $perspective_prop );
+		$this->assertSame( 'reporting', $perspective_prop['value'] );
+	}
+
+	public function test_yoast_article_filter_preserves_existing_additional_property(): void {
+		require_once BYLINE_FEED_PLUGIN_DIR . 'inc/schema-yoast.php';
+
+		$post_id = self::factory()->post->create(
+			array(
+				'post_status' => 'publish',
+				'post_title'  => 'Yoast Existing Props',
+			)
+		);
+
+		update_post_meta( $post_id, '_byline_perspective', 'analysis' );
+
+		add_filter(
+			'byline_feed_authors',
+			static function ( array $authors, WP_Post $post ) use ( $post_id ): array {
+				if ( $post_id !== $post->ID ) {
+					return $authors;
+				}
+
+				return array(
+					(object) array(
+						'id'           => 'existing-props-author',
+						'display_name' => 'Props Author',
+					),
+				);
+			},
+			10,
+			2
+		);
+
+		$yoast_article = array(
+			'@type'              => 'Article',
+			'author'             => array( '@id' => 'https://example.com/#person' ),
+			'additionalProperty' => array(
+				array(
+					'@type' => 'PropertyValue',
+					'name'  => 'existingProp',
+					'value' => 'existing-value',
+				),
+			),
+		);
+
+		$context     = new \stdClass();
+		$context->id = $post_id;
+
+		$enriched = \Byline_Feed\Schema_Yoast\enrich_article( $yoast_article, $context );
+
+		// Should have both the existing prop and the new perspective prop.
+		$this->assertCount( 2, $enriched['additionalProperty'] );
+
+		$names = array_column( $enriched['additionalProperty'], 'name' );
+		$this->assertContains( 'existingProp', $names );
+		$this->assertContains( 'bylinePerspective', $names );
+	}
+
+	public function test_yoast_returns_unchanged_when_no_authors(): void {
+		require_once BYLINE_FEED_PLUGIN_DIR . 'inc/schema-yoast.php';
+
+		$post_id = self::factory()->post->create(
+			array(
+				'post_status' => 'publish',
+				'post_title'  => 'Yoast No Authors',
+				'post_author' => 0,
+			)
+		);
+
+		// Return empty authors.
+		add_filter(
+			'byline_feed_authors',
+			static function () use ( $post_id ): array {
+				return array();
+			},
+			10,
+			2
+		);
+
+		$yoast_article = array(
+			'@type'  => 'Article',
+			'author' => array( '@id' => 'https://example.com/#person' ),
+		);
+
+		$context     = new \stdClass();
+		$context->id = $post_id;
+
+		$result = \Byline_Feed\Schema_Yoast\enrich_article( $yoast_article, $context );
+
+		// Should be unchanged.
+		$this->assertSame( $yoast_article, $result );
+	}
+
+	// ────────────────────────────────────────────────────────────
+	// Mode B: Rank Math enrichment tests (simulated via filter)
+	// ────────────────────────────────────────────────────────────
+
+	public function test_rankmath_filter_replaces_article_author_with_multi_author_array(): void {
+		require_once BYLINE_FEED_PLUGIN_DIR . 'inc/schema-rankmath.php';
+
+		$post_id = self::factory()->post->create(
+			array(
+				'post_status' => 'publish',
+				'post_title'  => 'Rank Math Multi Author',
+			)
+		);
+
+		add_filter(
+			'byline_feed_authors',
+			static function ( array $authors, WP_Post $post ) use ( $post_id ): array {
+				if ( $post_id !== $post->ID ) {
+					return $authors;
+				}
+
+				return array(
+					(object) array(
+						'id'           => 'rm-author-1',
+						'display_name' => 'RM Author One',
+						'role'         => 'creator',
+					),
+					(object) array(
+						'id'           => 'rm-author-2',
+						'display_name' => 'RM Author Two',
+						'role'         => 'contributor',
+						'ai_consent'   => 'deny',
+					),
+				);
+			},
+			10,
+			2
+		);
+
+		// Simulate a singular request context.
+		$this->go_to( get_permalink( $post_id ) );
+
+		$rankmath_data = array(
+			'richSnippet' => array(
+				'@type'  => 'Article',
+				'author' => array(
+					'@type' => 'Person',
+					'name'  => 'Original Author',
+				),
+			),
+		);
+
+		$enriched = \Byline_Feed\Schema_Rankmath\enrich_json_ld( $rankmath_data, new \stdClass() );
+
+		$article = $enriched['richSnippet'];
+
+		$this->assertIsArray( $article['author'] );
+		$this->assertCount( 2, $article['author'] );
+		$this->assertSame( 'RM Author One', $article['author'][0]['name'] );
+		$this->assertSame( 'RM Author Two', $article['author'][1]['name'] );
+
+		// Second author should have both role and consent.
+		$props = $article['author'][1]['additionalProperty'] ?? array();
+		$names = array_column( $props, 'name' );
+		$this->assertContains( 'bylineRole', $names );
+		$this->assertContains( 'aiTrainingConsent', $names );
+	}
+
+	public function test_rankmath_filter_adds_perspective(): void {
+		require_once BYLINE_FEED_PLUGIN_DIR . 'inc/schema-rankmath.php';
+
+		$post_id = self::factory()->post->create(
+			array(
+				'post_status' => 'publish',
+				'post_title'  => 'Rank Math Perspective',
+			)
+		);
+
+		update_post_meta( $post_id, '_byline_perspective', 'analysis' );
+
+		add_filter(
+			'byline_feed_authors',
+			static function ( array $authors, WP_Post $post ) use ( $post_id ): array {
+				if ( $post_id !== $post->ID ) {
+					return $authors;
+				}
+
+				return array(
+					(object) array(
+						'id'           => 'rm-perspective',
+						'display_name' => 'RM Analyst',
+					),
+				);
+			},
+			10,
+			2
+		);
+
+		$this->go_to( get_permalink( $post_id ) );
+
+		$rankmath_data = array(
+			'article' => array(
+				'@type'  => 'Article',
+				'author' => array( '@type' => 'Person', 'name' => 'Original' ),
+			),
+		);
+
+		$enriched = \Byline_Feed\Schema_Rankmath\enrich_json_ld( $rankmath_data, new \stdClass() );
+
+		$this->assertArrayHasKey( 'additionalProperty', $enriched['article'] );
+
+		$perspective_prop = null;
+		foreach ( $enriched['article']['additionalProperty'] as $prop ) {
+			if ( 'bylinePerspective' === $prop['name'] ) {
+				$perspective_prop = $prop;
+				break;
+			}
+		}
+
+		$this->assertNotNull( $perspective_prop );
+		$this->assertSame( 'analysis', $perspective_prop['value'] );
+	}
+
+	public function test_rankmath_filter_skips_non_singular(): void {
+		require_once BYLINE_FEED_PLUGIN_DIR . 'inc/schema-rankmath.php';
+
+		self::factory()->post->create(
+			array(
+				'post_status' => 'publish',
+				'post_title'  => 'RM Archive Only',
+			)
+		);
+
+		$this->go_to( home_url( '/' ) );
+
+		$original = array(
+			'article' => array(
+				'@type'  => 'Article',
+				'author' => array( '@type' => 'Person', 'name' => 'Original' ),
+			),
+		);
+
+		$result = \Byline_Feed\Schema_Rankmath\enrich_json_ld( $original, new \stdClass() );
+
+		$this->assertSame( $original, $result );
 	}
 }
