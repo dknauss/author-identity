@@ -17,6 +17,8 @@ namespace Byline_Feed\Feed_JSON;
 
 use function Byline_Feed\byline_feed_get_authors;
 use function Byline_Feed\byline_feed_get_perspective;
+use function Byline_Feed\Rights\resolve_ai_consent;
+use function Byline_Feed\Rights\get_policy_url;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -175,6 +177,19 @@ function filter_json_feed_item( array $item, \WP_Post $post ): array {
 		$item['_byline']['perspective'] = $perspective;
 	}
 
+	$consent = resolve_ai_consent( $post );
+	if ( 'deny' === $consent ) {
+		if ( ! isset( $item['_byline'] ) ) {
+			$item['_byline'] = array();
+		}
+		$rights = array( 'consent' => 'deny' );
+		$policy = get_policy_url( $post );
+		if ( '' !== $policy ) {
+			$rights['policy'] = $policy;
+		}
+		$item['_byline']['rights'] = $rights;
+	}
+
 	return $item;
 }
 
@@ -277,8 +292,25 @@ function render_json_feed(): void {
 		}
 
 		$perspective = byline_feed_get_perspective( $post );
-		if ( '' !== $perspective ) {
-			$item['_byline'] = array( 'perspective' => $perspective );
+		$consent     = resolve_ai_consent( $post );
+
+		if ( '' !== $perspective || 'deny' === $consent ) {
+			if ( ! isset( $item['_byline'] ) ) {
+				$item['_byline'] = array();
+			}
+
+			if ( '' !== $perspective ) {
+				$item['_byline']['perspective'] = $perspective;
+			}
+
+			if ( 'deny' === $consent ) {
+				$rights = array( 'consent' => 'deny' );
+				$policy = get_policy_url( $post );
+				if ( '' !== $policy ) {
+					$rights['policy'] = $policy;
+				}
+				$item['_byline']['rights'] = $rights;
+			}
 		}
 
 		/**

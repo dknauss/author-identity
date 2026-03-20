@@ -11,12 +11,16 @@ use WP_Post;
 use WP_UnitTestCase;
 use function Byline_Feed\Rights\filter_wp_headers;
 use function Byline_Feed\Rights\get_ai_txt_content;
+use function Byline_Feed\Rights\get_policy_url;
 use function Byline_Feed\Rights\maybe_render_ai_txt;
 use function Byline_Feed\Rights\register_consent_meta;
 use function Byline_Feed\Rights\render_metabox;
 use function Byline_Feed\Rights\render_robots_meta;
 use function Byline_Feed\Rights\resolve_ai_consent;
 use function Byline_Feed\Rights\save_metabox;
+use function Byline_Feed\Feed_RSS2\output_item as rss2_output_item;
+use function Byline_Feed\Feed_Atom\output_entry as atom_output_entry;
+use function Byline_Feed\Feed_JSON\build_author_byline_extension;
 
 class Test_Rights extends WP_UnitTestCase {
 
@@ -314,5 +318,167 @@ class Test_Rights extends WP_UnitTestCase {
 		save_metabox( $post_id );
 
 		$this->assertSame( '', get_post_meta( $post_id, '_byline_ai_consent', true ) );
+	}
+
+	public function test_rss2_item_includes_rights_element_for_denied_post(): void {
+		$post_id = self::factory()->post->create( array( 'post_status' => 'publish' ) );
+		$post    = get_post( $post_id );
+
+		add_filter(
+			'byline_feed_authors',
+			static function ( array $authors, WP_Post $filtered_post ) use ( $post_id ): array {
+				if ( $filtered_post->ID !== $post_id ) {
+					return $authors;
+				}
+
+				return array(
+					(object) array(
+						'id'           => 'deny-author',
+						'display_name' => 'Deny Author',
+						'role'         => 'author',
+						'ai_consent'   => 'deny',
+					),
+				);
+			},
+			10,
+			2
+		);
+
+		$this->go_to( get_permalink( $post_id ) );
+
+		// Set global post for RSS2 output_item.
+		$GLOBALS['post'] = $post;
+		setup_postdata( $post );
+
+		$output = $this->capture_output( static function () {
+			rss2_output_item();
+		} );
+
+		wp_reset_postdata();
+
+		$this->assertStringContainsString( '<byline:rights consent="deny"', $output );
+		$this->assertStringContainsString( 'policy=', $output );
+	}
+
+	public function test_rss2_item_omits_rights_element_for_allowed_post(): void {
+		$post_id = self::factory()->post->create( array( 'post_status' => 'publish' ) );
+		$post    = get_post( $post_id );
+
+		add_filter(
+			'byline_feed_authors',
+			static function ( array $authors, WP_Post $filtered_post ) use ( $post_id ): array {
+				if ( $filtered_post->ID !== $post_id ) {
+					return $authors;
+				}
+
+				return array(
+					(object) array(
+						'id'           => 'allow-author',
+						'display_name' => 'Allow Author',
+						'role'         => 'author',
+						'ai_consent'   => 'allow',
+					),
+				);
+			},
+			10,
+			2
+		);
+
+		$this->go_to( get_permalink( $post_id ) );
+		$GLOBALS['post'] = $post;
+		setup_postdata( $post );
+
+		$output = $this->capture_output( static function () {
+			rss2_output_item();
+		} );
+
+		wp_reset_postdata();
+
+		$this->assertStringNotContainsString( '<byline:rights', $output );
+	}
+
+	public function test_atom_entry_includes_rights_element_for_denied_post(): void {
+		$post_id = self::factory()->post->create( array( 'post_status' => 'publish' ) );
+		$post    = get_post( $post_id );
+
+		add_filter(
+			'byline_feed_authors',
+			static function ( array $authors, WP_Post $filtered_post ) use ( $post_id ): array {
+				if ( $filtered_post->ID !== $post_id ) {
+					return $authors;
+				}
+
+				return array(
+					(object) array(
+						'id'           => 'deny-author',
+						'display_name' => 'Deny Author',
+						'role'         => 'author',
+						'ai_consent'   => 'deny',
+					),
+				);
+			},
+			10,
+			2
+		);
+
+		$this->go_to( get_permalink( $post_id ) );
+		$GLOBALS['post'] = $post;
+		setup_postdata( $post );
+
+		$output = $this->capture_output( static function () {
+			atom_output_entry();
+		} );
+
+		wp_reset_postdata();
+
+		$this->assertStringContainsString( '<byline:rights consent="deny"', $output );
+	}
+
+	public function test_json_feed_item_includes_rights_for_denied_post(): void {
+		$post_id = self::factory()->post->create( array( 'post_status' => 'publish' ) );
+		$post    = get_post( $post_id );
+
+		update_post_meta( $post_id, '_byline_ai_consent', 'deny' );
+
+		add_filter(
+			'byline_feed_ai_policy_url',
+			static function (): string {
+				return 'https://example.com/ai-policy';
+			}
+		);
+
+		$item = \Byline_Feed\Feed_JSON\filter_json_feed_item( array(), $post );
+
+		$this->assertArrayHasKey( '_byline', $item );
+		$this->assertArrayHasKey( 'rights', $item['_byline'] );
+		$this->assertSame( 'deny', $item['_byline']['rights']['consent'] );
+		$this->assertSame( 'https://example.com/ai-policy', $item['_byline']['rights']['policy'] );
+	}
+
+	public function test_json_feed_item_omits_rights_for_allowed_post(): void {
+		$post_id = self::factory()->post->create( array( 'post_status' => 'publish' ) );
+		$post    = get_post( $post_id );
+
+		update_post_meta( $post_id, '_byline_ai_consent', 'allow' );
+
+		$item = \Byline_Feed\Feed_JSON\filter_json_feed_item( array(), $post );
+
+		if ( isset( $item['_byline'] ) ) {
+			$this->assertArrayNotHasKey( 'rights', $item['_byline'] );
+		} else {
+			$this->assertTrue( true ); // No _byline key at all is also correct.
+		}
+	}
+
+	public function test_enqueue_editor_assets_registers_script_when_asset_file_exists(): void {
+		$asset_file = BYLINE_FEED_PLUGIN_DIR . 'build/ai-consent-panel.tsx.asset.php';
+
+		if ( ! file_exists( $asset_file ) ) {
+			$this->markTestSkipped( 'Build assets not present.' );
+		}
+
+		\Byline_Feed\Rights\enqueue_editor_assets();
+
+		$this->assertTrue( wp_script_is( 'byline-feed-ai-consent-panel', 'registered' ) );
 	}
 }

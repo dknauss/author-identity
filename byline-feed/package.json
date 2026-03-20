@@ -4,8 +4,8 @@
 	"description": "Byline Feed WordPress plugin",
 	"private": true,
 	"scripts": {
-		"build": "wp-scripts build src/perspective-panel.tsx --output-path=build",
-		"start": "wp-scripts start src/perspective-panel.tsx --output-path=build",
+		"build": "wp-scripts build src/perspective-panel.tsx src/ai-consent-panel.tsx --output-path=build",
+		"start": "wp-scripts start src/perspective-panel.tsx src/ai-consent-panel.tsx --output-path=build",
 		"env:start": "npx @wordpress/env start",
 		"env:stop": "npx @wordpress/env stop",
 		"env:setup": "bash bin/setup-e2e.sh",

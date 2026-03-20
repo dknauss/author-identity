@@ -15,6 +15,8 @@ use function Byline_Feed\byline_feed_get_authors;
 use function Byline_Feed\byline_feed_get_perspective;
 use function Byline_Feed\Feed_Common\esc_xml_value;
 use function Byline_Feed\Feed_Common\output_person;
+use function Byline_Feed\Rights\resolve_ai_consent;
+use function Byline_Feed\Rights\get_policy_url;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -106,6 +108,16 @@ function output_item(): void {
 	$perspective = byline_feed_get_perspective( $post );
 	if ( '' !== $perspective ) {
 		$xml .= "\t\t<byline:perspective>" . esc_xml_value( $perspective ) . "</byline:perspective>\n";
+	}
+
+	$consent = resolve_ai_consent( $post );
+	if ( 'deny' === $consent ) {
+		$xml   .= "\t\t<byline:rights consent=\"deny\"";
+		$policy = get_policy_url( $post );
+		if ( '' !== $policy ) {
+			$xml .= ' policy="' . esc_url( $policy ) . '"';
+		}
+		$xml .= "/>\n";
 	}
 
 	/**

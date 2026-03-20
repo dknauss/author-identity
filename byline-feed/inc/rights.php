@@ -20,6 +20,7 @@ function register_hooks(): void {
 	add_action( 'init', __NAMESPACE__ . '\\register_consent_meta' );
 	add_action( 'add_meta_boxes', __NAMESPACE__ . '\\register_metabox' );
 	add_action( 'save_post', __NAMESPACE__ . '\\save_metabox' );
+	add_action( 'enqueue_block_editor_assets', __NAMESPACE__ . '\\enqueue_editor_assets' );
 	add_action( 'wp_head', __NAMESPACE__ . '\\render_robots_meta' );
 	add_filter( 'wp_headers', __NAMESPACE__ . '\\filter_wp_headers', 10, 1 );
 	add_action( 'template_redirect', __NAMESPACE__ . '\\maybe_render_ai_txt' );
@@ -385,4 +386,25 @@ function is_ai_txt_request(): bool {
 	}
 
 	return false;
+}
+
+/**
+ * Enqueue the block editor sidebar panel script for AI consent.
+ */
+function enqueue_editor_assets(): void {
+	$asset_file = BYLINE_FEED_PLUGIN_DIR . 'build/ai-consent-panel.tsx.asset.php';
+
+	if ( ! file_exists( $asset_file ) ) {
+		return;
+	}
+
+	$asset = require_once $asset_file;
+
+	wp_enqueue_script(
+		'byline-feed-ai-consent-panel',
+		BYLINE_FEED_PLUGIN_URL . 'build/ai-consent-panel.tsx.js',
+		$asset['dependencies'] ?? array(),
+		$asset['version'] ?? BYLINE_FEED_VERSION,
+		true
+	);
 }
