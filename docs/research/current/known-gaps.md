@@ -132,39 +132,28 @@ See `docs/research/current/nlweb-yoast-context.md` for the full NLWeb/Yoast land
 
 ## Schema output and AI agent discovery
 
-### WP-05 implementation gap: Yoast/Rank Math enrichment modes not yet coded
+### WP-05: Yoast/Rank Math enrichment modes — implemented
 
-**Status: Design complete, implementation partial — standalone mode only**
+**Status: All three modes implemented and live-verified (2026-03-20)**
 
-The WP-05 work package specifies three modes:
+The WP-05 work package specifies three modes, all now shipping:
 
-- **Mode A (Yoast active):** Enrich Yoast's schema graph via `wpseo_schema_article` and `wpseo_schema_person_data` filters, injecting multi-author arrays, bylineRole, bylinePerspective, fediverse sameAs, and aiTrainingConsent directly into the graph that the schemamap/NLWeb endpoint queries.
-- **Mode B (Rank Math active):** Equivalent enrichment via `rank_math/json_ld` filter.
-- **Mode C (no SEO plugin):** Standalone `<script type="application/ld+json">` output.
+- **Mode A (Yoast active):** `schema-yoast.php` hooks `wpseo_schema_article` to replace Yoast's single-author `@id` reference with a full multi-author Person array. Person objects include `bylineRole`, `aiTrainingConsent`, fediverse `sameAs` (resolved to canonical URL), and profile links. Article gets `bylinePerspective` as `additionalProperty`. Live-verified with Yoast SEO 27.2 — enriched data appears in Yoast's schema graph with no duplicate standalone output.
+- **Mode B (Rank Math active):** `schema-rankmath.php` hooks `rank_math/json_ld` to find Article/BlogPosting/NewsArticle nodes and apply equivalent enrichment via the shared Person builder.
+- **Mode C (no SEO plugin):** Standalone `<script type="application/ld+json">` output with full field coverage.
 
-**Only Mode C is implemented.** The current `schema.php` detects Yoast and Rank Math but **disables** byline-feed's output rather than enriching the SEO plugin's graph. The files `schema-yoast.php` and `schema-rankmath.php` specified in the WP-05 scaffold do not exist. The shared builder function `byline_feed_build_person_object()` (which would include `additionalProperty` nodes for role, perspective, and consent) is specified but not yet coded — the current `get_person_schema()` in `schema.php` omits role, perspective, and consent fields.
+Mode dispatch happens in `register_hooks()` with the `byline_feed_schema_mode` filter available for override. The `fediverse_profile_url()` function resolves `@user@instance` handles to `https://instance/@user` for `sameAs` inclusion.
 
-**What this means in practice:**
+### Standalone schema output: field coverage — resolved
 
-- On sites with **no SEO plugin**: byline-feed emits Article + Person JSON-LD on singular posts. Person objects include name, url, description, image, and sameAs (from profiles + ap_actor_url). This works correctly but is missing role, perspective, and consent signals.
-- On sites with **Yoast active**: byline-feed emits nothing. Yoast's schemamap shows single-author Article nodes and Person nodes without byline-specific signals. AI agents querying the NLWeb endpoint get Yoast's data with no byline enrichment.
-- On sites with **Rank Math active**: same as Yoast — byline-feed stands aside.
+**Status:** ✅ Resolved (2026-03-20)
 
-**This is the single largest implementation gap relative to the WP-05 specification.** The revised design (enrich, don't disable) is documented in the WP-05 spec but the code still follows the old design. See `Implementation Strategy/wp-05.md` for the full target architecture.
-
-### Standalone schema output: missing fields
-
-**Status:** Open — `schema.php` partial relative to WP-05 spec
-
-The current `get_person_schema()` function in `schema.php` emits:
-- `name`, `url`, `description`, `image`, `sameAs`
-
-The WP-05 spec's `byline_feed_build_person_object()` additionally specifies:
+`get_person_schema()` now includes all WP-05 specified fields:
+- `name`, `url`, `description`, `image`, `sameAs` (from profiles + fediverse canonical URL + `ap_actor_url`)
 - `additionalProperty` with `bylineRole` (from `$author->role`)
 - `additionalProperty` with `aiTrainingConsent` (from `$author->ai_consent`)
-- `sameAs` from fediverse handle resolved to canonical URL (current code uses `ap_actor_url` but not fediverse)
 
-The `byline_feed_schema_article` filter also does not yet inject `bylinePerspective` as an Article-level `additionalProperty`.
+Article-level `bylinePerspective` is injected as `additionalProperty` in all three modes.
 
 ### `@id` graph URI generation
 
@@ -358,21 +347,17 @@ Co-Authors Plus and PublishPress Authors both use the `author` taxonomy slug. Au
 
 ### Yoast SEO compatibility
 
-**Status:** Designed in WP-05 spec, not yet implemented
+**Status:** ✅ Implemented and live-verified with Yoast SEO 27.2
 
-byline-feed WP-05 targets Yoast SEO v27.1+ (Schema Aggregation). The integration uses
-Yoast's public filter API (`wpseo_schema_article`, `wpseo_schema_person_data`,
-`wpseo_schema_graph_pieces`), which is the supported extension mechanism and the same path
-used by The Events Calendar and WP Recipe Maker.
-
-**Current behavior:** byline-feed detects Yoast and disables its own schema output. This
-is the old design. The new design (enrich rather than disable) is specified but not coded.
-See "WP-05 implementation gap" above.
+byline-feed enriches Yoast's schema graph via `wpseo_schema_article` filter, replacing
+the single-author `@id` reference with full multi-author Person objects including
+`bylineRole`, `aiTrainingConsent`, fediverse `sameAs`, and `bylinePerspective`. Standalone
+output is suppressed when Yoast is active — no duplicate JSON-LD.
 
 ### Rank Math compatibility
 
-**Status:** Designed in WP-05 spec, not yet implemented
+**Status:** ✅ Implemented (unit-tested, not yet live-verified with Rank Math installed)
 
-Rank Math integration uses `rank_math/json_ld` filter. The WP-05 spec includes scaffolded
-code, but the implementation file (`schema-rankmath.php`) does not exist. Current behavior:
-byline-feed detects Rank Math and disables its own schema output.
+`schema-rankmath.php` hooks `rank_math/json_ld` to enrich Article nodes with multi-author
+Person arrays and `bylinePerspective`. Standalone output is suppressed when Rank Math is
+active.
