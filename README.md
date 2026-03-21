@@ -5,31 +5,15 @@
 [![PHP 7.4+](https://img.shields.io/badge/PHP-7.4%2B-777BB4?logo=php&logoColor=white)](byline-feed/composer.json)
 [![WordPress 6.0+](https://img.shields.io/badge/WordPress-6.0%2B-21759B?logo=wordpress&logoColor=white)](byline-feed/readme.txt)
 
-Structured author identity that travels with the work across feeds, search, the fediverse, and AI from one source of truth in WordPress.
+Structured authorial identity that travels with the work across feeds, search, the fediverse, and AI from one source of truth.
 
 ## What this project is
 
-This repository ("Author Identity") houses the **[Byline Feed](byline-feed/)** WordPress plugin, which implements the [Byline extension vocabulary](https://bylinespec.org) plus additional author-identity output channels. A normalized author-data layer in WordPress drives multiple outputs.
+This repository ("Author Identity") houses research and planning documents for an experiment for exposing richer, more textured WordPress user metadata that supports a more meaningful conception of authorship on the web. 
 
-Current shipped scope:
+It also includes the **[Byline Feed](byline-feed/)** WordPress plugin, which implements the [Byline extension vocabulary](https://bylinespec.org) plus additional author-identity output channels. A normalized author-data layer in WordPress drives multiple outputs.
 
-- normalized author resolution for core WordPress, Co-Authors Plus, PublishPress Authors, and HM Authorship
-- Byline output in RSS2, Atom, and JSON Feed
-- perspective storage and editor UI
-- `fediverse:creator` meta tag output for singular content
-- multi-author JSON-LD Article + Person output for singular content, including Yoast SEO and Rank Math schema integration modes
-- initial rights signaling: per-author and per-post AI consent, `robots` meta for denied posts, `TDMRep` headers, and `ai.txt`
-
-Next planned tranches:
-
-- additional rights work:
-  - feed-level rights metadata
-  - audit logging
-  - richer editor UI
-- Molongui adapter support
-
-Longer-range identity work such as `did:web:` remains in the vision/research layer, not the active roadmap.
-**The mental model:** WordPress is a Personal Data Server for authors. The author's WP profile is their everything folder. The plugin makes that PDS speak the open web's formats. Output channels are reactive to the normalized author data — none of them own it.
+**The mental model:** WordPress as a Personal Data Server for authors. Ultimately, with a federated identity, any WordPress user's profile can become their "everything" folder for any content across the web that they're associated with through its production and/or ownership. Most commonly, this association is one of authorship. The Byline Feed plugin makes WordPress speak the open web's existing and emerging formats for asserting authorship. Output channels are reactive to the normalized author data — none of them own it.
 
 ## What this repository contains
 
@@ -38,34 +22,27 @@ This repository has two related parts:
 1. A documentation set defining the vision, protocol landscape, implementation strategy, and quality gates for portable author identity in WordPress.
 2. A WordPress plugin, [byline-feed](byline-feed/), that implements the MVP portion of that strategy.
 
-The current implementation focus is the `byline-feed` plugin:
+### Current shipped scope for the plugin:
 
-- Normalize author data from core WordPress, Co-Authors Plus, PublishPress Authors, and HM Authorship.
+- Normalize authorial user data from core WordPress, Co-Authors Plus, PublishPress Authors, and the Human Made Authorship plugin.
 - Emit structured Byline metadata in RSS2, Atom, and JSON Feed.
-- Emit `fediverse:creator` meta tags in HTML heads for authors with configured fediverse handles.
-- Enrich Yoast SEO and Rank Math schema output when present, or emit standalone multi-author JSON-LD when no schema-owning SEO plugin is active.
-- Expose content perspective metadata for feed consumers.
-- Preserve standard feed elements so Byline output remains additive.
-- Prepare the next output and adapter tranches without expanding the active roadmap into broader identity-framework work.
+ - Expose new authorial user metadata like `byline:perspective` for feed consumers.
+ - Accommodate new authorial user metadata like `byline:perspective` in WordPress data model and user interface.
+- Emit `fediverse:creator` meta tags in HTML heads for singular content by authors with configured fediverse handles.
+- Emit multi-author JSON-LD Article + Person output for singular content, including Yoast SEO and Rank Math schema integration modes.
+ - Enrich Yoast SEO and Rank Math schema output when present, or emit standalone multi-author JSON-LD when no schema-owning SEO plugin is active.
+- Preserve all standard feed elements so Byline output remains additive.
+- Initial rights signaling: per-author and per-post AI consent, `robots` meta for denied posts, `TDMRep` headers, and `ai.txt`.
 
-## Current shipped scope:
+### Next planned tranches:
 
-- normalized author resolution for core WordPress, Co-Authors Plus, PublishPress Authors, and HM Authorship
-- Byline output in RSS2, Atom, and JSON Feed
-- perspective storage and editor UI
-- `fediverse:creator` meta tag output for singular content
-- multi-author JSON-LD Article + Person output for singular content, including Yoast SEO and Rank Math schema integration modes
-- initial rights signaling: per-author and per-post AI consent, `robots` meta for denied posts, `TDMRep` headers, and `ai.txt`
-
-## Next planned tranches:
-
-- additional rights work:
-  - feed-level rights metadata
-  - audit logging
-  - richer editor UI
+- Additional rights work:
+  - Feed-level rights metadata
+  - Audit logging
+  - Richer editor UI
 - Molongui adapter support
 
-Longer-range identity work such as `did:web:` remains in the vision/research layer, not the active roadmap.
+Longer-range identity work such as `did:web:` remains in the vision/research layer, not the active roadmap. Current work focuses on the output and adapter tranches without expanding the active roadmap into broader identity-framework work.
 
 ## Documentation map
 
