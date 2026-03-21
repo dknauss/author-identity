@@ -286,18 +286,18 @@ All four P1 items were resolved in the current codebase prior to the 2026-03-20 
 
 See `Implementation Strategy/code-review-plan.md` for the complete prioritized backlog.
 
-### P1 — High priority (partially resolved)
+### P1 — High priority (mostly resolved)
 
 - **Feed output E2E tests.** ✅ `tests/e2e/feed-output.spec.js` now covers RSS2 namespace+contributors, Atom namespace, JSON Feed `_byline` extension, JSON-LD Article+Person schema on singular posts, and `fediverse:creator` meta tags. All 5 tests pass against a live Local site (single-instance.local, 2026-03-20).
-- **Empty authors array.** (open) No test for graceful handling when no author can be resolved (deleted user, `post_author = 0` with no adapter match).
-- **PPA integration test parity.** (open) CAP integration tests cover WP users, guests, multi-author, and contract shape. PPA integration tests are thinner — missing guest author handling, multi-author posts, and user meta in PPA context.
+- **Empty authors array.** ✅ Covered in `test-feed-rss2.php`, `test-feed-atom.php`, `test-feed-json.php`, and `test-schema.php` for no-author resolution cases.
+- **PPA integration test parity.** ✅ Covered in `test-integration-ppa.php` and `test-adapter-ppa.php`, including guest authors, multi-author ordering, linked user meta, and term-meta precedence.
 
-### P2 — Medium priority (open)
+### P2 — Medium priority (mostly resolved)
 
-- **JSON Feed filter coverage.** `byline_feed_json_author_extension` and `byline_feed_json_feed` filters not exercised in tests.
-- **Special characters in author fields.** No test for XML/JSON encoding of `<`, `&`, `"`, emoji, CJK in author names/descriptions across feed formats.
-- **Role mapping completeness.** Only `editor` and `author` WordPress roles tested; admin, subscriber, contributor untested.
-- **REST API meta round-trip.** Meta registration for REST verified but no actual REST request test for read/write.
+- **JSON Feed filter coverage.** ✅ `test-feed-json.php` now exercises `byline_feed_json_author_extension` and `byline_feed_json_feed`.
+- **Special characters in author fields.** ✅ Feed and schema tests now cover `<`, `&`, `"`, emoji, and CJK across RSS2, Atom, JSON Feed, and singular schema output.
+- **Role mapping completeness.** ✅ `test-adapter-core.php` now covers the standard WordPress role set.
+- **REST API meta round-trip.** ✅ `test-author-meta.php` now verifies registered author meta through real REST requests.
 - **Rank Math coexistence tests.** Detection exists in code but dedicated coexistence tests are thin.
 
 ---

@@ -63,19 +63,13 @@ Both P2 items have been resolved. Verified 2026-03-20.
 
 All 5 tests verified passing against live Local site (single-instance.local, 2026-03-20). Tests also run against `wp-env` via `npm run test:e2e`.
 
-#### 8. Unit: empty authors array
+#### 8. Unit: empty authors array ✅
 
-**Current state:** No test for what happens when no author can be resolved (deleted user, post_author = 0 with no adapter match).
-**Plan:** Add tests in `test-feed-rss2.php`, `test-feed-atom.php`, `test-feed-json.php`, and `test-schema.php` confirming graceful output (no crash, valid feed/schema, Byline block omitted or empty).
+**Status:** Covered in `test-feed-rss2.php`, `test-feed-atom.php`, `test-feed-json.php`, and `test-schema.php`. The suite now verifies graceful output when no author can be resolved, including valid feed/schema output and omitted empty Byline blocks.
 
-#### 9. Unit: PPA integration test parity with CAP
+#### 9. Unit: PPA integration test parity with CAP ✅
 
-**Current state:** CAP integration tests cover WP users, guests, multi-author, and contract shape. PPA integration tests only cover detection, non-empty result, and shape.
-**Plan:** Add to `test-integration-ppa.php`:
-- Guest author handling
-- Multi-author posts
-- User meta (byline_feed_*) in PPA context
-- Term metadata preferred over user profile
+**Status:** Covered in `test-integration-ppa.php` and `test-adapter-ppa.php`. PublishPress Authors parity now includes guest author handling, multi-author ordering, linked user meta passthrough, and term metadata precedence, plus a regression test for method-based `is_guest()` detection.
 
 ### P2 — Medium priority
 
@@ -95,25 +89,21 @@ Do **not** solve this by copying ActivityPub-derived handles into stored user me
 
 **Why backlog, not current release:** This is a UX and identity-model refinement, not a stability fix. It should follow RC stabilization and should ship with explicit PHPUnit + browser coverage.
 
-#### 11. Unit: JSON Feed filter coverage
+#### 11. Unit: JSON Feed filter coverage ✅
 
-**Current state:** `byline_feed_json_author_extension` and `byline_feed_json_feed` filters are cleaned up in tearDown but never exercised in tests. Only `byline_feed_json_item` is tested.
-**Plan:** Add tests in `test-feed-json.php` for the two untested filters.
+**Status:** Covered in `test-feed-json.php`. The suite now exercises `byline_feed_json_author_extension` and `byline_feed_json_feed` in addition to `byline_feed_json_item`.
 
-#### 12. Unit: special characters in author fields
+#### 12. Unit: special characters in author fields ✅
 
-**Current state:** No test verifies that special characters, HTML entities, or unicode in author names/descriptions survive feed output without causing XML parse errors or JSON encoding failures.
-**Plan:** Add a test per feed format (RSS2, Atom, JSON) with an author whose `display_name` contains `<`, `&`, `"`, and unicode characters (e.g., emoji, CJK). Assert the feed remains well-formed.
+**Status:** Covered in `test-feed-rss2.php`, `test-feed-atom.php`, `test-feed-json.php`, and `test-schema.php`. Tests now verify special characters, HTML entities, emoji, and CJK survive feed/schema output without breaking encoding.
 
-#### 13. Unit: role mapping completeness
+#### 13. Unit: role mapping completeness ✅
 
-**Current state:** Only `editor` and `author` WordPress roles are tested for mapping to Byline roles. Admin, subscriber, and contributor are untested.
-**Plan:** Add a parameterized test (or loop) in `test-adapter-core.php` covering all standard WordPress roles.
+**Status:** Covered in `test-adapter-core.php`. Standard WordPress role mapping coverage now includes admin, editor, author, contributor, and subscriber cases.
 
-#### 14. Unit: REST API meta round-trip
+#### 14. Unit: REST API meta round-trip ✅
 
-**Current state:** Meta registration for REST is verified (the schema key exists), but no test makes an actual REST request to read/write author meta.
-**Plan:** Add a test in `test-author-meta.php` that uses `rest_do_request()` to GET user meta and verify the fediverse field is returned with correct shape.
+**Status:** Covered in `test-author-meta.php` using real REST requests via `rest_do_request()` for read/write verification of registered author meta.
 
 ### P3 — Low priority
 
