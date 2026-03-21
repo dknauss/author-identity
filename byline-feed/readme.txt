@@ -62,7 +62,7 @@ Byline Feed is additive. It preserves core feed elements such as `<author>` and 
 
 = Does this replace my SEO plugin? =
 
-No. Byline Feed focuses on author identity and attribution output. It now emits its own JSON-LD Article + Person schema on singular content, but disables that output by default when known schema-owning SEO plugins such as Yoast SEO or Rank Math are active.
+No. Byline Feed focuses on author identity and attribution output. When Yoast SEO or Rank Math is active, Byline Feed enriches that plugin's schema output with multi-author attribution and related author-identity fields. When no known schema-owning SEO plugin is active, Byline Feed emits its own JSON-LD Article + Person schema on singular content.
 
 = Does this block AI crawlers? =
 

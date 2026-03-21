@@ -17,7 +17,7 @@ Current shipped scope:
 - Byline output in RSS2, Atom, and JSON Feed
 - perspective storage and editor UI
 - `fediverse:creator` meta tag output for singular content
-- multi-author JSON-LD Article + Person output for singular content
+- multi-author JSON-LD Article + Person output for singular content, including Yoast SEO and Rank Math schema integration modes
 - initial rights signaling: per-author and per-post AI consent, `robots` meta for denied posts, `TDMRep` headers, and `ai.txt`
 
 Next planned tranches:
@@ -43,6 +43,7 @@ The current implementation focus is the `byline-feed` plugin:
 - Normalize author data from core WordPress, Co-Authors Plus, PublishPress Authors, and HM Authorship.
 - Emit structured Byline metadata in RSS2, Atom, and JSON Feed.
 - Emit `fediverse:creator` meta tags in HTML heads for authors with configured fediverse handles.
+- Enrich Yoast SEO and Rank Math schema output when present, or emit standalone multi-author JSON-LD when no schema-owning SEO plugin is active.
 - Expose content perspective metadata for feed consumers.
 - Preserve standard feed elements so Byline output remains additive.
 - Prepare the next output and adapter tranches without expanding the active roadmap into broader identity-framework work.
@@ -53,7 +54,7 @@ The current implementation focus is the `byline-feed` plugin:
 - Byline output in RSS2, Atom, and JSON Feed
 - perspective storage and editor UI
 - `fediverse:creator` meta tag output for singular content
-- multi-author JSON-LD Article + Person output for singular content
+- multi-author JSON-LD Article + Person output for singular content, including Yoast SEO and Rank Math schema integration modes
 - initial rights signaling: per-author and per-post AI consent, `robots` meta for denied posts, `TDMRep` headers, and `ai.txt`
 
 ## Next planned tranches:
@@ -72,7 +73,7 @@ Longer-range identity work such as `did:web:` remains in the vision/research lay
 | --- | --- |
 | Vision | [author-identity-vision.md](docs/vision/author-identity-vision.md): Full project vision and positioning |
 | Planning | [implementation-spec.md](Implementation%20Strategy/implementation-spec.md): Authoritative plugin implementation spec, roadmap, and release gates<br>[byline-spec-plan.md](docs/planning/byline-spec-plan.md): Byline spec assessment — what the plugin validates, current divergences, and pre-1.0 priorities<br>[byline-adoption-strategy.md](docs/planning/byline-adoption-strategy.md): Adoption strategy — audiences, workstreams, and post-Gate-A product direction<br>[fediverse-identity-design.md](docs/planning/fediverse-identity-design.md): Future source-model design for explicit vs derived fediverse identity |
-| Research | [docs/README.md](docs/README.md): Documentation tree index<br>[docs/research/README.md](docs/research/README.md): Curated research index with current vs exploratory tiers<br>[multi-author-matrix.md](docs/research/current/multi-author-matrix.md): Comparison of WordPress multi-author systems<br>[protocol-coverage-map.md](docs/research/current/protocol-coverage-map.md): Protocol coverage by output channel<br>[architecture.md](docs/research/current/architecture.md): HM Authorship architecture notes<br>[landscape.md](docs/research/current/landscape.md): Plugin ecosystem and historical lineage<br>[metadata-models-for-publishers.md](docs/research/current/metadata-models-for-publishers.md): JSON-LD background and longer-term publication metadata context |
+| Research | [docs/README.md](docs/README.md): Documentation tree index<br>[docs/research/README.md](docs/research/README.md): Curated research index with current vs exploratory tiers<br>[multi-author-matrix.md](docs/research/current/multi-author-matrix.md): Comparison of WordPress multi-author systems<br>[protocol-coverage-map.md](docs/research/current/protocol-coverage-map.md): Protocol coverage by output channel<br>[architecture.md](docs/research/current/architecture.md): HM Authorship architecture notes<br>[landscape.md](docs/research/current/landscape.md): Plugin ecosystem and historical lineage<br>[metadata-models-for-publishers.md](docs/research/current/metadata-models-for-publishers.md): JSON-LD background and longer-term publication metadata context<br>[nlweb-yoast-context.md](docs/research/current/nlweb-yoast-context.md): How Yoast Schema Aggregation and NLWeb relate to the plugin's schema strategy |
 | Playground | [playground/README.md](playground/README.md): Playground demo index<br>[playground/output-demo/README.md](playground/output-demo/README.md): Stable output-demo bundle for feeds, `fediverse:creator`, and JSON-LD |
 | Quality | [ASSESSMENT.md](docs/quality/ASSESSMENT.md): Project assessment and recommendations<br>[TEST_COVERAGE_MATRIX.md](docs/quality/TEST_COVERAGE_MATRIX.md): Coverage status and remaining gaps<br>[TDD_TESTING_STANDARD.md](docs/quality/TDD_TESTING_STANDARD.md): Testing workflow and definition of done |
 | Release | [RELEASE_CHECKLIST.md](docs/quality/RELEASE_CHECKLIST.md): Short operational checklist for packaging and publishing a Byline Feed release |
@@ -83,7 +84,7 @@ Longer-range identity work such as `did:web:` remains in the vision/research lay
 
 | Status | Items |
 | --- | --- |
-| Implemented | adapter interface plus core, Co-Authors Plus, PublishPress Authors, and HM Authorship adapters<br>RSS2, Atom, JSON Feed, and JSON-LD output, including `profile` / `now` / `uses` for linked WordPress users via plugin-owned meta<br>content perspective storage and editor UI<br>`fediverse:creator` meta tags for authors with configured fediverse handles<br>conservative `ap_actor_url` resolution for linked WordPress users when ActivityPub identity can be resolved<br>initial rights signaling: per-author/per-post AI consent, `robots` meta output, `TDMRep` headers, and `ai.txt`<br>runtime validation for the normalized author contract<br>PHPUnit, PHPCS, Playwright E2E, and GitHub Actions CI scaffolding |
+| Implemented | adapter interface plus core, Co-Authors Plus, PublishPress Authors, and HM Authorship adapters<br>RSS2, Atom, JSON Feed, and JSON-LD output, including `profile` / `now` / `uses` for linked WordPress users via plugin-owned meta<br>Yoast SEO and Rank Math schema integration modes for multi-author JSON-LD enrichment<br>content perspective storage and editor UI<br>`fediverse:creator` meta tags for authors with configured fediverse handles<br>conservative `ap_actor_url` resolution for linked WordPress users when ActivityPub identity can be resolved<br>initial rights signaling: per-author/per-post AI consent, `robots` meta output, `TDMRep` headers, and `ai.txt`<br>runtime validation for the normalized author contract<br>PHPUnit, PHPCS, Playwright E2E, and GitHub Actions CI scaffolding |
 | Not yet implemented | feed-level rights metadata, audit logging, and richer rights/editor UI<br>Molongui adapter |
 | Primary references | [byline-feed/](byline-feed/)<br>[byline-feed/docs/output-reference.md](byline-feed/docs/output-reference.md)<br>[implementation-spec.md](Implementation%20Strategy/implementation-spec.md)<br>[wp-01.md](Implementation%20Strategy/wp-01.md) to [wp-06.md](Implementation%20Strategy/wp-06.md) |
 
