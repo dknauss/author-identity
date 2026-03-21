@@ -51,11 +51,14 @@ if [[ -z "${POST_ID}" ]]; then
 	POST_ID="$(npx @wordpress/env run cli wp post create \
 		--post_type=post \
 		--post_status=draft \
+		--post_author=1 \
 		--post_title='Byline Perspective E2E' \
 		--post_name='byline-perspective-e2e' \
 		--porcelain \
 		--allow-root | tr -d '\r')"
 fi
+
+npx @wordpress/env run cli wp post update "${POST_ID}" --post_author=1 --allow-root >/dev/null
 
 npx @wordpress/env run cli wp post meta delete "${POST_ID}" _byline_perspective --allow-root >/dev/null 2>&1 || true
 npx @wordpress/env run cli wp post meta delete "${POST_ID}" _byline_ai_consent --allow-root >/dev/null 2>&1 || true
@@ -85,12 +88,15 @@ if [[ -z "${PUB_POST_ID}" ]]; then
 	PUB_POST_ID="$(npx @wordpress/env run cli wp post create \
 		--post_type=post \
 		--post_status=publish \
+		--post_author=1 \
 		--post_title='Byline Feed Output E2E' \
 		--post_name='byline-feed-output-e2e' \
 		--post_content='Feed output fixture content for E2E testing.' \
 		--porcelain \
 		--allow-root | tr -d '\r')"
 fi
+
+npx @wordpress/env run cli wp post update "${PUB_POST_ID}" --post_author=1 --allow-root >/dev/null
 
 printf '%s\n' "${PUB_POST_ID}" > "${PUBLISHED_POST_ID_FILE}"
 echo "E2E fixture post (published): ${PUB_POST_ID}"

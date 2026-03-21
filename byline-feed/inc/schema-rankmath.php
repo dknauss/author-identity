@@ -36,10 +36,12 @@ function register_hooks(): void {
  * and adds bylinePerspective.
  *
  * @param array  $data   Rank Math's assembled JSON-LD data array.
- * @param object $jsonld Rank Math's JsonLD object.
+ * @param object $_jsonld Rank Math's JsonLD object.
  * @return array Modified data array.
  */
-function enrich_json_ld( array $data, $jsonld ): array {
+function enrich_json_ld( array $data, $_jsonld ): array {
+	unset( $_jsonld );
+
 	if ( ! is_singular() ) {
 		return $data;
 	}
