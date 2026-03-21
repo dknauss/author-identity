@@ -19,28 +19,44 @@ When cutting a release:
 
 ## Unreleased
 
+No unreleased entries yet.
+
+## 0.1.0-rc2 - 2026-03-21
+
 ### Added
 
-- WP-05 JSON-LD schema enrichment — all three modes:
-  - Mode A: Yoast enrichment via `wpseo_schema_article` — replaces single-author `@id` with full multi-author Person array
-  - Mode B: Rank Math enrichment via `rank_math/json_ld` — equivalent Article node enrichment
-  - Mode C: Standalone `<script type="application/ld+json">` with full field coverage
-  - Mode dispatch with `byline_feed_schema_mode` filter override
-  - Person `additionalProperty` for `bylineRole` and `aiTrainingConsent`
-  - Article `additionalProperty` for `bylinePerspective`
-  - `fediverse_profile_url()` resolves `@user@instance` to canonical HTTPS URL for `sameAs`
-  - 29 PHPUnit tests covering all modes, field enrichment, and filter extensibility
-  - Live-verified with Yoast SEO 27.2
-- WP-06 block editor AI consent panel (`ai-consent-panel.tsx`) — `PluginDocumentSettingPanel` for per-post AI consent override
-- WP-06 feed-level rights metadata:
-  - RSS2/Atom: `<byline:rights consent="deny" policy="..."/>` on denied items
-  - JSON Feed: `_byline.rights` object with consent and policy fields
-  - 6 new PHPUnit tests for feed rights output and editor script enqueue
+- WP-05 JSON-LD schema enrichment across all shipped modes:
+  - Yoast enrichment via `wpseo_schema_article`
+  - Rank Math enrichment via `rank_math/json_ld`
+  - standalone `<script type="application/ld+json">` output when no schema-owning SEO plugin is active
+- richer schema field coverage, including ordered multi-author `Person` arrays, `sameAs` normalization, and byline-specific `additionalProperty` values
+- WP-06 rights additions:
+  - block editor AI-consent panel for per-post overrides
+  - denied-item feed rights metadata in RSS2, Atom, and JSON Feed
+  - admin-side AI-consent audit log under `Tools > AI Consent Audit Log`
+- portable Docker-backed local PHPUnit runner via `byline-feed/bin/run-phpunit-local.sh`
+- stronger PublishPress Authors integration parity tests and regression coverage for method-based guest detection
+
+### Changed
+
+- release-facing docs and WordPress.org-facing plugin readme now describe the shipped schema-enrichment modes, denied-item rights output, audit logging, and the current Playground demo surface
+- the public Playground output-demo flow now serves as a maintained RC validation surface with pinned immutable source tags per refresh
+
+### Fixed
+
+- HM Authorship integration CI regression caused by manual `rest_api_init` dispatch in REST tests
+- PublishPress Authors guest detection when the upstream object exposes `is_guest()` as a method rather than a property
+- stale backlog and known-gaps docs that still described completed test hardening items as open
+- PHPCS alignment warnings introduced during the PublishPress Authors adapter fix
+
+### Security
+
+- cleared the active Dependabot/npm advisory backlog on `main` and restored a clean audit baseline for the shipped dependency set
 
 ### Docs
 
-- Gap analysis and known-gaps documents updated to reflect WP-05 completion and WP-06 progress
-- Test coverage matrix updated with schema enrichment and feed-level rights entries
+- refreshed root README, plugin readme, Playground demo docs, release checklist references, and RC issue tracking to match the rc2 surface
+- updated planning and gap-analysis documents to reflect completed audit logging, REST round-trip coverage, role-mapping coverage, empty-author handling, special-character handling, and PublishPress Authors parity testing
 
 ## 0.1.0-rc1 - 2026-03-15
 

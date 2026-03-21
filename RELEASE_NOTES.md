@@ -42,21 +42,22 @@ Release notes complement, but do not replace:
 - the dated version entries in `CHANGELOG.md`
 
 
-## Draft: 0.1.0-rc1
+## Draft: 0.1.0-rc2
 
 ### Summary
 
-Byline Feed 0.1.0-rc1 is the first release candidate for the Author Identity plugin suite. It ships multi-format Byline feed output for RSS2, Atom, and JSON Feed; adapter support for core WordPress, Co-Authors Plus, PublishPress Authors, and HM Authorship; fediverse author-attribution meta tags; multi-author JSON-LD Article schema; and an initial AI-consent signaling layer.
+Byline Feed 0.1.0-rc2 is the second release candidate for the Author Identity plugin suite. It keeps the same core output surface as rc1 while hardening the release around shipped schema enrichment, rights signaling, integration coverage, Playground validation, and local test reproducibility.
 
 ### Highlights
 
 - Structured Byline output for RSS2, Atom, and JSON Feed
 - Multi-author adapter support for Co-Authors Plus, PublishPress Authors, and HM Authorship
 - Fediverse author attribution via `fediverse:creator`
-- Ordered multi-author JSON-LD `Article` + `Person` output
+- Ordered multi-author JSON-LD `Article` + `Person` output, including Yoast SEO and Rank Math enrichment modes
 - Editorial `Content Perspective` field with block-editor and classic-editor support
-- Initial AI-consent signaling with per-author and per-post resolution, `robots` meta, `TDMRep`, and `ai.txt`
-- Green CI across the supported PHP/WordPress matrix plus Playwright E2E coverage
+- AI-consent signaling with per-author and per-post resolution, denied-item feed rights metadata, `robots` meta, `TDMRep`, `ai.txt`, and admin-side audit logging
+- Docker-backed local PHPUnit workflow plus green CI across the supported PHP/WordPress matrix, adapter integrations, and Playwright E2E coverage
+- Refreshed public Playground demo routes aligned with the current release candidate
 
 ### AI assistance note
 

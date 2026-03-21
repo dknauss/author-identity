@@ -2,7 +2,7 @@
 Contributors: dknauss
 Tags: rss, atom, byline, author, attribution, feeds
 Requires at least: 6.0
-Tested up to: 6.7
+Tested up to: 6.9
 Requires PHP: 7.4
 Stable tag: trunk
 License: GPLv2 or later
@@ -96,12 +96,10 @@ Content Perspective is an editorial field that communicates the intent behind a 
 
 == Changelog ==
 
-= 0.1.0-rc1 =
-* First release candidate.
-* Adapter layer with Co-Authors Plus, PublishPress Authors, HM Authorship, and core WordPress support.
-* RSS2, Atom, and JSON Feed Byline output.
-* Content Perspective field with block editor panel and classic editor support.
-* Fediverse-handle profile field and `fediverse:creator` meta tag output.
-* Multi-author JSON-LD Article + Person schema with Yoast/Rank Math enrichment when those plugins own the schema graph.
-* Initial AI-consent signaling with per-author and per-post consent resolution, denied-item feed rights metadata, `robots` meta output, `TDMRep` headers, `ai.txt`, and admin-side audit logging.
-* Test and CI baseline established for supported PHP and WordPress versions.
+= 0.1.0-rc2 =
+* Second release candidate.
+* Multi-author JSON-LD schema now supports Yoast SEO and Rank Math enrichment modes, with standalone output when no schema-owning SEO plugin is active.
+* AI-consent signaling now includes denied-item feed rights metadata, a block-editor consent panel, and an admin-side audit log.
+* Local PHPUnit workflow now uses a documented Docker-backed path for reproducible test setup.
+* Integration coverage now includes stronger PublishPress Authors parity plus HM Authorship regression protection.
+* Playground output-demo assets and release-facing docs were refreshed to match the shipped plugin behavior.

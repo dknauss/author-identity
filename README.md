@@ -148,7 +148,7 @@ The public `Try in Playground` CTA now targets the stable `codex/playground-asse
 
 ## Current RC
 
-- Pre-release: [Byline Feed 0.1.0-rc1](https://github.com/dknauss/Author-Identity/releases/tag/v0.1.0-rc1)
+- Pre-release: [Byline Feed 0.1.0-rc2](https://github.com/dknauss/Author-Identity/releases/tag/v0.1.0-rc2)
 - Feedback and stabilization: [issue #17](https://github.com/dknauss/Author-Identity/issues/17)
 
 ## Governance
