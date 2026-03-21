@@ -8,7 +8,7 @@ Stable tag: trunk
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Enriches RSS2, Atom, and JSON Feed output with structured author identity metadata following the Byline specification, and emits fediverse author-attribution meta tags plus multi-author JSON-LD schema on singular content.
+Enriches RSS2, Atom, and JSON Feed output with structured author identity metadata following the Byline specification, and emits fediverse author-attribution meta tags, multi-author JSON-LD schema, and advisory AI-consent signals on singular content.
 
 == Description ==
 
@@ -25,8 +25,8 @@ The plugin currently supports:
 * Core WordPress fallback adapter
 * Content Perspective editorial field
 * `fediverse:creator` meta tags for authors with configured fediverse handles
-* Multi-author JSON-LD Article + Person output on singular views
-* Initial AI-consent signaling with `robots` meta, `TDMRep` headers, and `ai.txt`
+* Multi-author JSON-LD Article + Person output on singular views, including Yoast SEO and Rank Math enrichment modes
+* Initial AI-consent signaling with denied-item feed rights metadata, `robots` meta, `TDMRep` headers, `ai.txt`, and admin-side audit logging
 * Filter and action hooks for output customization
 
 Byline Feed is additive. It preserves core feed elements such as `<author>` and `<dc:creator>` and adds Byline metadata alongside them.
@@ -38,8 +38,10 @@ Byline Feed is additive. It preserves core feed elements such as `<author>` and 
 * Supports `byline:profile`, `byline:now`, and `byline:uses` from plugin-owned user meta
 * Emits `<meta name="fediverse:creator">` tags on singular views for authors with configured handles
 * Emits JSON-LD `Article` + ordered `Person` schema on singular post views
+* Enriches Yoast SEO and Rank Math schema output when present, or emits standalone JSON-LD when no schema-owning SEO plugin is active
 * Auto-detects PublishPress Authors, HM Authorship, Co-Authors Plus, or falls back to core WordPress
 * Adds Content Perspective, fediverse-handle, and AI-consent fields in WordPress editing/profile UI
+* Stores AI-consent changes in an admin-only audit log under Tools
 * Validates normalized author data before output
 * Works without requiring a specific multi-author plugin
 
@@ -100,6 +102,6 @@ Content Perspective is an editorial field that communicates the intent behind a 
 * RSS2, Atom, and JSON Feed Byline output.
 * Content Perspective field with block editor panel and classic editor support.
 * Fediverse-handle profile field and `fediverse:creator` meta tag output.
-* Multi-author JSON-LD Article + Person schema with conservative Yoast/Rank Math coexistence rules.
-* Initial AI-consent signaling with per-author and per-post consent resolution, `robots` meta output, `TDMRep` headers, and `ai.txt`.
+* Multi-author JSON-LD Article + Person schema with Yoast/Rank Math enrichment when those plugins own the schema graph.
+* Initial AI-consent signaling with per-author and per-post consent resolution, denied-item feed rights metadata, `robots` meta output, `TDMRep` headers, `ai.txt`, and admin-side audit logging.
 * Test and CI baseline established for supported PHP and WordPress versions.

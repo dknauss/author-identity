@@ -32,6 +32,7 @@ Feed routes:
 - `/feed/atom/`
 - `/feed/json/`
   - inspect for multi-author Byline output driven by the same deterministic author fixture set
+  - denied demo posts also appear in the feeds with denied-item rights signaling
 
 Denied rights demos:
 - `/?p=101`
