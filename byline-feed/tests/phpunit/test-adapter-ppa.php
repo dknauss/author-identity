@@ -151,6 +151,36 @@ class Test_Adapter_PPA extends WP_UnitTestCase {
 		$this->assertSame( '', $author->ai_consent );
 	}
 
+	public function test_normalize_maps_method_based_guest_author_to_guest_role(): void {
+		$term = wp_insert_term( 'Method Guest Contributor', 'category', array( 'slug' => 'method-guest-contributor' ) );
+		$this->assertIsArray( $term );
+		$term_id = (int) $term['term_id'];
+
+		update_term_meta( $term_id, 'description', 'Method guest term bio.' );
+
+		$author_object = new class($term_id) {
+			public $slug = 'method-guest-contributor';
+			public $display_name = 'Method Guest Contributor';
+			public $user_id = 0;
+			public $term_id;
+
+			public function __construct( int $term_id ) {
+				$this->term_id = $term_id;
+			}
+
+			public function is_guest(): bool {
+				return true;
+			}
+		};
+
+		$author = $this->invoke_normalize( $author_object );
+
+		$this->assertTrue( $author->is_guest );
+		$this->assertSame( 'guest', $author->role );
+		$this->assertSame( 0, $author->user_id );
+		$this->assertSame( 'Method guest term bio.', $author->description );
+	}
+
 	/**
 	 * Invoke the adapter's private normalize() method.
 	 *

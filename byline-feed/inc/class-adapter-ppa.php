@@ -55,7 +55,14 @@ class Adapter_PPA implements Adapter {
 	 * @return object Normalized author object.
 	 */
 	private function normalize( object $author ): object {
-		$is_guest = ! empty( $author->is_guest );
+		$is_guest = false;
+
+		if ( method_exists( $author, 'is_guest' ) ) {
+			$is_guest = (bool) $author->is_guest();
+		} elseif ( ! empty( $author->is_guest ) ) {
+			$is_guest = true;
+		}
+
 		$user_id  = $author->user_id ?? 0;
 		$user     = $user_id ? get_userdata( $user_id ) : null;
 		$term_id  = $author->term_id ?? 0;

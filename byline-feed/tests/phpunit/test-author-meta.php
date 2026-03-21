@@ -229,7 +229,6 @@ class Test_Author_Meta extends WP_UnitTestCase {
 		register_author_meta();
 		register_consent_meta();
 		rest_get_server();
-		do_action( 'rest_api_init' );
 
 		$admin_id = self::factory()->user->create( array( 'role' => 'administrator' ) );
 		$user_id  = self::factory()->user->create();
