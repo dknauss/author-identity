@@ -47,6 +47,10 @@ wp-config.php
 # uncomment the next line
 #/wp-content/themes
 
+# Dependencies (installed locally, not committed)
+byline-feed/node_modules/
+byline-feed/vendor/
+
 # Local development caches
 byline-feed/.npm-cache/
 byline-feed/.phpunit.result.cache

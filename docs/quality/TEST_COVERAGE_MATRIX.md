@@ -72,16 +72,27 @@
 | JSON-LD Article + Person schema | **Covered** | `test-schema.php` | Singular Article output, ordered multi-author `Person` arrays, publisher organization, and guest-author omission behavior are covered. |
 | JSON-LD sameAs from profiles | **Covered** | `test-schema.php` | `sameAs` is populated from normalized `profiles[]` entries. |
 | JSON-LD sameAs extension with `ap_actor_url` | **Covered** | `test-schema.php` | `ap_actor_url` is added only when present and never inferred from other profile URLs. `did:web:` remains intentionally outside the active matrix. |
-| JSON-LD Yoast/Rank Math detection | **Covered** | `test-schema.php` | Known SEO-plugin conflict detection disables output by default and respects override filters. |
+| JSON-LD Yoast enrichment (Mode A) | **Covered** | `test-schema.php` | Yoast `wpseo_schema_article` filter replaces single-author reference with full multi-author Person array including `bylineRole`, `aiTrainingConsent`, fediverse `sameAs`, and `bylinePerspective`. Live-verified with Yoast SEO 27.2. |
+| JSON-LD Rank Math enrichment (Mode B) | **Covered** | `test-schema.php` | Rank Math `rank_math/json_ld` filter enriches Article/BlogPosting/NewsArticle nodes. |
+| JSON-LD mode detection + dispatch | **Covered** | `test-schema.php` | Standalone/Yoast/Rank Math detection, filter override, Yoast priority. |
+| JSON-LD Person `additionalProperty` | **Covered** | `test-schema.php` | `bylineRole`, `aiTrainingConsent` as PropertyValue nodes; omission when empty. |
+| JSON-LD Article `bylinePerspective` | **Covered** | `test-schema.php` | Present when meta set, absent when unset, across all three modes. |
+| JSON-LD fediverse URL resolution | **Covered** | `test-schema.php` | `@user@instance` → `https://instance/@user` for `sameAs`. Invalid handles return empty. |
 | AI consent resolution logic | **Covered** | `test-rights.php` | Post override, most-restrictive-wins author resolution, and filter override are covered. |
 | AI consent HTML meta output | **Covered** | `test-rights.php` | Denied singular posts emit `robots` meta; allow/unset produce no output. |
 | AI consent TDM headers | **Covered** | `test-rights.php` | Denied singular posts emit `TDMRep` with a filterable policy URL. |
 | ai.txt generation | **Covered** | `test-rights.php` | Default generated content and direct render path are covered. |
+| AI consent block editor panel | **Covered** | `test-rights.php` | Script enqueue test verifies asset registration when build artifacts exist. |
+| AI consent classic editor metabox | **Covered** | `test-rights.php` | Render, nonce, save, and delete are covered. |
+| Feed-level rights (RSS2) | **Covered** | `test-rights.php` | `<byline:rights consent="deny" policy="..."/>` emitted for denied posts; omitted for allow/unset. |
+| Feed-level rights (Atom) | **Covered** | `test-rights.php` | Same pattern as RSS2 — rights element present on denied, absent on allowed. |
+| Feed-level rights (JSON Feed) | **Covered** | `test-rights.php` | `_byline.rights` object with consent and policy fields emitted for denied posts. |
+| AI consent user profile field | **Covered** | `test-author-meta.php`, `ai-consent-ui.spec.js` | PHPUnit + Playwright coverage for save/persist/render. |
 | Consent audit logging | **Gap** | Missing file | No logging implementation exists yet. |
 
 ## Priority backlog (highest impact first)
 
-1. **Add feed-level rights metadata coverage when that WP-06 sub-slice starts.** Current tests stop at HTML/header/`ai.txt` output.
+1. ~~**Add feed-level rights metadata coverage.**~~ ✅ Resolved (2026-03-20). RSS2, Atom, and JSON Feed rights tests are in `test-rights.php`.
 2. **Add consent audit-log coverage if logging is implemented.** That statefulness is not in the current slice.
 3. **Add real ActivityPub-plugin integration checks for `ap_actor_url`.** The current WP-04/WP-05 suite intentionally keeps actor resolution conservative and only partially covered.
 4. **Add browser coverage for the fediverse profile field.** The save/normalization logic is covered in PHPUnit, but the user-profile UI is not yet covered in a browser run.

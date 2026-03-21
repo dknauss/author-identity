@@ -118,7 +118,7 @@ The following items from the original gap analysis are **resolved:**
 
 - **No `dc:creator` output.** byline-feed uses its own Byline namespace rather than Dublin Core. Individual co-author attribution uses `<byline:author ref="..."/>` referencing the contributor block, not `<dc:creator>`. Feed consumers expecting `dc:creator` for multi-author content will not find it. This is a design decision (Byline namespace is richer), not a bug, but interoperability with legacy consumers is reduced.
 - **No Schema.org / JSON-LD embedded in feed items.** Schema output is on HTML pages only (`wp_head`). Feed items do not carry inline JSON-LD. This is standard practice (JSON-LD in feeds is not widely supported by feed readers) but worth noting for completeness.
-- **Feed-level rights metadata not yet shipped.** The initial WP-06 slice covers HTML meta, TDMRep headers, and `ai.txt`. Feed-level `<byline:rights>` or equivalent is deferred.
+- ~~**Feed-level rights metadata not yet shipped.**~~ ✅ Resolved (2026-03-20). RSS2/Atom emit `<byline:rights consent="deny" policy="..."/>` on denied items; JSON Feed emits `_byline.rights` object.
 
 **Context (March 2026):** Microsoft's NLWeb project explicitly identifies RSS and Schema.org
 as the semantic foundation of its AI agent query protocol. The same enrichment that byline-feed
@@ -194,7 +194,7 @@ Summary of what each source uniquely provides:
 The integration strategy for Mode A (Yoast active) is to merge our data into Yoast's graph —
 enriching `sameAs` rather than overwriting it, adding `additionalProperty` nodes for role
 and consent signals, and replacing the single-author `Article.author` reference with our
-full ordered array. **This strategy is designed but not yet implemented.**
+full ordered array. **This strategy is implemented and live-verified with Yoast SEO 27.2 (2026-03-20).**
 
 ---
 
@@ -202,7 +202,7 @@ full ordered array. **This strategy is designed but not yet implemented.**
 
 ### Initial advisory signals shipped
 
-**Status: WP-06 partially implemented (0.1.0-rc1)**
+**Status: WP-06 mostly implemented (2026-03-20)**
 
 The following rights signals are implemented and tested:
 
@@ -218,10 +218,10 @@ The following rights signals are implemented and tested:
 
 ### Remaining WP-06 gaps
 
-- **Feed-level rights metadata.** No `<byline:rights>` or equivalent in RSS2/Atom/JSON Feed output. The consent signal is HTML-page-only.
-- **Block editor consent UI.** Only the classic editor metabox exists. No block editor sidebar panel for AI consent (compare: perspective has both).
-- **Consent audit logging.** No logging of consent changes. Silent change from `allow` to `deny` has no audit trail.
-- **Schema-level consent signals.** The WP-05 spec describes `aiTrainingConsent` as an `additionalProperty` on Person nodes and a dedicated `CreativeWork` consent graph piece. Neither is implemented — the current `schema.php` does not include consent data.
+- ~~**Feed-level rights metadata.**~~ ✅ Resolved (2026-03-20). RSS2 and Atom now emit `<byline:rights consent="deny" policy="..."/>` on denied items. JSON Feed emits `_byline.rights` with consent and policy fields. Live-verified on `single-instance.local`.
+- ~~**Block editor consent UI.**~~ ✅ Resolved (2026-03-20). `ai-consent-panel.tsx` provides a `PluginDocumentSettingPanel` for per-post AI consent override, matching the perspective panel UX pattern.
+- **Consent audit logging.** No logging of consent changes. Silent change from `allow` to `deny` has no audit trail. This is the sole remaining WP-06 gap.
+- ~~**Schema-level consent signals.**~~ ✅ Resolved (2026-03-20). `get_person_schema()` now includes `aiTrainingConsent` as `additionalProperty` on Person nodes across all three schema modes.
 
 ---
 
@@ -275,10 +275,10 @@ All four P1 items were resolved in the current codebase prior to the 2026-03-20 
 - **`feed-common.php`:** ✅ `mb_substr()` now specifies `'UTF-8'` encoding parameter (line 26).
 - **`perspective.php`:** ✅ Uses `require_once` for asset file inclusion (line 173). Safe because `enqueue_block_editor_assets` fires once per request.
 
-### P2 — Defensive improvements (open)
+### P2 — Defensive improvements (resolved)
 
-- **`feed-rss2.php` / `feed-atom.php`:** No null-check on `$wp_query` before accessing `$wp_query->posts`.
-- **`namespace.php`:** Filter-then-revalidate ordering in `byline_feed_authors` not documented.
+- **`feed-rss2.php` / `feed-atom.php`:** ✅ Null-check added: `if ( empty( $wp_query ) || empty( $wp_query->posts ) )`.
+- **`namespace.php`:** ✅ Filter-then-revalidate ordering documented in docblock.
 
 ---
 

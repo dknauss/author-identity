@@ -12,12 +12,12 @@ The mental model: **WordPress is a Personal Data Server for authors.** The autho
 
 MVP (wp.org submission target): WP-01, WP-02, WP-03
 Shipped post-MVP: WP-04, WP-05, HM Authorship
-Current shipped rights slice: initial WP-06 advisory signaling
-Current focus: release-candidate stabilization
-Later roadmap: additional WP-06 work as justified by real consumer need
+Shipped WP-06: consent resolution, HTML/header/ai.txt signals, feed-level rights, block editor consent panel
+Remaining WP-06: audit logging for consent state changes
+Later roadmap: Molongui adapter, additional testing hardening
 Reserved/deferred: WP-07 (`did:web:`)
 
-Gate A is complete. WP-04, WP-05, HM Authorship, and the initial WP-06 advisory-signals slice now ship. Stabilize the current release candidate before expanding WP-06 further. See `../Implementation Strategy/implementation-spec.md § Release gates`.
+Gate A is complete. WP-04, WP-05, HM Authorship, and WP-06 (minus audit logging) now ship. The sole remaining code deliverable before release-candidate stabilization is WP-06 audit logging. See `../Implementation Strategy/implementation-spec.md § Release gates`.
 
 ## Normalized author object — field constraints
 

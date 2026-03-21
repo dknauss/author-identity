@@ -32,19 +32,19 @@ All four P1 source issues have been resolved in the current codebase. Verified 2
 **File:** `inc/perspective.php` (line 173)
 **Resolution:** Already uses `require_once`. The `enqueue_block_editor_assets` hook fires once per request, so this is safe.
 
-### P2 — Defensive improvements
+### P2 — Defensive improvements (all resolved)
 
-#### 5. feed-rss2.php / feed-atom.php: null-check $wp_query
+Both P2 items have been resolved. Verified 2026-03-20.
 
-**Files:** `inc/feed-rss2.php` (~line 46), `inc/feed-atom.php` (equivalent line)
-**Problem:** Code accesses `$wp_query->posts` without checking that `$wp_query` itself is set. Always true in feed context, but a null-check costs nothing.
-**Fix:** `if ( empty( $wp_query ) || empty( $wp_query->posts ) )`.
+#### 5. feed-rss2.php / feed-atom.php: ✅ null-check $wp_query added
 
-#### 6. namespace.php: document filter-validation ordering
+**Files:** `inc/feed-rss2.php`, `inc/feed-atom.php`
+**Resolution:** Guard changed to `if ( empty( $wp_query ) || empty( $wp_query->posts ) )`.
 
-**File:** `inc/namespace.php` (~line 101)
-**Problem:** The `byline_feed_authors` filter runs, then `validate_author_objects()` re-validates the result. Filter authors who introduce invalid contract entries will have those entries silently dropped. This is correct behavior, but not documented.
-**Fix:** Add a docblock note above the filter: "Filtered authors are re-validated against the normalized contract. Invalid entries are dropped and logged."
+#### 6. namespace.php: ✅ filter-validation ordering documented
+
+**File:** `inc/namespace.php`
+**Resolution:** Docblock updated: "Filtered authors are re-validated against the normalized contract. Invalid entries are dropped and logged via log_invalid_author_contract()."
 
 ---
 
@@ -132,6 +132,6 @@ Do **not** solve this by copying ActivityPub-derived handles into stored user me
 ## Execution notes
 
 - All P1 source fixes (items 1–4) are resolved. No commit needed.
-- P2 source fixes (items 5–6) can be a standalone commit.
+- P2 source fixes (items 5–6) are resolved (2026-03-20). `$wp_query` null-checks added; filter-validation ordering documented.
 - E2E feed output tests (item 7) are resolved. The remaining test items (8–16) are independent and can be done in any order.
 - None of these items change the plugin's public API or output format.

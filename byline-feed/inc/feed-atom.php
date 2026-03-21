@@ -41,7 +41,7 @@ function output_namespace(): void {
 function output_contributors(): void {
 	global $wp_query;
 
-	if ( empty( $wp_query->posts ) ) {
+	if ( empty( $wp_query ) || empty( $wp_query->posts ) ) {
 		return;
 	}
 

@@ -17,7 +17,7 @@ For each real release:
 
 When a release includes material AI-assisted work, add a short note like:
 
-> Portions of this release were developed with OpenAI Codex assistance. Repository ownership, review, and merge accountability remain with the human maintainer.
+> Portions of this release were developed with AI coding assistance (Claude, Codex). Repository ownership, review, and merge accountability remain with the human maintainer.
 
 ## When to include it
 
@@ -36,7 +36,7 @@ You can omit the note when AI assistance was trivial or purely editorial.
 
 Release notes complement, but do not replace:
 
-- `Assisted-by: Codex` commit trailers
+- `Co-Authored-By:` commit trailers
 - the AI assistance disclosure in `README.md`
 - the contributor/process guidance in `CONTRIBUTING.md`
 - the dated version entries in `CHANGELOG.md`
@@ -60,4 +60,4 @@ Byline Feed 0.1.0-rc1 is the first release candidate for the Author Identity plu
 
 ### AI assistance note
 
-> Portions of this release were developed with OpenAI Codex assistance. Repository ownership, review, and merge accountability remain with the human maintainer.
+> Portions of this release were developed with AI coding assistance (Claude, Codex). Repository ownership, review, and merge accountability remain with the human maintainer.

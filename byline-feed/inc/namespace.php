@@ -99,6 +99,9 @@ function byline_feed_get_authors( \WP_Post $post ): array {
 	/**
 	 * Filters the normalized author array after adapter resolution.
 	 *
+	 * Filtered authors are re-validated against the normalized contract.
+	 * Invalid entries are dropped and logged via log_invalid_author_contract().
+	 *
 	 * @param object[] $authors Normalized author objects.
 	 * @param \WP_Post $post    The post.
 	 */

@@ -19,6 +19,29 @@ When cutting a release:
 
 ## Unreleased
 
+### Added
+
+- WP-05 JSON-LD schema enrichment — all three modes:
+  - Mode A: Yoast enrichment via `wpseo_schema_article` — replaces single-author `@id` with full multi-author Person array
+  - Mode B: Rank Math enrichment via `rank_math/json_ld` — equivalent Article node enrichment
+  - Mode C: Standalone `<script type="application/ld+json">` with full field coverage
+  - Mode dispatch with `byline_feed_schema_mode` filter override
+  - Person `additionalProperty` for `bylineRole` and `aiTrainingConsent`
+  - Article `additionalProperty` for `bylinePerspective`
+  - `fediverse_profile_url()` resolves `@user@instance` to canonical HTTPS URL for `sameAs`
+  - 29 PHPUnit tests covering all modes, field enrichment, and filter extensibility
+  - Live-verified with Yoast SEO 27.2
+- WP-06 block editor AI consent panel (`ai-consent-panel.tsx`) — `PluginDocumentSettingPanel` for per-post AI consent override
+- WP-06 feed-level rights metadata:
+  - RSS2/Atom: `<byline:rights consent="deny" policy="..."/>` on denied items
+  - JSON Feed: `_byline.rights` object with consent and policy fields
+  - 6 new PHPUnit tests for feed rights output and editor script enqueue
+
+### Docs
+
+- Gap analysis and known-gaps documents updated to reflect WP-05 completion and WP-06 progress
+- Test coverage matrix updated with schema enrichment and feed-level rights entries
+
 ## 0.1.0-rc1 - 2026-03-15
 
 ### Added
