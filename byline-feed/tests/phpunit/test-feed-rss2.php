@@ -423,4 +423,95 @@ class Test_Feed_RSS2 extends WP_UnitTestCase {
 		$this->assertStringContainsString( '<byline:author ref="template-author"/>', $feed );
 		$this->assertStringContainsString( '<byline:contributors>', $feed );
 	}
+
+	public function test_empty_author_array_omits_byline_output_without_breaking_xml(): void {
+		$post_id = self::factory()->post->create(
+			array(
+				'post_author' => 0,
+				'post_status' => 'publish',
+				'post_title'  => 'Authorless RSS2 Post',
+			)
+		);
+
+		add_filter(
+			'byline_feed_authors',
+			static function (): array {
+				return array();
+			}
+		);
+
+		$this->set_feed_posts( array( $post_id ) );
+		$this->set_current_post( $post_id );
+
+		$contributors = $this->capture_output(
+			static function () {
+				output_contributors();
+			}
+		);
+		$item         = $this->capture_output(
+			static function () {
+				output_item();
+			}
+		);
+
+		$this->assertSame( '', $contributors );
+		$this->assertSame( '', $item );
+
+		$xml = simplexml_load_string( '<rss xmlns:byline="https://bylinespec.org/1.0"><channel><item></item></channel></rss>' );
+		$this->assertNotFalse( $xml );
+	}
+
+	public function test_special_characters_in_author_fields_produce_well_formed_rss2_xml(): void {
+		$post_id      = self::factory()->post->create( array( 'post_status' => 'publish' ) );
+		$display_name = 'A <B> & "C" 😄 漢字';
+		$description  = 'Context with <strong>markup</strong> & symbols 😄 漢字';
+
+		$this->set_feed_posts( array( $post_id ) );
+		$this->set_current_post( $post_id );
+
+		add_filter(
+			'byline_feed_authors',
+			static function () use ( $display_name, $description ): array {
+				return array(
+					(object) array(
+						'id'           => 'special-rss2-author',
+						'display_name' => $display_name,
+						'description'  => $description,
+						'url'          => 'https://example.com/authors/special?x=1&y=2',
+						'avatar_url'   => '',
+						'user_id'      => 0,
+						'role'         => 'staff',
+						'is_guest'     => false,
+						'profiles'     => array(),
+						'now_url'      => '',
+						'uses_url'     => '',
+						'fediverse'    => '',
+						'ai_consent'   => '',
+					),
+				);
+			}
+		);
+
+		$contributors = $this->capture_output(
+			static function () {
+				output_contributors();
+			}
+		);
+		$item         = $this->capture_output(
+			static function () {
+				output_item();
+			}
+		);
+		$xml          = simplexml_load_string( '<rss xmlns:byline="https://bylinespec.org/1.0"><channel>' . $contributors . '<item>' . $item . '</item></channel></rss>' );
+
+		$this->assertNotFalse( $xml, 'RSS2 output must remain well-formed with special characters.' );
+
+		$namespaces    = $xml->getNamespaces( true );
+		$channel       = $xml->channel;
+		$contributorsn = $channel->children( $namespaces['byline'] )->contributors;
+		$person        = $contributorsn->children( $namespaces['byline'] )->person[0];
+
+		$this->assertSame( $display_name, (string) $person->children( $namespaces['byline'] )->name );
+		$this->assertStringContainsString( 'markup & symbols 😄 漢字', (string) $person->children( $namespaces['byline'] )->context );
+	}
 }

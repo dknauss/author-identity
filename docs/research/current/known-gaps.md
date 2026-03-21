@@ -220,7 +220,7 @@ The following rights signals are implemented and tested:
 
 - ~~**Feed-level rights metadata.**~~ ✅ Resolved (2026-03-20). RSS2 and Atom now emit `<byline:rights consent="deny" policy="..."/>` on denied items. JSON Feed emits `_byline.rights` with consent and policy fields. Live-verified on `single-instance.local`.
 - ~~**Block editor consent UI.**~~ ✅ Resolved (2026-03-20). `ai-consent-panel.tsx` provides a `PluginDocumentSettingPanel` for per-post AI consent override, matching the perspective panel UX pattern.
-- **Consent audit logging.** No logging of consent changes. Silent change from `allow` to `deny` has no audit trail. This is the sole remaining WP-06 gap.
+- ~~**Consent audit logging.**~~ ✅ Resolved (2026-03-21). Consent changes are now recorded in an admin-only audit log with actor, timestamp, old value, and new value.
 - ~~**Schema-level consent signals.**~~ ✅ Resolved (2026-03-20). `get_person_schema()` now includes `aiTrainingConsent` as `additionalProperty` on Person nodes across all three schema modes.
 
 ---

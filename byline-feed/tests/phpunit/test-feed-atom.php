@@ -461,4 +461,94 @@ class Test_Feed_Atom extends WP_UnitTestCase {
 
 		$this->assertStringContainsString( '<byline:role>staff</byline:role>', $feed );
 	}
+
+	public function test_empty_author_array_omits_byline_output_without_breaking_atom_xml(): void {
+		$post_id = self::factory()->post->create(
+			array(
+				'post_author' => 0,
+				'post_status' => 'publish',
+				'post_title'  => 'Authorless Atom Post',
+			)
+		);
+
+		add_filter(
+			'byline_feed_authors',
+			static function (): array {
+				return array();
+			}
+		);
+
+		$this->set_feed_posts( array( $post_id ) );
+		$this->set_current_post( $post_id );
+
+		$contributors = $this->capture_output(
+			static function () {
+				output_contributors();
+			}
+		);
+		$entry        = $this->capture_output(
+			static function () {
+				output_entry();
+			}
+		);
+
+		$this->assertSame( '', $contributors );
+		$this->assertSame( '', $entry );
+
+		$xml = simplexml_load_string( '<feed xmlns:byline="https://bylinespec.org/1.0"><entry></entry></feed>' );
+		$this->assertNotFalse( $xml );
+	}
+
+	public function test_special_characters_in_author_fields_produce_well_formed_atom_xml(): void {
+		$post_id      = self::factory()->post->create( array( 'post_status' => 'publish' ) );
+		$display_name = 'A <B> & "C" 😄 漢字';
+		$description  = 'Context with <em>markup</em> & symbols 😄 漢字';
+
+		$this->set_feed_posts( array( $post_id ) );
+		$this->set_current_post( $post_id );
+
+		add_filter(
+			'byline_feed_authors',
+			static function () use ( $display_name, $description ): array {
+				return array(
+					(object) array(
+						'id'           => 'special-atom-author',
+						'display_name' => $display_name,
+						'description'  => $description,
+						'url'          => 'https://example.com/authors/special?x=1&y=2',
+						'avatar_url'   => '',
+						'user_id'      => 0,
+						'role'         => 'staff',
+						'is_guest'     => false,
+						'profiles'     => array(),
+						'now_url'      => '',
+						'uses_url'     => '',
+						'fediverse'    => '',
+						'ai_consent'   => '',
+					),
+				);
+			}
+		);
+
+		$contributors = $this->capture_output(
+			static function () {
+				output_contributors();
+			}
+		);
+		$entry        = $this->capture_output(
+			static function () {
+				output_entry();
+			}
+		);
+		$xml          = simplexml_load_string( '<feed xmlns:byline="https://bylinespec.org/1.0">' . $contributors . '<entry>' . $entry . '</entry></feed>' );
+
+		$this->assertNotFalse( $xml, 'Atom output must remain well-formed with special characters.' );
+
+		$namespaces   = $xml->getNamespaces( true );
+		$contributors = $xml->children( $namespaces['byline'] )->contributors;
+		$person       = $contributors->children( $namespaces['byline'] )->person[0];
+
+		$this->assertSame( $display_name, (string) $person->children( $namespaces['byline'] )->name );
+		$this->assertStringContainsString( 'markup & symbols 😄 漢字', (string) $person->children( $namespaces['byline'] )->context );
+	}
 }

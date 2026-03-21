@@ -32,13 +32,12 @@ This repository has two related parts:
 - Emit multi-author JSON-LD Article + Person output for singular content, including Yoast SEO and Rank Math schema integration modes.
 - Enrich Yoast SEO and Rank Math schema output when present, or emit standalone multi-author JSON-LD when no schema-owning SEO plugin is active.
 - Preserve all standard feed elements so Byline output remains additive.
-- Initial rights signaling: per-author and per-post AI consent, `robots` meta for denied posts, `TDMRep` headers, and `ai.txt`.
+- Initial rights signaling: per-author and per-post AI consent, denied-item feed rights metadata, `robots` meta for denied posts, `TDMRep` headers, `ai.txt`, and admin-side audit logging.
 
 ### Next planned tranches:
 
 - Additional rights work:
   - Feed-level rights metadata
-  - Audit logging
   - Richer editor UI
 - Molongui adapter support
 
@@ -62,8 +61,8 @@ Longer-range identity work such as `did:web:` remains in the vision/research lay
 
 | Status | Items |
 | --- | --- |
-| Implemented | adapter interface plus core, Co-Authors Plus, PublishPress Authors, and HM Authorship adapters<br>RSS2, Atom, JSON Feed, and JSON-LD output, including `profile` / `now` / `uses` for linked WordPress users via plugin-owned meta<br>Yoast SEO and Rank Math schema integration modes for multi-author JSON-LD enrichment<br>content perspective storage and editor UI<br>`fediverse:creator` meta tags for authors with configured fediverse handles<br>conservative `ap_actor_url` resolution for linked WordPress users when ActivityPub identity can be resolved<br>initial rights signaling: per-author/per-post AI consent, `robots` meta output, `TDMRep` headers, and `ai.txt`<br>runtime validation for the normalized author contract<br>PHPUnit, PHPCS, Playwright E2E, and GitHub Actions CI scaffolding |
-| Not yet implemented | feed-level rights metadata, audit logging, and richer rights/editor UI<br>Molongui adapter |
+| Implemented | adapter interface plus core, Co-Authors Plus, PublishPress Authors, and HM Authorship adapters<br>RSS2, Atom, JSON Feed, and JSON-LD output, including `profile` / `now` / `uses` for linked WordPress users via plugin-owned meta<br>Yoast SEO and Rank Math schema integration modes for multi-author JSON-LD enrichment<br>content perspective storage and editor UI<br>`fediverse:creator` meta tags for authors with configured fediverse handles<br>conservative `ap_actor_url` resolution for linked WordPress users when ActivityPub identity can be resolved<br>initial rights signaling: per-author/per-post AI consent, `robots` meta output, `TDMRep` headers, `ai.txt`, and admin-side audit logging<br>runtime validation for the normalized author contract<br>PHPUnit, PHPCS, Playwright E2E, and GitHub Actions CI scaffolding |
+| Not yet implemented | feed-level rights metadata and richer rights/editor UI<br>Molongui adapter |
 | Primary references | [byline-feed/](byline-feed/)<br>[byline-feed/docs/output-reference.md](byline-feed/docs/output-reference.md)<br>[implementation-spec.md](Implementation%20Strategy/implementation-spec.md)<br>[wp-01.md](Implementation%20Strategy/wp-01.md) to [wp-06.md](Implementation%20Strategy/wp-06.md) |
 
 For a maintained repository tree, see [docs/codebase-map.md](docs/codebase-map.md).
@@ -77,8 +76,16 @@ From [byline-feed/](byline-feed/):
 ```bash
 composer install
 composer lint
+bash bin/run-phpunit-local.sh
+```
+
+Alternative when you already have a WordPress test suite and database configured:
+
+```bash
 WP_TESTS_DIR=/tmp/byline-wp-tests composer test
 ```
+
+Use `bash bin/run-phpunit-local.sh` for the default local path on this repo because it provisions a disposable Docker MySQL instance and avoids stale machine-specific socket config. Use `composer test` directly only when you already have a valid `WP_TESTS_DIR` plus database configuration in place.
 
 ### JavaScript build
 

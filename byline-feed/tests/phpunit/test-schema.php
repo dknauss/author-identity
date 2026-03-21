@@ -274,6 +274,25 @@ class Test_Schema extends WP_UnitTestCase {
 		$this->assertArrayNotHasKey( 'url', $schema['author'][1] );
 	}
 
+	public function test_standalone_schema_is_omitted_when_no_authors_resolve(): void {
+		$post_id = self::factory()->post->create(
+			array(
+				'post_status' => 'publish',
+				'post_title'  => 'Schema No Authors',
+				'post_author' => 0,
+			)
+		);
+
+		add_filter(
+			'byline_feed_authors',
+			static function (): array {
+				return array();
+			}
+		);
+
+		$this->assertSame( '', $this->capture_schema_output( get_permalink( $post_id ) ) );
+	}
+
 	public function test_same_as_is_not_inferred_when_actor_url_is_missing(): void {
 		$post_id = self::factory()->post->create(
 			array(

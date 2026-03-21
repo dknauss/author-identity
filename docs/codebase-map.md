@@ -55,6 +55,7 @@ byline-feed/
 |   |-- install-wp-tests.sh
 |   |-- run-e2e.sh
 |   |-- run-integration-tests.sh
+|   |-- run-phpunit-local.sh
 |   `-- setup-e2e.sh
 |-- build/
 |   |-- ai-consent-panel.tsx.asset.php

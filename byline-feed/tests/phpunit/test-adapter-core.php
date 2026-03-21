@@ -57,34 +57,24 @@ class Test_Adapter_Core extends WP_UnitTestCase {
 		$this->assertSame( array(), $authors );
 	}
 
-	public function test_role_is_staff_for_editor(): void {
-		$user_id = self::factory()->user->create( array(
-			'role' => 'editor',
-		) );
+	public function test_standard_wordpress_roles_map_to_expected_byline_roles(): void {
+		$cases = array(
+			'administrator' => 'staff',
+			'editor'        => 'staff',
+			'author'        => 'contributor',
+			'contributor'   => 'contributor',
+			'subscriber'    => 'contributor',
+		);
 
-		$post_id = self::factory()->post->create( array(
-			'post_author' => $user_id,
-		) );
+		foreach ( $cases as $wp_role => $expected_byline_role ) {
+			$user_id = self::factory()->user->create( array( 'role' => $wp_role ) );
+			$post_id = self::factory()->post->create( array( 'post_author' => $user_id ) );
 
-		$post    = get_post( $post_id );
-		$authors = $this->adapter->get_authors( $post );
+			$post    = get_post( $post_id );
+			$authors = $this->adapter->get_authors( $post );
 
-		$this->assertSame( 'staff', $authors[0]->role );
-	}
-
-	public function test_role_is_contributor_for_author_role(): void {
-		$user_id = self::factory()->user->create( array(
-			'role' => 'author',
-		) );
-
-		$post_id = self::factory()->post->create( array(
-			'post_author' => $user_id,
-		) );
-
-		$post    = get_post( $post_id );
-		$authors = $this->adapter->get_authors( $post );
-
-		$this->assertSame( 'contributor', $authors[0]->role );
+			$this->assertSame( $expected_byline_role, $authors[0]->role, 'Failed asserting Byline role for WP role ' . $wp_role );
+		}
 	}
 
 	public function test_all_optional_fields_have_zero_values(): void {

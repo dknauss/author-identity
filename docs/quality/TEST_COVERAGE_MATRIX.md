@@ -88,12 +88,12 @@
 | Feed-level rights (Atom) | **Covered** | `test-rights.php` | Same pattern as RSS2 — rights element present on denied, absent on allowed. |
 | Feed-level rights (JSON Feed) | **Covered** | `test-rights.php` | `_byline.rights` object with consent and policy fields emitted for denied posts. |
 | AI consent user profile field | **Covered** | `test-author-meta.php`, `ai-consent-ui.spec.js` | PHPUnit + Playwright coverage for save/persist/render. |
-| Consent audit logging | **Gap** | Missing file | No logging implementation exists yet. |
+| Consent audit logging | **Covered** | `test-rights.php` | User and post consent changes are recorded in an admin-only audit log and covered by PHPUnit. |
 
 ## Priority backlog (highest impact first)
 
 1. ~~**Add feed-level rights metadata coverage.**~~ ✅ Resolved (2026-03-20). RSS2, Atom, and JSON Feed rights tests are in `test-rights.php`.
-2. **Add consent audit-log coverage if logging is implemented.** That statefulness is not in the current slice.
+2. **Add empty-author and special-character hardening coverage across remaining output paths.** These are stability-focused edge cases rather than feature gaps.
 3. **Add real ActivityPub-plugin integration checks for `ap_actor_url`.** The current WP-04/WP-05 suite intentionally keeps actor resolution conservative and only partially covered.
 4. **Add browser coverage for the fediverse profile field.** The save/normalization logic is covered in PHPUnit, but the user-profile UI is not yet covered in a browser run.
 5. **Add browser coverage for the classic editor perspective metabox.** Lower priority than the block editor path, but still useful as fallback hardening.

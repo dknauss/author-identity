@@ -23,6 +23,57 @@ if [[ ! -f "${DEFAULT_TESTS_DIR}/wp-tests-config.php" ]]; then
 	exit 1
 fi
 
+parse_db_host() {
+	local input="$1"
+	local host="$input"
+	local port=""
+	local socket=""
+
+	if [[ "$input" =~ ^localhost:(/.*)$ ]]; then
+		host="localhost"
+		socket="${BASH_REMATCH[1]}"
+	elif [[ "$input" =~ ^([^:]+):([0-9]+)$ ]]; then
+		host="${BASH_REMATCH[1]}"
+		port="${BASH_REMATCH[2]}"
+	fi
+
+	printf '%s\n%s\n%s\n' "$host" "$port" "$socket"
+}
+
+recreate_db_via_php() {
+	local db_name="$1"
+	local db_user="$2"
+	local db_password="$3"
+	local db_host="$4"
+	local db_port="$5"
+	local db_socket="$6"
+
+	php -r '
+		[$dbName, $dbUser, $dbPass, $dbHost, $dbPort, $dbSocket] = array_slice($argv, 1);
+		mysqli_report(MYSQLI_REPORT_OFF);
+		$mysqli = mysqli_init();
+		if (! $mysqli) {
+			fwrite(STDERR, "Could not initialize mysqli.\n");
+			exit(1);
+		}
+		$port = "" === $dbPort ? 0 : (int) $dbPort;
+		$socket = "" === $dbSocket ? null : $dbSocket;
+		if (! @mysqli_real_connect($mysqli, $dbHost, $dbUser, $dbPass, null, $port, $socket)) {
+			fwrite(STDERR, mysqli_connect_error() . "\n");
+			exit(1);
+		}
+		$escaped = str_replace("`", "``", $dbName);
+		if (! mysqli_query($mysqli, "DROP DATABASE IF EXISTS `" . $escaped . "`")) {
+			fwrite(STDERR, mysqli_error($mysqli) . "\n");
+			exit(1);
+		}
+		if (! mysqli_query($mysqli, "CREATE DATABASE `" . $escaped . "`")) {
+			fwrite(STDERR, mysqli_error($mysqli) . "\n");
+			exit(1);
+		}
+	' "$db_name" "$db_user" "$db_password" "$db_host" "$db_port" "$db_socket"
+}
+
 MULTISITE="${WP_MULTISITE:-0}"
 MODE="single"
 DB_NAME_SUFFIX="single"
@@ -45,10 +96,10 @@ extract_define() {
 	' "${DEFAULT_TESTS_DIR}/wp-tests-config.php" "${key}"
 }
 
-BASE_DB_NAME="$(extract_define "DB_NAME")"
-DB_USER="$(extract_define "DB_USER")"
-DB_PASSWORD="$(extract_define "DB_PASSWORD")"
-DB_HOST="$(extract_define "DB_HOST")"
+BASE_DB_NAME="${BYLINE_TEST_DB_NAME:-$(extract_define "DB_NAME")}"
+DB_USER="${BYLINE_TEST_DB_USER:-$(extract_define "DB_USER")}"
+DB_PASSWORD="${BYLINE_TEST_DB_PASSWORD:-$(extract_define "DB_PASSWORD")}"
+DB_HOST="${BYLINE_TEST_DB_HOST:-$(extract_define "DB_HOST")}"
 
 TESTS_RUN_DIR="/tmp/byline-feed-wp-tests-${MODE}"
 DB_NAME="${BASE_DB_NAME}_${DB_NAME_SUFFIX}"
@@ -66,10 +117,31 @@ ln -s "${DEFAULT_TESTS_DIR}/data" "${TESTS_RUN_DIR}/data"
 php -r '
 	$content = file_get_contents($argv[1]);
 	$db_name = $argv[2];
-	$multisite = $argv[3];
+	$db_user = $argv[3];
+	$db_password = $argv[4];
+	$db_host = $argv[5];
+	$multisite = $argv[6];
 	$content = preg_replace(
 		"/define\\(\\s*[\"\\x27]DB_NAME[\"\\x27]\\s*,\\s*[\"\\x27][^\"\\x27]*[\"\\x27]\\s*\\)/",
 		"define( \x27DB_NAME\x27, \x27{$db_name}\x27 )",
+		$content,
+		1
+	);
+	$content = preg_replace(
+		"/define\\(\\s*[\"\\x27]DB_USER[\"\\x27]\\s*,\\s*[\"\\x27][^\"\\x27]*[\"\\x27]\\s*\\)/",
+		"define( \x27DB_USER\x27, \x27{$db_user}\x27 )",
+		$content,
+		1
+	);
+	$content = preg_replace(
+		"/define\\(\\s*[\"\\x27]DB_PASSWORD[\"\\x27]\\s*,\\s*[\"\\x27][^\"\\x27]*[\"\\x27]\\s*\\)/",
+		"define( \x27DB_PASSWORD\x27, \x27{$db_password}\x27 )",
+		$content,
+		1
+	);
+	$content = preg_replace(
+		"/define\\(\\s*[\"\\x27]DB_HOST[\"\\x27]\\s*,\\s*[\"\\x27][^\"\\x27]*[\"\\x27]\\s*\\)/",
+		"define( \x27DB_HOST\x27, \x27{$db_host}\x27 )",
 		$content,
 		1
 	);
@@ -81,11 +153,23 @@ php -r '
 			1
 		);
 	}
-	file_put_contents($argv[4], $content);
- ' "${DEFAULT_TESTS_DIR}/wp-tests-config.php" "${DB_NAME}" "${MULTISITE}" "${TESTS_RUN_DIR}/wp-tests-config.php"
+	file_put_contents($argv[7], $content);
+ ' "${DEFAULT_TESTS_DIR}/wp-tests-config.php" "${DB_NAME}" "${DB_USER}" "${DB_PASSWORD}" "${DB_HOST}" "${MULTISITE}" "${TESTS_RUN_DIR}/wp-tests-config.php"
 
-MYSQL_PWD="${DB_PASSWORD}" mysql --protocol=tcp --host="${DB_HOST}" --user="${DB_USER}" \
-	-e "DROP DATABASE IF EXISTS \`${DB_NAME}\`; CREATE DATABASE \`${DB_NAME}\`;" >/dev/null
+DB_HOSTNAME=""
+DB_PORT=""
+DB_SOCKET=""
+while IFS= read -r line; do
+	if [[ -z "${DB_HOSTNAME}" ]]; then
+		DB_HOSTNAME="${line}"
+	elif [[ -z "${DB_PORT}" ]]; then
+		DB_PORT="${line}"
+	else
+		DB_SOCKET="${line}"
+	fi
+done < <(parse_db_host "${DB_HOST}")
+
+recreate_db_via_php "${DB_NAME}" "${DB_USER}" "${DB_PASSWORD}" "${DB_HOSTNAME}" "${DB_PORT}" "${DB_SOCKET}"
 
 echo "Running ${MODE} integration tests with DB ${DB_NAME} and WP_TESTS_DIR=${TESTS_RUN_DIR}"
 

@@ -7,6 +7,7 @@
 
 namespace Byline_Feed\Tests;
 
+use WP_REST_Request;
 use WP_UnitTestCase;
 use function Byline_Feed\get_byline_feed_profiles_for_user;
 use function Byline_Feed\get_byline_feed_now_url_for_user;
@@ -20,8 +21,15 @@ use function Byline_Feed\parse_byline_profiles_textarea;
 use function Byline_Feed\render_author_meta_fields;
 use function Byline_Feed\register_author_meta;
 use function Byline_Feed\save_author_meta_fields;
+use function Byline_Feed\Rights\register_consent_meta;
 
 class Test_Author_Meta extends WP_UnitTestCase {
+
+	public function tear_down(): void {
+		wp_set_current_user( 0 );
+		$_POST = array();
+		parent::tear_down();
+	}
 
 	/**
 	 * Capture output from a callback.
@@ -215,6 +223,44 @@ class Test_Author_Meta extends WP_UnitTestCase {
 
 		$this->assertArrayHasKey( 'byline_feed_fediverse', $meta_keys );
 		$this->assertTrue( $meta_keys['byline_feed_fediverse']['show_in_rest'] );
+	}
+
+	public function test_rest_api_round_trip_returns_plugin_owned_user_meta_in_edit_context(): void {
+		register_author_meta();
+		register_consent_meta();
+		rest_get_server();
+		do_action( 'rest_api_init' );
+
+		$admin_id = self::factory()->user->create( array( 'role' => 'administrator' ) );
+		$user_id  = self::factory()->user->create();
+
+		wp_set_current_user( $admin_id );
+
+		$update_request = new WP_REST_Request( 'POST', '/wp/v2/users/' . $user_id );
+		$update_request->set_param(
+			'meta',
+			array(
+				'byline_feed_fediverse'  => 'user@example.social',
+				'byline_feed_ai_consent' => 'deny',
+			)
+		);
+
+		$update_response = rest_get_server()->dispatch( $update_request );
+		$update_data     = $update_response->get_data();
+
+		$this->assertSame( 200, $update_response->get_status() );
+		$this->assertSame( '@user@example.social', $update_data['meta']['byline_feed_fediverse'] );
+		$this->assertSame( 'deny', $update_data['meta']['byline_feed_ai_consent'] );
+
+		$get_request = new WP_REST_Request( 'GET', '/wp/v2/users/' . $user_id );
+		$get_request->set_param( 'context', 'edit' );
+
+		$get_response = rest_get_server()->dispatch( $get_request );
+		$get_data     = $get_response->get_data();
+
+		$this->assertSame( 200, $get_response->get_status() );
+		$this->assertSame( '@user@example.social', $get_data['meta']['byline_feed_fediverse'] );
+		$this->assertSame( 'deny', $get_data['meta']['byline_feed_ai_consent'] );
 	}
 
 	// -------------------------------------------------------------------------

@@ -6,6 +6,7 @@ Purpose:
 - demonstrate shipped output channels, not adapter integration
 - keep author data deterministic through a small demo mu-plugin
 - make feeds, singular head output, denied-rights signaling, and `ai.txt` easy to inspect in one disposable site
+- keep the admin-only AI consent audit trail out of public output while documenting where to inspect it locally
 
 What it installs:
 - `byline-feed` from the `main` branch of this repository via `git:directory`
@@ -65,6 +66,11 @@ Denied rights output:
 `ai.txt`:
 - open `/ai.txt`
 - confirm the policy body is present
+
+Admin-only audit log:
+- local Playground runs can inspect `/wp-admin/tools.php?page=byline-feed-ai-consent-audit-log`
+- the public demo URLs use `login=no`, so the audit screen is intentionally not exposed there
+- changing per-author or per-post AI consent values in wp-admin should create timestamped audit entries
 
 ## Public demo URLs
 

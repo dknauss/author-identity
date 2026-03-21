@@ -10,10 +10,13 @@ namespace Byline_Feed\Tests;
 use WP_Post;
 use WP_UnitTestCase;
 use function Byline_Feed\Rights\filter_wp_headers;
+use function Byline_Feed\Rights\clear_audit_log_entries;
+use function Byline_Feed\Rights\get_audit_log_entries;
 use function Byline_Feed\Rights\get_ai_txt_content;
 use function Byline_Feed\Rights\get_policy_url;
 use function Byline_Feed\Rights\maybe_render_ai_txt;
 use function Byline_Feed\Rights\register_consent_meta;
+use function Byline_Feed\Rights\render_audit_log_page;
 use function Byline_Feed\Rights\render_metabox;
 use function Byline_Feed\Rights\render_robots_meta;
 use function Byline_Feed\Rights\resolve_ai_consent;
@@ -30,8 +33,11 @@ class Test_Rights extends WP_UnitTestCase {
 		remove_all_filters( 'byline_feed_ai_robots_content' );
 		remove_all_filters( 'byline_feed_ai_policy_url' );
 		remove_all_filters( 'byline_feed_ai_headers' );
+		remove_all_filters( 'byline_feed_ai_consent_audit_entry' );
 		remove_all_filters( 'byline_feed_ai_txt_content' );
 		remove_all_filters( 'byline_feed_ai_txt_should_exit' );
+		clear_audit_log_entries();
+		wp_set_current_user( 0 );
 		$_POST                  = array();
 		$_SERVER['REQUEST_URI'] = '';
 		parent::tear_down();
@@ -318,6 +324,79 @@ class Test_Rights extends WP_UnitTestCase {
 		save_metabox( $post_id );
 
 		$this->assertSame( '', get_post_meta( $post_id, '_byline_ai_consent', true ) );
+	}
+
+	public function test_user_consent_changes_are_logged_for_audit(): void {
+		$admin_id = self::factory()->user->create( array( 'role' => 'administrator' ) );
+		$user_id  = self::factory()->user->create();
+
+		wp_set_current_user( $admin_id );
+
+		update_user_meta( $user_id, 'byline_feed_ai_consent', 'deny' );
+		delete_user_meta( $user_id, 'byline_feed_ai_consent' );
+
+		$entries = get_audit_log_entries();
+
+		$this->assertCount( 2, $entries );
+		$this->assertSame( 'user', $entries[0]['target_type'] );
+		$this->assertSame( $user_id, $entries[0]['target_id'] );
+		$this->assertSame( 'deny', $entries[0]['old_value'] );
+		$this->assertSame( '', $entries[0]['new_value'] );
+		$this->assertSame( $admin_id, $entries[0]['actor_user_id'] );
+		$this->assertSame( '', $entries[1]['old_value'] );
+		$this->assertSame( 'deny', $entries[1]['new_value'] );
+		$this->assertNotSame( '', $entries[0]['timestamp_gmt'] );
+	}
+
+	public function test_post_consent_changes_are_logged_for_audit(): void {
+		$admin_id = self::factory()->user->create( array( 'role' => 'administrator' ) );
+		$post_id  = self::factory()->post->create();
+
+		wp_set_current_user( $admin_id );
+
+		update_post_meta( $post_id, '_byline_ai_consent', 'allow' );
+		update_post_meta( $post_id, '_byline_ai_consent', 'deny' );
+		delete_post_meta( $post_id, '_byline_ai_consent' );
+
+		$entries = get_audit_log_entries();
+
+		$this->assertCount( 3, $entries );
+		$this->assertSame( 'post', $entries[0]['target_type'] );
+		$this->assertSame( $post_id, $entries[0]['target_id'] );
+		$this->assertSame( 'deny', $entries[0]['old_value'] );
+		$this->assertSame( '', $entries[0]['new_value'] );
+		$this->assertSame( 'allow', $entries[1]['old_value'] );
+		$this->assertSame( 'deny', $entries[1]['new_value'] );
+		$this->assertSame( '', $entries[2]['old_value'] );
+		$this->assertSame( 'allow', $entries[2]['new_value'] );
+	}
+
+	public function test_audit_log_page_renders_entries_for_admins(): void {
+		$admin_id = self::factory()->user->create(
+			array(
+				'role'         => 'administrator',
+				'display_name' => 'Audit Admin',
+			)
+		);
+		$user_id  = self::factory()->user->create(
+			array(
+				'display_name' => 'Logged Author',
+			)
+		);
+
+		wp_set_current_user( $admin_id );
+		update_user_meta( $user_id, 'byline_feed_ai_consent', 'deny' );
+
+		$output = $this->capture_output(
+			static function () {
+				render_audit_log_page();
+			}
+		);
+
+		$this->assertStringContainsString( 'AI Consent Audit Log', $output );
+		$this->assertStringContainsString( 'Audit Admin', $output );
+		$this->assertStringContainsString( 'Logged Author', $output );
+		$this->assertStringContainsString( 'deny', $output );
 	}
 
 	public function test_rss2_item_includes_rights_element_for_denied_post(): void {

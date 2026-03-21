@@ -497,7 +497,7 @@ This is now present in the repository and should be treated as a maintained cont
 A shorter document covering:
 
 - Local dev environment: PHP 7.4+, WordPress test suite setup, `composer install`, `npm ci`.
-- How to run tests: `composer test`, `npm run build`.
+- How to run tests: `bash bin/run-phpunit-local.sh` as the default local PHPUnit path, `composer test` only when `WP_TESTS_DIR` and the test database are already configured, and `npm run build`.
 - How to add a new adapter: implement the `Adapter` interface, add detection to `bootstrap()`, add test class.
 - CI expectations: what the GitHub Actions workflow checks.
 
@@ -556,7 +556,7 @@ Based on the [gap analysis](gap-analysis.md) — what exists, what remains, and 
 | | | | | |
 | **WP-04: fediverse:creator** | Implemented | Keep docs current and add deeper ActivityPub integration coverage only when the real plugin is in play | Ongoing maintenance | WP-01 |
 | **WP-05: JSON-LD schema** | Implemented | Keep consumer docs current and add deeper real-plugin coexistence checks only when needed | Ongoing maintenance | WP-01 |
-| **WP-06: AI consent** | Partial | Initial slice ships per-author/per-post consent, resolution logic, HTML/header output, `TDMRep`, and `ai.txt`; remaining work is feed-level rights metadata, richer UI, and audit logging | 3–5 days | WP-01 |
+| **WP-06: AI consent** | Partial | Current slice ships per-author/per-post consent, resolution logic, HTML/header output, denied-item feed rights, `TDMRep`, `ai.txt`, and admin-side audit logging; remaining work is channel-wide/feed-wide rights metadata and richer UI | 2–4 days | WP-01 |
 | **Gate B': adapter-proven expansion** | Complete | WP-04 + WP-05 + HM Authorship shipped | After Gate A | WP-04/05 + HM Authorship |
 | **Gate D: rights expansion** | — | WP-06 HTML/header signals after B'; feed-level rights after Gate C | After Gate B' / Gate C | WP-06 |
 
@@ -569,14 +569,14 @@ Based on the [gap analysis](gap-analysis.md) — what exists, what remains, and 
 | **WP-04: fediverse:creator** | Implemented |
 | **WP-05: JSON-LD schema** | Implemented |
 | **HM Authorship adapter** | Implemented |
-| **WP-06: AI consent** | +3–5 days from current state for the remaining slice |
+| **WP-06: AI consent** | +2–4 days from current state for the remaining slice |
 | **Gate B': adapter-proven expansion** | Complete |
 | **Gate D: rights expansion** | After WP-06 HTML/header signals; feed-level rights still wait for Gate C |
 
 ### Caveats
 
 - **Integration testing against real CAP/PPA installations** could surface adapter bugs that take unpredictable time to fix. The adapters were written against API contracts, not tested against real plugin behavior. Budget an extra 2–3 days for this.
-- **WP-06 is the riskiest work package.** The consent resolution logic (most-restrictive-wins across co-authors, post-level override, retroactive consent changes, audit logging) has the most complex state management. The 6–8 day estimate assumes no scope surprises.
+- **WP-06 is the riskiest work package.** The consent resolution logic (most-restrictive-wins across co-authors, post-level override, retroactive consent changes, and any future channel-wide rights expansion) has the most complex state management. The estimate assumes no scope surprises.
 - **Gate C (reader-side signal)** is externally dependent and has no ETA. The feed-level rights portion of WP-06 / Gate D ships only after at least one feed reader indicates Byline parsing interest. This could be weeks or months.
 - **Estimates do not include time for Byline spec validation tooling.** If bylinespec.org publishes an XSD or RelaxNG schema during development, integrating schema validation into the test suite would add 1–2 days.
 - **Estimates assume the adapters work correctly against current CAP/PPA versions.** If either plugin has changed its return shapes since the adapters were written, debugging and updating could add 2–3 days per adapter.

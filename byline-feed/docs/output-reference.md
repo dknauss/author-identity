@@ -13,14 +13,14 @@ Current shipped output:
 - JSON Feed 1.1 output with `_byline` extensions
 - `fediverse:creator` meta tags on singular HTML views
 - JSON-LD Article + Person schema on singular HTML views
-- initial rights signals on singular/content-policy routes
+- initial rights signals on singular/content-policy routes and denied feed items
+- admin-side consent audit logging
 - Perspective post meta and feed output
 - Public filters and actions for feed customization
 
 Not yet shipped:
 
-- feed-level rights metadata
-- consent audit logging
+- channel-wide or feed-wide rights metadata beyond denied-item signaling
 
 ## Output model
 
@@ -94,7 +94,10 @@ Current behavior:
 - consent resolution uses the most restrictive linked-author preference when there is no post override
 - denied posts emit `<meta name="robots" content="noai, noimageai">`
 - denied posts emit a `TDMRep` header pointing to the policy URL
+- denied RSS2 and Atom items emit `<byline:rights consent="deny" policy="..."/>`
+- denied JSON Feed items emit `_byline.rights` with `consent` and `policy`
 - `/ai.txt` is generated dynamically and is filterable
+- consent changes are stored in an admin-only audit log at `Tools > AI Consent Audit Log`
 
 Example HTML:
 
@@ -111,9 +114,7 @@ TDMRep: https://example.com/ai.txt
 Current limitations:
 
 - these are advisory machine-readable signals, not enforcement
-- no feed-level rights metadata is emitted yet
-- no consent audit log is emitted or stored yet
-- block-editor UI for rights signaling is not shipped yet
+- no channel-wide or feed-wide rights metadata is emitted yet beyond denied-item signaling
 
 ## JSON-LD output
 

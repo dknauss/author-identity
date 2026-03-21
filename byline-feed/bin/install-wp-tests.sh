@@ -31,6 +31,43 @@ download() {
 	fi
 }
 
+parse_db_host() {
+	DB_HOSTNAME="$DB_HOST"
+	DB_PORT=""
+	DB_SOCKET=""
+
+	if [[ "$DB_HOST" =~ ^localhost:(/.*)$ ]]; then
+		DB_HOSTNAME="localhost"
+		DB_SOCKET="${BASH_REMATCH[1]}"
+	elif [[ "$DB_HOST" =~ ^([^:]+):([0-9]+)$ ]]; then
+		DB_HOSTNAME="${BASH_REMATCH[1]}"
+		DB_PORT="${BASH_REMATCH[2]}"
+	fi
+}
+
+recreate_db_via_php() {
+	php -r '
+		[$dbName, $dbUser, $dbPass, $dbHost, $dbPort, $dbSocket] = array_slice($argv, 1);
+		mysqli_report(MYSQLI_REPORT_OFF);
+		$mysqli = mysqli_init();
+		if (! $mysqli) {
+			fwrite(STDERR, "Could not initialize mysqli.\n");
+			exit(1);
+		}
+		$port = "" === $dbPort ? 0 : (int) $dbPort;
+		$socket = "" === $dbSocket ? null : $dbSocket;
+		if (! @mysqli_real_connect($mysqli, $dbHost, $dbUser, $dbPass, null, $port, $socket)) {
+			fwrite(STDERR, mysqli_connect_error() . "\n");
+			exit(1);
+		}
+		$escaped = str_replace("`", "``", $dbName);
+		if (! mysqli_query($mysqli, "CREATE DATABASE IF NOT EXISTS `" . $escaped . "`")) {
+			fwrite(STDERR, mysqli_error($mysqli) . "\n");
+			exit(1);
+		}
+	' "$DB_NAME" "$DB_USER" "$DB_PASS" "$DB_HOSTNAME" "$DB_PORT" "$DB_SOCKET"
+}
+
 if [[ $WP_VERSION =~ ^[0-9]+\.[0-9]+\-(beta|RC)[0-9]+$ ]]; then
 	WP_BRANCH=${WP_VERSION%\-*}
 	WP_TESTS_TAG="branches/$WP_BRANCH"
@@ -101,12 +138,13 @@ install_test_suite() {
 
 	if [ ! -f "$WP_TESTS_DIR/wp-tests-config.php" ]; then
 		download "https://develop.svn.wordpress.org/${WP_TESTS_TAG}/wp-tests-config-sample.php" "$WP_TESTS_DIR/wp-tests-config.php"
-		sed $ioption "s:dirname( __FILE__ ) . '/src/':'$WP_CORE_DIR/':" "$WP_TESTS_DIR/wp-tests-config.php"
-		sed $ioption "s/youremptytestdbnamehere/$DB_NAME/" "$WP_TESTS_DIR/wp-tests-config.php"
-		sed $ioption "s/yourusernamehere/$DB_USER/" "$WP_TESTS_DIR/wp-tests-config.php"
-		sed $ioption "s/yourpasswordhere/$DB_PASS/" "$WP_TESTS_DIR/wp-tests-config.php"
-		sed $ioption "s|localhost|${DB_HOST}|" "$WP_TESTS_DIR/wp-tests-config.php"
 	fi
+
+	sed $ioption "s:dirname( __FILE__ ) . '/src/':'$WP_CORE_DIR/':" "$WP_TESTS_DIR/wp-tests-config.php"
+	sed $ioption "s/define( 'DB_NAME', '[^']*' );/define( 'DB_NAME', '$DB_NAME' );/" "$WP_TESTS_DIR/wp-tests-config.php"
+	sed $ioption "s/define( 'DB_USER', '[^']*' );/define( 'DB_USER', '$DB_USER' );/" "$WP_TESTS_DIR/wp-tests-config.php"
+	sed $ioption "s/define( 'DB_PASSWORD', '[^']*' );/define( 'DB_PASSWORD', '$DB_PASS' );/" "$WP_TESTS_DIR/wp-tests-config.php"
+	sed $ioption "s|define( 'DB_HOST', '[^']*' );|define( 'DB_HOST', '$DB_HOST' );|" "$WP_TESTS_DIR/wp-tests-config.php"
 }
 
 recreate_db() {
@@ -116,7 +154,8 @@ recreate_db() {
 	fi
 	shopt -u nocasematch
 
-	mysqladmin create "$DB_NAME" --user="$DB_USER" --password="$DB_PASS" --host="$DB_HOST" --protocol=tcp 2>/dev/null || true
+	parse_db_host
+	recreate_db_via_php
 }
 
 install_wp

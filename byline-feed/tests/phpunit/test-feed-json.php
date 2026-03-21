@@ -285,4 +285,134 @@ class Test_Feed_JSON extends WP_UnitTestCase {
 
 		$this->assertSame( 'yes', $items['Filtered Item Hook Post']['_byline']['custom_flag'] );
 	}
+
+	public function test_author_extension_filter_can_enrich_feed_and_item_author_entries(): void {
+		$user_id = self::factory()->user->create(
+			array(
+				'display_name'  => 'Filtered Author',
+				'user_nicename' => 'filtered-author',
+			)
+		);
+
+		self::factory()->post->create(
+			array(
+				'post_author' => $user_id,
+				'post_status' => 'publish',
+				'post_title'  => 'Author Extension Hook Post',
+			)
+		);
+
+		add_filter(
+			'byline_feed_json_author_extension',
+			static function ( array $ext, object $author, ?\WP_Post $post ): array {
+				$ext['scope'] = $post instanceof \WP_Post ? 'item' : 'feed';
+				$ext['slug']  = $author->id;
+				return $ext;
+			},
+			10,
+			3
+		);
+
+		$feed  = $this->render_feed();
+		$items = $this->index_items_by_title( $feed['items'] );
+
+		$this->assertSame( 'feed', $feed['authors'][0]['_byline']['scope'] );
+		$this->assertSame( 'filtered-author', $feed['authors'][0]['_byline']['slug'] );
+		$this->assertSame( 'item', $items['Author Extension Hook Post']['authors'][0]['_byline']['scope'] );
+		$this->assertSame( 'filtered-author', $items['Author Extension Hook Post']['authors'][0]['_byline']['slug'] );
+	}
+
+	public function test_complete_feed_filter_can_enrich_top_level_json_feed_output(): void {
+		$user_id = self::factory()->user->create();
+
+		self::factory()->post->create(
+			array(
+				'post_author' => $user_id,
+				'post_status' => 'publish',
+				'post_title'  => 'Top Level Feed Hook Post',
+			)
+		);
+
+		add_filter(
+			'byline_feed_json_feed',
+			static function ( array $feed ): array {
+				$feed['_byline']['custom_flag'] = 'enabled';
+				$feed['hubs']                   = array(
+					array(
+						'type' => 'WebSub',
+						'url'  => 'https://example.com/hub',
+					),
+				);
+				return $feed;
+			}
+		);
+
+		$feed = $this->render_feed();
+
+		$this->assertSame( 'enabled', $feed['_byline']['custom_flag'] );
+		$this->assertSame( 'WebSub', $feed['hubs'][0]['type'] );
+		$this->assertSame( 'https://example.com/hub', $feed['hubs'][0]['url'] );
+	}
+
+	public function test_empty_author_array_keeps_json_feed_valid_and_omits_author_blocks(): void {
+		$post_id = self::factory()->post->create(
+			array(
+				'post_author' => 0,
+				'post_status' => 'publish',
+				'post_title'  => 'Authorless JSON Post',
+			)
+		);
+
+		add_filter(
+			'byline_feed_authors',
+			static function (): array {
+				return array();
+			}
+		);
+
+		$feed  = $this->render_feed();
+		$items = $this->index_items_by_title( $feed['items'] );
+
+		$this->assertSame( array(), $feed['authors'] );
+		$this->assertArrayNotHasKey( 'authors', $items['Authorless JSON Post'] );
+		$this->assertSame( $post_id, url_to_postid( $items['Authorless JSON Post']['url'] ) );
+	}
+
+	public function test_special_characters_in_author_fields_survive_json_feed_encoding(): void {
+		$post_id      = self::factory()->post->create(
+			array(
+				'post_status' => 'publish',
+				'post_title'  => 'Special JSON Post',
+			)
+		);
+		$display_name = 'A <B> & "C" 😄 漢字';
+		$description  = 'Context with <strong>markup</strong> & symbols 😄 漢字';
+
+		add_filter(
+			'byline_feed_authors',
+			static function ( $authors, $post ) use ( $post_id, $display_name, $description ) {
+				if ( $post_id !== $post->ID ) {
+					return $authors;
+				}
+
+				return array(
+					(object) array(
+						'id'           => 'special-json-author',
+						'display_name' => $display_name,
+						'description'  => $description,
+						'role'         => 'staff',
+					),
+				);
+			},
+			10,
+			2
+		);
+
+		$feed  = $this->render_feed();
+		$items = $this->index_items_by_title( $feed['items'] );
+		$item  = $items['Special JSON Post'];
+
+		$this->assertSame( $display_name, $item['authors'][0]['name'] );
+		$this->assertSame( 'Context with markup & symbols 😄 漢字', $item['authors'][0]['_byline']['context'] );
+	}
 }
