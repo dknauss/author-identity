@@ -48,6 +48,7 @@ Longer-range identity work such as `did:web:` remains in the vision/research lay
 
 | Area | Items |
 | --- | --- |
+| Layout | [docs/codebase-map.md](docs/codebase-map.md): Curated repository and plugin tree map |
 | Vision | [author-identity-vision.md](docs/vision/author-identity-vision.md): Full project vision and positioning |
 | Planning | [implementation-spec.md](Implementation%20Strategy/implementation-spec.md): Authoritative plugin implementation spec, roadmap, and release gates<br>[byline-spec-plan.md](docs/planning/byline-spec-plan.md): Byline spec assessment — what the plugin validates, current divergences, and pre-1.0 priorities<br>[byline-adoption-strategy.md](docs/planning/byline-adoption-strategy.md): Adoption strategy — audiences, workstreams, and post-Gate-A product direction<br>[fediverse-identity-design.md](docs/planning/fediverse-identity-design.md): Future source-model design for explicit vs derived fediverse identity |
 | Research | [docs/README.md](docs/README.md): Documentation tree index<br>[docs/research/README.md](docs/research/README.md): Curated research index with current vs exploratory tiers<br>[multi-author-matrix.md](docs/research/current/multi-author-matrix.md): Comparison of WordPress multi-author systems<br>[protocol-coverage-map.md](docs/research/current/protocol-coverage-map.md): Protocol coverage by output channel<br>[architecture.md](docs/research/current/architecture.md): HM Authorship architecture notes<br>[landscape.md](docs/research/current/landscape.md): Plugin ecosystem and historical lineage<br>[metadata-models-for-publishers.md](docs/research/current/metadata-models-for-publishers.md): JSON-LD background and longer-term publication metadata context<br>[nlweb-yoast-context.md](docs/research/current/nlweb-yoast-context.md): How Yoast Schema Aggregation and NLWeb relate to the plugin's schema strategy |
@@ -64,6 +65,8 @@ Longer-range identity work such as `did:web:` remains in the vision/research lay
 | Implemented | adapter interface plus core, Co-Authors Plus, PublishPress Authors, and HM Authorship adapters<br>RSS2, Atom, JSON Feed, and JSON-LD output, including `profile` / `now` / `uses` for linked WordPress users via plugin-owned meta<br>Yoast SEO and Rank Math schema integration modes for multi-author JSON-LD enrichment<br>content perspective storage and editor UI<br>`fediverse:creator` meta tags for authors with configured fediverse handles<br>conservative `ap_actor_url` resolution for linked WordPress users when ActivityPub identity can be resolved<br>initial rights signaling: per-author/per-post AI consent, `robots` meta output, `TDMRep` headers, and `ai.txt`<br>runtime validation for the normalized author contract<br>PHPUnit, PHPCS, Playwright E2E, and GitHub Actions CI scaffolding |
 | Not yet implemented | feed-level rights metadata, audit logging, and richer rights/editor UI<br>Molongui adapter |
 | Primary references | [byline-feed/](byline-feed/)<br>[byline-feed/docs/output-reference.md](byline-feed/docs/output-reference.md)<br>[implementation-spec.md](Implementation%20Strategy/implementation-spec.md)<br>[wp-01.md](Implementation%20Strategy/wp-01.md) to [wp-06.md](Implementation%20Strategy/wp-06.md) |
+
+For a maintained repository tree, see [docs/codebase-map.md](docs/codebase-map.md).
 
 ## Development and verification
 

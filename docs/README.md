@@ -6,6 +6,7 @@ This directory contains the maintained project documentation for the Author Iden
 
 | Area | Purpose |
 | --- | --- |
+| [`codebase-map.md`](codebase-map.md) | Curated repository and plugin tree map for navigation |
 | [`vision/`](vision/) | Long-form framing for the author-identity problem space and product direction |
 | [`planning/`](planning/) | Roadmaps, implementation sequencing, adoption strategy, and spec plans |
 | [`research/`](research/) | Source-grounded research inputs, split into current planning references and exploratory semantic-publishing notes |
