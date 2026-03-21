@@ -9,7 +9,7 @@ Structured authorial identity that travels with the work across feeds, search, t
 
 ## What this project is
 
-This repository ("Author Identity") houses research and planning documents for an experiment for exposing richer, more textured WordPress user metadata that supports a more meaningful conception of authorship on the web. 
+This repository ("Author Identity") houses research and planning documents for an experiment in exposing richer, more textured WordPress user metadata that supports a more meaningful conception of authorship on the web.
 
 It also includes the **[Byline Feed](byline-feed/)** WordPress plugin, which implements the [Byline extension vocabulary](https://bylinespec.org) plus additional author-identity output channels. A normalized author-data layer in WordPress drives multiple outputs.
 
@@ -26,11 +26,11 @@ This repository has two related parts:
 
 - Normalize authorial user data from core WordPress, Co-Authors Plus, PublishPress Authors, and the Human Made Authorship plugin.
 - Emit structured Byline metadata in RSS2, Atom, and JSON Feed.
- - Expose new authorial user metadata like `byline:perspective` for feed consumers.
- - Accommodate new authorial user metadata like `byline:perspective` in WordPress data model and user interface.
+- Expose new authorial user metadata like `byline:perspective` for feed consumers.
+- Accommodate new authorial user metadata like `byline:perspective` in WordPress data model and user interface.
 - Emit `fediverse:creator` meta tags in HTML heads for singular content by authors with configured fediverse handles.
 - Emit multi-author JSON-LD Article + Person output for singular content, including Yoast SEO and Rank Math schema integration modes.
- - Enrich Yoast SEO and Rank Math schema output when present, or emit standalone multi-author JSON-LD when no schema-owning SEO plugin is active.
+- Enrich Yoast SEO and Rank Math schema output when present, or emit standalone multi-author JSON-LD when no schema-owning SEO plugin is active.
 - Preserve all standard feed elements so Byline output remains additive.
 - Initial rights signaling: per-author and per-post AI consent, `robots` meta for denied posts, `TDMRep` headers, and `ai.txt`.
 
@@ -64,54 +64,6 @@ Longer-range identity work such as `did:web:` remains in the vision/research lay
 | Implemented | adapter interface plus core, Co-Authors Plus, PublishPress Authors, and HM Authorship adapters<br>RSS2, Atom, JSON Feed, and JSON-LD output, including `profile` / `now` / `uses` for linked WordPress users via plugin-owned meta<br>Yoast SEO and Rank Math schema integration modes for multi-author JSON-LD enrichment<br>content perspective storage and editor UI<br>`fediverse:creator` meta tags for authors with configured fediverse handles<br>conservative `ap_actor_url` resolution for linked WordPress users when ActivityPub identity can be resolved<br>initial rights signaling: per-author/per-post AI consent, `robots` meta output, `TDMRep` headers, and `ai.txt`<br>runtime validation for the normalized author contract<br>PHPUnit, PHPCS, Playwright E2E, and GitHub Actions CI scaffolding |
 | Not yet implemented | feed-level rights metadata, audit logging, and richer rights/editor UI<br>Molongui adapter |
 | Primary references | [byline-feed/](byline-feed/)<br>[byline-feed/docs/output-reference.md](byline-feed/docs/output-reference.md)<br>[implementation-spec.md](Implementation%20Strategy/implementation-spec.md)<br>[wp-01.md](Implementation%20Strategy/wp-01.md) to [wp-06.md](Implementation%20Strategy/wp-06.md) |
-
-## Plugin layout
-
-```text
-byline-feed/
-|-- byline-feed.php
-|-- composer.json
-|-- package.json
-|-- phpunit.xml.dist
-|-- bin/
-|   `-- install-wp-tests.sh
-|-- inc/
-|   |-- interface-adapter.php
-|   |-- class-adapter-core.php
-|   |-- class-adapter-cap.php
-|   |-- class-adapter-ppa.php
-|   |-- class-adapter-authorship.php
-|   |-- namespace.php
-|   |-- feed-common.php
-|   |-- feed-rss2.php
-|   |-- feed-atom.php
-|   |-- feed-json.php
-|   |-- fediverse.php
-|   |-- schema.php
-|   |-- rights.php
-|   |-- author-meta.php
-|   `-- perspective.php
-|-- src/
-|   `-- perspective-panel.tsx
-|-- build/
-|   |-- perspective-panel.tsx.asset.php
-|   `-- perspective-panel.tsx.js
-`-- tests/phpunit/
-    |-- bootstrap.php
-    |-- test-adapter-core.php
-    |-- test-adapter-cap.php
-    |-- test-adapter-ppa.php
-    |-- test-adapter-authorship.php
-    |-- test-author-contract.php
-    |-- test-fediverse.php
-    |-- test-feed-atom.php
-    |-- test-feed-json.php
-    |-- test-feed-rss2.php
-    |-- test-rights.php
-    |-- test-schema.php
-    |-- test-perspective.php
-    `-- test-integration-authorship.php
-```
 
 ## Development and verification
 
