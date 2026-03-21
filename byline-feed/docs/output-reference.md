@@ -560,6 +560,6 @@ add_action(
 ## Related files
 
 - [Plugin readme](../readme.txt)
-- [WP-02 specification](../../Implementation%20Strategy/wp-02.md)
-- [WP-03 specification](../../Implementation%20Strategy/wp-03.md)
+- [WP-02 specification](../../implementation-strategy/wp-02.md)
+- [WP-03 specification](../../implementation-strategy/wp-03.md)
 - [Coverage matrix](../../docs/quality/TEST_COVERAGE_MATRIX.md)

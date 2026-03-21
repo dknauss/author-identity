@@ -11,7 +11,7 @@ Use this document to answer:
 - what evidence should be generated next
 - how post-Gate-A product work supports adoption without depending on feed-reader support
 
-For the authoritative execution order, use [Implementation Strategy/implementation-spec.md](../../Implementation%20Strategy/implementation-spec.md) and [Implementation Strategy/gap-analysis.md](../../Implementation%20Strategy/gap-analysis.md).
+For the authoritative execution order, use [implementation-strategy/implementation-spec.md](../../implementation-strategy/implementation-spec.md) and [implementation-strategy/gap-analysis.md](../../implementation-strategy/gap-analysis.md).
 
 ## Current state
 
@@ -215,7 +215,7 @@ Success signal:
 ## Related documents
 
 - [implementation-spec.md](implementation-spec.md) — active roadmap summary
-- [Implementation Strategy/implementation-spec.md](../../Implementation%20Strategy/implementation-spec.md) — authoritative work-package sequence and release gates
-- [Implementation Strategy/gap-analysis.md](../../Implementation%20Strategy/gap-analysis.md) — current status and next priorities
+- [implementation-strategy/implementation-spec.md](../../implementation-strategy/implementation-spec.md) — authoritative work-package sequence and release gates
+- [implementation-strategy/gap-analysis.md](../../implementation-strategy/gap-analysis.md) — current status and next priorities
 - [byline-spec-plan.md](byline-spec-plan.md) — current Byline-spec assessment and spec-alignment issues
 - [author-identity-vision.md](../vision/author-identity-vision.md) — broader long-range product vision

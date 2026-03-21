@@ -11,7 +11,7 @@ It is not the authoritative execution roadmap. Its job is to clarify:
 - which spec questions matter before calling the plugin a stable 1.0 implementation
 - how HM Authorship fits into later adapter work without redefining the near-term roadmap
 
-For current execution order, use [implementation-spec.md](implementation-spec.md) and [Implementation Strategy/gap-analysis.md](../../Implementation%20Strategy/gap-analysis.md).
+For current execution order, use [implementation-spec.md](implementation-spec.md) and [implementation-strategy/gap-analysis.md](../../implementation-strategy/gap-analysis.md).
 
 ## Byline in this project
 
@@ -176,6 +176,6 @@ The strongest future use of this document is as a record of concrete implementat
 ## Related documents
 
 - [implementation-spec.md](implementation-spec.md) — active roadmap summary
-- [Implementation Strategy/implementation-spec.md](../../Implementation%20Strategy/implementation-spec.md) — work packages, release gates, cross-cutting concerns
-- [Implementation Strategy/gap-analysis.md](../../Implementation%20Strategy/gap-analysis.md) — current status and post-Gate-A priorities
+- [implementation-strategy/implementation-spec.md](../../implementation-strategy/implementation-spec.md) — work packages, release gates, cross-cutting concerns
+- [implementation-strategy/gap-analysis.md](../../implementation-strategy/gap-analysis.md) — current status and post-Gate-A priorities
 - [byline-adoption-strategy.md](byline-adoption-strategy.md) — ecosystem strategy beyond spec conformance

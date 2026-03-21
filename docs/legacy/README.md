@@ -4,7 +4,7 @@ This folder is for documentation kept for historical context rather than current
 
 ## What is kept here
 
-- [`../../Byline RSS Spec Adoption/`](../../Byline%20RSS%20Spec%20Adoption/) remains the primary legacy planning/archive set.
+- [`../../byline-rss-spec-adoption/`](../../byline-rss-spec-adoption/) remains the primary legacy planning/archive set.
 
 ## What was removed
 

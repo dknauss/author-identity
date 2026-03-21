@@ -2,7 +2,7 @@
 
 The authoritative implementation spec, roadmap, release gates, and cross-cutting concerns live in:
 
-**[Implementation Strategy/implementation-spec.md](../../Implementation%20Strategy/implementation-spec.md)**
+**[implementation-strategy/implementation-spec.md](../../implementation-strategy/implementation-spec.md)**
 
 That document covers:
 

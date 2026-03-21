@@ -11,7 +11,7 @@ It is intentionally selective:
 ## Top-level layout
 
 ```text
-Author-Identity/
+author-identity/
 |-- README.md
 |-- CHANGELOG.md
 |-- CONTRIBUTING.md
@@ -29,8 +29,8 @@ Author-Identity/
 |   |-- research/
 |   |-- vision/
 |   `-- legacy/
-|-- Implementation Strategy/
-|-- Byline RSS Spec Adoption/
+|-- implementation-strategy/
+|-- byline-rss-spec-adoption/
 |-- byline-feed/
 `-- playground/
     |-- bin/
@@ -98,7 +98,8 @@ byline-feed/
 | `docs/planning/` | Strategy, adoption, and planning references |
 | `docs/research/` | Current and exploratory research inputs |
 | `docs/quality/` | Assessment, release, and testing standards |
-| `Implementation Strategy/` | Delivery specs and implementation roadmap |
+| `implementation-strategy/` | Delivery specs and implementation roadmap |
+| `byline-rss-spec-adoption/` | Legacy planning and earlier positioning documents |
 | `byline-feed/inc/` | PHP runtime code: adapters, outputs, and shared logic |
 | `byline-feed/src/` | Editor-facing TypeScript entry points |
 | `byline-feed/build/` | Built JavaScript assets committed for the plugin |

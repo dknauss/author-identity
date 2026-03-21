@@ -5,7 +5,7 @@
 This repository contains both project documentation and the `byline-feed` WordPress plugin. Changes should preserve consistency between:
 
 - repository-level docs in `docs/`
-- work package specs in `Implementation Strategy/`
+- work package specs in `implementation-strategy/`
 - user-facing plugin details in `byline-feed/readme.txt`
 
 ## Development expectations
@@ -66,4 +66,4 @@ When behavior, scope, or process changes, update the relevant docs in the same c
 - `README.md` for repository-level orientation
 - `byline-feed/readme.txt` for plugin-facing user documentation
 - `docs/` for vision, planning, research, and quality materials
-- `Implementation Strategy/` when a work package or delivery rule changes
+- `implementation-strategy/` when a work package or delivery rule changes

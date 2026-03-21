@@ -2,7 +2,7 @@
 
 A side-by-side comparison of WordPress multi-author systems — their data models, features, architectural trade-offs, and the gaps that motivated the [Byline Feed plugin](../../../byline-feed/).
 
-This matrix synthesizes findings from the [landscape analysis](landscape.md), [HM Authorship architecture review](architecture.md), [known gaps audit](known-gaps.md), and the [implementation spec](../../../Implementation%20Strategy/implementation-spec.md). For the vision of what structured author identity should look like across all output channels, see [author-identity-vision.md](../../vision/author-identity-vision.md).
+This matrix synthesizes findings from the [landscape analysis](landscape.md), [HM Authorship architecture review](architecture.md), [known gaps audit](known-gaps.md), and the [implementation spec](../../../implementation-strategy/implementation-spec.md). For the vision of what structured author identity should look like across all output channels, see [author-identity-vision.md](../../vision/author-identity-vision.md).
 
 **Companion document:** [protocol-coverage-map.md](protocol-coverage-map.md) — covers the *output side*: which protocols carry which identity signals across feeds, HTML, HTTP headers, and federation.
 
@@ -109,13 +109,13 @@ Features that no existing plugin provides are highlighted — these are the gaps
 
 | Missing capability | Relevance | Addressed by |
 | --- | --- | --- |
-| **Structured feed author metadata** (Byline XML namespace) | Feed readers cannot distinguish authors or roles | [WP-02](../../../Implementation%20Strategy/wp-02.md) |
-| **Content perspective in feeds** | Feed readers cannot distinguish reporting from opinion | [WP-03](../../../Implementation%20Strategy/wp-03.md) |
-| **`fediverse:creator` meta tag** | Mastodon doesn't show author bylines on shared links | [WP-04](../../../Implementation%20Strategy/wp-04.md) |
-| **Multi-author JSON-LD schema** | Search engines see single-author schema only | [WP-05](../../../Implementation%20Strategy/wp-05.md) |
-| **Per-author AI training consent** | No machine-readable consent signal per author | [WP-06](../../../Implementation%20Strategy/wp-06.md) |
-| **TDM-Rep headers / ai.txt** | No standardized rights declaration for crawlers | [WP-06](../../../Implementation%20Strategy/wp-06.md) |
-| **Cross-plugin normalized author API** | No common interface across CAP/PPA/HM/Molongui/Core | [WP-01](../../../Implementation%20Strategy/wp-01.md) |
+| **Structured feed author metadata** (Byline XML namespace) | Feed readers cannot distinguish authors or roles | [WP-02](../../../implementation-strategy/wp-02.md) |
+| **Content perspective in feeds** | Feed readers cannot distinguish reporting from opinion | [WP-03](../../../implementation-strategy/wp-03.md) |
+| **`fediverse:creator` meta tag** | Mastodon doesn't show author bylines on shared links | [WP-04](../../../implementation-strategy/wp-04.md) |
+| **Multi-author JSON-LD schema** | Search engines see single-author schema only | [WP-05](../../../implementation-strategy/wp-05.md) |
+| **Per-author AI training consent** | No machine-readable consent signal per author | [WP-06](../../../implementation-strategy/wp-06.md) |
+| **TDM-Rep headers / ai.txt** | No standardized rights declaration for crawlers | [WP-06](../../../implementation-strategy/wp-06.md) |
+| **Cross-plugin normalized author API** | No common interface across CAP/PPA/HM/Molongui/Core | [WP-01](../../../implementation-strategy/wp-01.md) |
 
 ---
 
@@ -179,7 +179,7 @@ Guest author handling is where these systems diverge most sharply. See [known-ga
 
 ## Adapter coverage in Byline Feed
 
-The [Byline Feed plugin](../../../byline-feed/) normalizes author data from any of these systems into a single [author object contract](../../../Implementation%20Strategy/implementation-spec.md#normalized-author-object-contract) via its adapter layer.
+The [Byline Feed plugin](../../../byline-feed/) normalizes author data from any of these systems into a single [author object contract](../../../implementation-strategy/implementation-spec.md#normalized-author-object-contract) via its adapter layer.
 
 | Adapter | Status | Detection method | Implementation |
 | --- | --- | --- | --- |
@@ -189,7 +189,7 @@ The [Byline Feed plugin](../../../byline-feed/) normalizes author data from any 
 | Molongui Authorship | 🔜 Planned | `class_exists( 'Molongui\\Authorship\\Author' )` | — |
 | HM Authorship | 🔜 Planned | `function_exists( 'Authorship\\get_authors' )` | — |
 
-Detection priority and the adapter interface are defined in the [implementation spec § Adapter detection](../../../Implementation%20Strategy/implementation-spec.md#adapter-detection-and-priority).
+Detection priority and the adapter interface are defined in the [implementation spec § Adapter detection](../../../implementation-strategy/implementation-spec.md#adapter-detection-and-priority).
 
 ---
 
@@ -208,7 +208,7 @@ Each generation addressed limitations of the previous, trading off differently b
 | **Conceptual simplicity** | Moderate (sync required) | High (one entity type) | Moderate (custom entity) |
 | **Feature breadth** | High (CAP: legacy; PPA: active) | Low (developer-focused) | High (display-focused) |
 
-The Byline Feed plugin's adapter layer exists precisely because no single approach won. Sites use different systems and the output layer should not care which one. The [normalized author contract](../../../Implementation%20Strategy/implementation-spec.md#normalized-author-object-contract) is the abstraction that makes this possible.
+The Byline Feed plugin's adapter layer exists precisely because no single approach won. Sites use different systems and the output layer should not care which one. The [normalized author contract](../../../implementation-strategy/implementation-spec.md#normalized-author-object-contract) is the abstraction that makes this possible.
 
 ---
 
@@ -217,8 +217,8 @@ The Byline Feed plugin's adapter layer exists precisely because no single approa
 - [landscape.md](landscape.md) — Install counts, historical lineage, per-plugin data model detail
 - [architecture.md](architecture.md) — HM Authorship source-level architecture review
 - [known-gaps.md](known-gaps.md) — Security, data integrity, and performance gaps
-- [Implementation Strategy/implementation-spec.md](../../../Implementation%20Strategy/implementation-spec.md) — Byline Feed plugin implementation spec and roadmap
+- [implementation-strategy/implementation-spec.md](../../../implementation-strategy/implementation-spec.md) — Byline Feed plugin implementation spec and roadmap
 - [author-identity-vision.md](../../vision/author-identity-vision.md) — Full vision: feeds, schema, fediverse, AI, rights
 - [byline-spec-plan.md](../../planning/byline-spec-plan.md) — Byline RSS spec plan
 - [byline-adoption-strategy.md](../../planning/byline-adoption-strategy.md) — Byline spec adoption strategy
-- [Implementation Strategy/](../../../Implementation%20Strategy/) — Work package specs (WP-01 through WP-06)
+- [implementation-strategy/](../../../implementation-strategy/) — Work package specs (WP-01 through WP-06)

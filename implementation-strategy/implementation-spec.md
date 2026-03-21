@@ -112,7 +112,7 @@ Each work package is a self-contained deliverable. Packages are ordered by depen
 | 05 | JSON-LD schema output | 01 | Multi-author Article + Person schema in `wp_head`; `ap_actor_url` may extend `sameAs` |
 | 06 | Content rights and AI consent | 01 | Per-author/per-post consent, TDM headers, `ai.txt` |
 
-Detailed scaffolds for each: `Implementation Strategy/wp-01.md` through `Implementation Strategy/wp-06.md`.
+Detailed scaffolds for each: `implementation-strategy/wp-01.md` through `implementation-strategy/wp-06.md`.
 
 ## Scope philosophy: one plugin, gated growth
 

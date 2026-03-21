@@ -2,7 +2,7 @@
 
 **Date:** March 2026  
 **Scope:** Current audit of `byline-feed/` against the work package specifications (WP-01 through WP-06) and cross-cutting concerns.  
-**Method:** File-by-file comparison of the shipped plugin, tests, CI, and governance docs against [Implementation Strategy/implementation-spec.md](implementation-spec.md) and the individual work package specs.
+**Method:** File-by-file comparison of the shipped plugin, tests, CI, and governance docs against [implementation-strategy/implementation-spec.md](implementation-spec.md) and the individual work package specs.
 
 ---
 
@@ -194,6 +194,6 @@ The following items appeared in earlier audits but are now resolved:
 
 ## Related documents
 
-- [Implementation Strategy/implementation-spec.md](implementation-spec.md) — Work packages, cross-cutting concerns, delivery schedule
+- [implementation-strategy/implementation-spec.md](implementation-spec.md) — Work packages, cross-cutting concerns, delivery schedule
 - [wp-01.md](wp-01.md) through [wp-06.md](wp-06.md) — Individual work package specifications
 - [docs/quality/TEST_COVERAGE_MATRIX.md](../docs/quality/TEST_COVERAGE_MATRIX.md) — Current test coverage by domain

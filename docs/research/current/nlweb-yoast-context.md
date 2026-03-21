@@ -13,8 +13,8 @@ picture, the field coverage comparison between the schemamap's author data and o
 author contract, and the adoption strategy implications.
 
 For architectural decisions that follow from this analysis, see:
-- `Implementation Strategy/wp-05.md` — revised schema output work package
-- `Implementation Strategy/gap-analysis.md` / `known-gaps.md` — Schema output and AI agent
+- `implementation-strategy/wp-05.md` — revised schema output work package
+- `implementation-strategy/gap-analysis.md` / `known-gaps.md` — Schema output and AI agent
   discovery section
 
 ---

@@ -78,8 +78,8 @@ That means the earlier CAP/PPA discrepancy for linked-user `url` normalization i
 
 ## Related documents
 
-- [Implementation Strategy/implementation-spec.md](../../Implementation%20Strategy/implementation-spec.md) — Full spec, work packages, and cross-cutting concerns
-- [Implementation Strategy/gap-analysis.md](../../Implementation%20Strategy/gap-analysis.md) — Current remaining gaps
+- [implementation-strategy/implementation-spec.md](../../implementation-strategy/implementation-spec.md) — Full spec, work packages, and cross-cutting concerns
+- [implementation-strategy/gap-analysis.md](../../implementation-strategy/gap-analysis.md) — Current remaining gaps
 - [TEST_COVERAGE_MATRIX.md](./TEST_COVERAGE_MATRIX.md) — Test coverage status by domain
 - [TDD_TESTING_STANDARD.md](./TDD_TESTING_STANDARD.md) — Testing protocol
 - [author-identity-vision.md](../vision/author-identity-vision.md) — Vision document

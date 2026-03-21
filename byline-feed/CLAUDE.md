@@ -17,7 +17,7 @@ Remaining WP-06: audit logging for consent state changes
 Later roadmap: Molongui adapter, additional testing hardening
 Reserved/deferred: WP-07 (`did:web:`)
 
-Gate A is complete. WP-04, WP-05, HM Authorship, and WP-06 (minus audit logging) now ship. The sole remaining code deliverable before release-candidate stabilization is WP-06 audit logging. See `../Implementation Strategy/implementation-spec.md § Release gates`.
+Gate A is complete. WP-04, WP-05, HM Authorship, and WP-06 (minus audit logging) now ship. The sole remaining code deliverable before release-candidate stabilization is WP-06 audit logging. See `../implementation-strategy/implementation-spec.md § Release gates`.
 
 ## Normalized author object — field constraints
 
@@ -59,9 +59,9 @@ No mechanism currently exists for our multi-author data to influence the AP plug
 ## Key cross-references
 
 - Architectural decisions in full: `../docs/vision/author-identity-vision.md § WordPress as a Personal Data Server`
-- Author object contract: `../Implementation Strategy/implementation-spec.md § Normalized author object contract`
+- Author object contract: `../implementation-strategy/implementation-spec.md § Normalized author object contract`
 - AP boundary detail: `../docs/research/current/known-gaps.md § Byline Feed plugin — integration boundaries`
-- Work package scaffolds: `../Implementation Strategy/wp-01.md` through `../Implementation Strategy/wp-06.md`
+- Work package scaffolds: `../implementation-strategy/wp-01.md` through `../implementation-strategy/wp-06.md`
 
 ## What not to do
 

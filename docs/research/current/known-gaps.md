@@ -7,8 +7,8 @@ enrichment, and AI agent discovery.
 
 **Last updated:** 2026-03-20
 **Cross-references:**
-- `Implementation Strategy/gap-analysis.md` — work-package-level status and priority
-- `Implementation Strategy/code-review-plan.md` — source fixes and test coverage backlog
+- `implementation-strategy/gap-analysis.md` — work-package-level status and priority
+- `implementation-strategy/code-review-plan.md` — source fixes and test coverage backlog
 - `docs/research/current/nlweb-yoast-context.md` — NLWeb/Yoast landscape analysis
 
 ---
@@ -264,7 +264,7 @@ The normalized author object contract (see `implementation-spec.md`) includes `a
 ## Source-level issues (byline-feed)
 
 These are code-level findings from the full source review. See
-`Implementation Strategy/code-review-plan.md` for the complete prioritized backlog.
+`implementation-strategy/code-review-plan.md` for the complete prioritized backlog.
 
 ### P1 — Moderate issues (resolved)
 
@@ -284,7 +284,7 @@ All four P1 items were resolved in the current codebase prior to the 2026-03-20 
 
 ## Test coverage gaps (byline-feed)
 
-See `Implementation Strategy/code-review-plan.md` for the complete prioritized backlog.
+See `implementation-strategy/code-review-plan.md` for the complete prioritized backlog.
 
 ### P1 — High priority (mostly resolved)
 

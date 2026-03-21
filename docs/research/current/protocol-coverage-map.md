@@ -83,7 +83,7 @@ Which protocols carry which identity signals. This is the core of the coverage m
 - **What it adds:** Structured author identity (`byline:person`), content perspective (`byline:perspective`), author roles (`byline:role`), affiliation/COI disclosure, IndieWeb profile references (`/now`, `/uses`)
 - **Design:** Additive — never removes or replaces standard feed elements. Ignored by readers that don't support it.
 - **Trust model:** Declared metadata. No built-in verification, but profile links enable `rel="me"` mutual linking as a social-proof layer.
-- **WordPress status:** Byline Feed is now the first known WordPress implementation. See [Implementation Strategy/implementation-spec.md](../../../Implementation%20Strategy/implementation-spec.md).
+- **WordPress status:** Byline Feed is now the first known WordPress implementation. See [implementation-strategy/implementation-spec.md](../../../implementation-strategy/implementation-spec.md).
 
 #### RSS 2.0
 - **Standard:** Stable (Dave Winer / Harvard Law)
@@ -118,7 +118,7 @@ Which protocols carry which identity signals. This is the core of the coverage m
 - **Channel:** HTML `<script type="application/ld+json">` in `wp_head`
 - **Author support:** `Person` type with `name`, `url`, `description`, `image`, `sameAs` (social profiles), `worksFor` (organization). `Article.author` accepts array for multi-author.
 - **Consumers:** Google (E-E-A-T ranking signals, Knowledge Panels, Rich Results), Bing, AI search systems.
-- **WordPress status:** Theme-dependent. SEO plugins (Yoast, Rank Math) provide single-author schema. Multi-author JSON-LD is still rare. Byline Feed [WP-05](../../../Implementation%20Strategy/wp-05.md) now addresses it with ordered multi-author `Article.author` output.
+- **WordPress status:** Theme-dependent. SEO plugins (Yoast, Rank Math) provide single-author schema. Multi-author JSON-LD is still rare. Byline Feed [WP-05](../../../implementation-strategy/wp-05.md) now addresses it with ordered multi-author `Article.author` output.
 
 #### fediverse:creator
 - **Standard:** Informal convention (Mastodon, July 2024)
@@ -126,7 +126,7 @@ Which protocols carry which identity signals. This is the core of the coverage m
 - **Purpose:** When a link is shared on Mastodon, the author's fediverse identity appears on the link preview card.
 - **Verification:** Author must add the publishing domain to their Mastodon "Author Attribution" allowlist. This is domain-based verification, stronger than pure declared metadata.
 - **Multi-author:** Mastodon currently displays only the first tag. PR #30846 adds multi-author API support; display support expected to follow.
-- **WordPress status:** Not in core. Byline Feed [WP-04](../../../Implementation%20Strategy/wp-04.md) now outputs from user meta for singular content.
+- **WordPress status:** Not in core. Byline Feed [WP-04](../../../implementation-strategy/wp-04.md) now outputs from user meta for singular content.
 
 #### OpenGraph
 - **Standard:** De facto (Facebook/Meta, ogp.me)
@@ -149,19 +149,19 @@ Which protocols carry which identity signals. This is the core of the coverage m
 - **Channel:** HTML `<meta name="robots" content="noai, noimageai" />`
 - **Purpose:** Advisory signal requesting AI crawlers not use page content for training.
 - **Enforcement:** None — depends on crawler compliance. Not legally binding.
-- **WordPress status:** Not in core. Byline Feed [WP-06](../../../Implementation%20Strategy/wp-06.md) will output per-post when any attributed author has `ai_consent = 'deny'`.
+- **WordPress status:** Not in core. Byline Feed [WP-06](../../../implementation-strategy/wp-06.md) will output per-post when any attributed author has `ai_consent = 'deny'`.
 
 #### TDM-Rep (Text and Data Mining Reservation)
 - **Standard:** W3C emerging specification
 - **Channel:** HTTP response header (`TDMRep: https://example.com/tdm-policy`)
 - **Purpose:** Declares a policy URL governing text and data mining rights. More formal than robots meta; on a W3C standardization path that may eventually carry legal weight.
-- **WordPress status:** Not in core. Byline Feed [WP-06](../../../Implementation%20Strategy/wp-06.md) will output header.
+- **WordPress status:** Not in core. Byline Feed [WP-06](../../../implementation-strategy/wp-06.md) will output header.
 
 #### ai.txt
 - **Standard:** Emerging community convention (analogous to robots.txt)
 - **Channel:** Well-known file at `/ai.txt` or `/.well-known/ai.txt`
 - **Purpose:** Site-wide AI training consent policy. Machine-readable directives per content category.
-- **WordPress status:** Not in core. Byline Feed [WP-06](../../../Implementation%20Strategy/wp-06.md) will dynamically generate.
+- **WordPress status:** Not in core. Byline Feed [WP-06](../../../implementation-strategy/wp-06.md) will dynamically generate.
 
 #### Creative Commons
 - **Standard:** Creative Commons (creativecommons.org)
@@ -231,12 +231,12 @@ The plugin is the **routing layer** — not a protocol. It reads author data onc
 
 | Work package | Output channel | Protocol used | Identity signals routed |
 | --- | --- | --- | --- |
-| [WP-01](../../../Implementation%20Strategy/wp-01.md) | Internal | Adapter interface | Normalized author object from CAP/PPA/Core |
-| [WP-02](../../../Implementation%20Strategy/wp-02.md) | RSS2 + Atom feeds | Byline namespace | Name, bio, avatar, URL, role, author refs |
-| [WP-03](../../../Implementation%20Strategy/wp-03.md) | RSS2 + Atom feeds | Byline namespace | Content perspective |
-| [WP-04](../../../Implementation%20Strategy/wp-04.md) | HTML `<head>` | fediverse:creator | Fediverse handle per author |
-| [WP-05](../../../Implementation%20Strategy/wp-05.md) | HTML `<head>` | JSON-LD / schema.org | Person objects, sameAs links, Article schema |
-| [WP-06](../../../Implementation%20Strategy/wp-06.md) | HTML + HTTP + file | robots meta, TDM-Rep, ai.txt | AI consent, rights declarations |
+| [WP-01](../../../implementation-strategy/wp-01.md) | Internal | Adapter interface | Normalized author object from CAP/PPA/Core |
+| [WP-02](../../../implementation-strategy/wp-02.md) | RSS2 + Atom feeds | Byline namespace | Name, bio, avatar, URL, role, author refs |
+| [WP-03](../../../implementation-strategy/wp-03.md) | RSS2 + Atom feeds | Byline namespace | Content perspective |
+| [WP-04](../../../implementation-strategy/wp-04.md) | HTML `<head>` | fediverse:creator | Fediverse handle per author |
+| [WP-05](../../../implementation-strategy/wp-05.md) | HTML `<head>` | JSON-LD / schema.org | Person objects, sameAs links, Article schema |
+| [WP-06](../../../implementation-strategy/wp-06.md) | HTML + HTTP + file | robots meta, TDM-Rep, ai.txt | AI consent, rights declarations |
 
 This is why a unified spec would be the wrong abstraction. Each protocol operates in a different channel with different consumers and different trust assumptions. The plugin normalizes the *data*; the protocols remain purpose-built for their channels.
 
@@ -255,7 +255,7 @@ All protocols that carry author identity agree on the same core fields: **name**
 | URL | `byline:url` | `Person.url` | `actor.url` | `u-url` |
 | Avatar | `byline:avatar` | `Person.image` | `actor.icon` | `u-photo` |
 
-The Byline Feed plugin's [normalized author object](../../../Implementation%20Strategy/implementation-spec.md#normalized-author-object-contract) maps to all four without loss.
+The Byline Feed plugin's [normalized author object](../../../implementation-strategy/implementation-spec.md#normalized-author-object-contract) maps to all four without loss.
 
 ### Where protocols diverge
 
@@ -271,7 +271,7 @@ These are not incompatible. A sophisticated implementation uses cryptographic id
 
 **Content perspective.** Only the Byline spec carries it. No other protocol has a concept of editorial intent (reporting vs. opinion vs. satire). This is Byline's most distinctive contribution — it addresses a problem (content collapse in feeds) that no other standard even recognizes.
 
-**Rights and consent.** Fragmented across four mechanisms (robots meta, TDM-Rep, ai.txt, CC license) with no coordination between them. None support per-author granularity — they're all per-page or per-site. The Byline Feed plugin's [WP-06](../../../Implementation%20Strategy/wp-06.md) routes per-author consent preferences to these per-page outputs using a most-restrictive-wins rule: if any author on a multi-author post denies AI training, the page-level signal is deny.
+**Rights and consent.** Fragmented across four mechanisms (robots meta, TDM-Rep, ai.txt, CC license) with no coordination between them. None support per-author granularity — they're all per-page or per-site. The Byline Feed plugin's [WP-06](../../../implementation-strategy/wp-06.md) routes per-author consent preferences to these per-page outputs using a most-restrictive-wins rule: if any author on a multi-author post denies AI training, the page-level signal is deny.
 
 ### Where XFN fits
 
@@ -295,7 +295,7 @@ The coverage map reveals why the Byline Feed plugin is structured as a routing l
 
 1. **No single protocol covers all channels.** You need Byline for feeds, JSON-LD for search, fediverse:creator for Mastodon, and robots/TDM-Rep/ai.txt for rights. Trying to unify these into one spec would either lose channel-specific capabilities or add complexity that each channel's consumers wouldn't understand.
 
-2. **The data model is the shared layer, not the protocol.** The [normalized author contract](../../../Implementation%20Strategy/implementation-spec.md#normalized-author-object-contract) is what unifies. It captures the superset of fields across all protocols; each output module selects what it needs.
+2. **The data model is the shared layer, not the protocol.** The [normalized author contract](../../../implementation-strategy/implementation-spec.md#normalized-author-object-contract) is what unifies. It captures the superset of fields across all protocols; each output module selects what it needs.
 
 3. **Trust is layered, not unified.** A Byline `byline:person` element carries declared metadata (weakest trust). The same author's fediverse:creator tag has domain-verified trust (moderate). Their ActivityPub actor has cryptographically signed trust (strongest). The *data* is the same; the *assurance level* varies by channel. This is correct — different channels serve different purposes.
 
@@ -307,10 +307,10 @@ The coverage map reveals why the Byline Feed plugin is structured as a routing l
 
 - [multi-author-matrix.md](multi-author-matrix.md) — Plugin implementation comparison (the systems that produce author data)
 - [author-identity-vision.md](../../vision/author-identity-vision.md) — Full vision: feeds, schema, fediverse, AI, rights
-- [Implementation Strategy/implementation-spec.md](../../../Implementation%20Strategy/implementation-spec.md) — Byline Feed plugin spec and work packages
+- [implementation-strategy/implementation-spec.md](../../../implementation-strategy/implementation-spec.md) — Byline Feed plugin spec and work packages
 - [byline-spec-plan.md](../../planning/byline-spec-plan.md) — Byline RSS spec assessment
 - [byline-adoption-strategy.md](../../planning/byline-adoption-strategy.md) — Cross-plugin adoption strategy
 - [architecture.md](architecture.md) — HM Authorship source-level review
 - [landscape.md](landscape.md) — Multi-author plugin landscape
 - [known-gaps.md](known-gaps.md) — Security and data integrity gaps
-- [Implementation Strategy/](../../../Implementation%20Strategy/) — Work package specs (WP-01 through WP-06)
+- [implementation-strategy/](../../../implementation-strategy/) — Work package specs (WP-01 through WP-06)
