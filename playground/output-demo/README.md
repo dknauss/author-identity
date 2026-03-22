@@ -2,6 +2,8 @@
 
 This bundle is the primary WordPress Playground target for `byline-feed`.
 
+It runs the actual `byline-feed` plugin code with synthetic fixture authors and rights data so the demo output stays stable and easy to inspect.
+
 Purpose:
 - demonstrate shipped output channels, not adapter integration
 - keep author data deterministic through a small demo mu-plugin

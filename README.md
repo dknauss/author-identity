@@ -124,6 +124,8 @@ The output-demo README includes direct inspection routes for:
 - denied rights-signaling routes
 - `/ai.txt`
 
+The public Playground demo runs the actual `byline-feed` plugin code, but uses synthetic fixture authors/content via a small demo mu-plugin so the inspection routes stay deterministic.
+
 [![Try in Playground](https://img.shields.io/badge/Try%20in-Playground-21759B?logo=wordpress&logoColor=white)](https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2Fdknauss%2FAuthor-Identity%2Fcodex%2Fplayground-assets%2Fplayground%2Fpublic%2Foutput-demo.blueprint.json&url=%2F%3Fp%3D1&mode=browser-full-screen&login=no)
 
 Use the output-demo bundle locally with:
