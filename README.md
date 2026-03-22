@@ -1,6 +1,6 @@
 # Author Identity
 
-[![CI](https://github.com/dknauss/Author-Identity/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/dknauss/Author-Identity/actions/workflows/ci.yml)
+[![CI](https://github.com/dknauss/author-identity/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/dknauss/author-identity/actions/workflows/ci.yml)
 [![License: GPL-2.0-or-later](https://img.shields.io/badge/License-GPL%202.0%2B-blue.svg)](LICENSE)
 [![PHP 7.4+](https://img.shields.io/badge/PHP-7.4%2B-777BB4?logo=php&logoColor=white)](byline-feed/composer.json)
 [![WordPress 6.0+](https://img.shields.io/badge/WordPress-6.0%2B-21759B?logo=wordpress&logoColor=white)](byline-feed/readme.txt)
@@ -126,7 +126,7 @@ The output-demo README includes direct inspection routes for:
 
 The public Playground demo runs the actual `byline-feed` plugin code, but uses synthetic fixture authors/content via a small demo mu-plugin so the inspection routes stay deterministic.
 
-[![Try in Playground](https://img.shields.io/badge/Try%20in-Playground-21759B?logo=wordpress&logoColor=white)](https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2Fdknauss%2FAuthor-Identity%2Fcodex%2Fplayground-assets%2Fplayground%2Fpublic%2Foutput-demo.blueprint.json&url=%2F%3Fp%3D1&mode=browser-full-screen&login=no)
+[![Try in Playground](https://img.shields.io/badge/Try%20in-Playground-21759B?logo=wordpress&logoColor=white)](https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2Fdknauss%2Fauthor-identity%2Fcodex%2Fplayground-assets%2Fplayground%2Fpublic%2Foutput-demo.blueprint.json&url=%2F%3Fp%3D1&mode=browser-full-screen&login=no)
 
 Use the output-demo bundle locally with:
 
@@ -150,8 +150,8 @@ The public `Try in Playground` CTA now targets the stable `codex/playground-asse
 
 ## Current RC
 
-- Pre-release: [Byline Feed 0.1.0-rc2](https://github.com/dknauss/Author-Identity/releases/tag/v0.1.0-rc2)
-- Feedback and stabilization: [issue #17](https://github.com/dknauss/Author-Identity/issues/17)
+- Pre-release: [Byline Feed 0.1.0-rc2](https://github.com/dknauss/author-identity/releases/tag/v0.1.0-rc2)
+- Feedback and stabilization: [issue #17](https://github.com/dknauss/author-identity/issues/17)
 
 ## Governance
 

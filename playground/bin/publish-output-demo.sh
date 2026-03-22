@@ -6,16 +6,16 @@ ASSET_BRANCH="codex/playground-assets"
 SNAPSHOT_SCRIPT="$ROOT_DIR/playground/bin/build-output-demo-snapshot.sh"
 SNAPSHOT_ZIP="$ROOT_DIR/playground/dist/byline-feed-output-demo.zip"
 DEMO_PLUGIN="$ROOT_DIR/playground/output-demo/demo-mu-plugin.php"
-REPO_SLUG="dknauss/Author-Identity"
+REPO_SLUG="dknauss/author-identity"
 SOURCE_SHA="$(git -C "$ROOT_DIR" rev-parse HEAD)"
 SOURCE_SHORT_SHA="$(git -C "$ROOT_DIR" rev-parse --short=12 HEAD)"
 SOURCE_TAG="playground-output-demo-source-${SOURCE_SHORT_SHA}"
 PUBLIC_BLUEPRINT_URL="https://raw.githubusercontent.com/${REPO_SLUG}/${ASSET_BRANCH}/playground/public/output-demo.blueprint.json"
-PLAYGROUND_URL="https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2Fdknauss%2FAuthor-Identity%2Fcodex%2Fplayground-assets%2Fplayground%2Fpublic%2Foutput-demo.blueprint.json&url=%2F%3Fp%3D1&mode=browser-full-screen&login=no"
-PLAYGROUND_FEED_URL="https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2Fdknauss%2FAuthor-Identity%2Fcodex%2Fplayground-assets%2Fplayground%2Fpublic%2Foutput-demo.blueprint.json&url=%2Ffeed%2F&mode=browser-full-screen&login=no"
-PLAYGROUND_AUTHOR_DENY_URL="https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2Fdknauss%2FAuthor-Identity%2Fcodex%2Fplayground-assets%2Fplayground%2Fpublic%2Foutput-demo.blueprint.json&url=%2F%3Fp%3D101&mode=browser-full-screen&login=no"
-PLAYGROUND_POST_DENY_URL="https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2Fdknauss%2FAuthor-Identity%2Fcodex%2Fplayground-assets%2Fplayground%2Fpublic%2Foutput-demo.blueprint.json&url=%2F%3Fp%3D102&mode=browser-full-screen&login=no"
-PLAYGROUND_AI_TXT_URL="https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2Fdknauss%2FAuthor-Identity%2Fcodex%2Fplayground-assets%2Fplayground%2Fpublic%2Foutput-demo.blueprint.json&url=%2Fai.txt&mode=browser-full-screen&login=no"
+PLAYGROUND_URL="https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2Fdknauss%2Fauthor-identity%2Fcodex%2Fplayground-assets%2Fplayground%2Fpublic%2Foutput-demo.blueprint.json&url=%2F%3Fp%3D1&mode=browser-full-screen&login=no"
+PLAYGROUND_FEED_URL="https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2Fdknauss%2Fauthor-identity%2Fcodex%2Fplayground-assets%2Fplayground%2Fpublic%2Foutput-demo.blueprint.json&url=%2Ffeed%2F&mode=browser-full-screen&login=no"
+PLAYGROUND_AUTHOR_DENY_URL="https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2Fdknauss%2Fauthor-identity%2Fcodex%2Fplayground-assets%2Fplayground%2Fpublic%2Foutput-demo.blueprint.json&url=%2F%3Fp%3D101&mode=browser-full-screen&login=no"
+PLAYGROUND_POST_DENY_URL="https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2Fdknauss%2Fauthor-identity%2Fcodex%2Fplayground-assets%2Fplayground%2Fpublic%2Foutput-demo.blueprint.json&url=%2F%3Fp%3D102&mode=browser-full-screen&login=no"
+PLAYGROUND_AI_TXT_URL="https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2Fdknauss%2Fauthor-identity%2Fcodex%2Fplayground-assets%2Fplayground%2Fpublic%2Foutput-demo.blueprint.json&url=%2Fai.txt&mode=browser-full-screen&login=no"
 WORKTREE_DIR="$(mktemp -d /tmp/author-identity-playground-assets.XXXXXX)"
 
 cleanup() {
@@ -79,7 +79,7 @@ obj = {
             "step": "installPlugin",
             "pluginData": {
                 "resource": "git:directory",
-                "url": "https://github.com/dknauss/Author-Identity",
+                "url": "https://github.com/dknauss/author-identity",
                 "ref": source_tag,
                 "refType": "tag",
                 "path": "byline-feed",

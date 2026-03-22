@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name:       Byline Feed
- * Plugin URI:        https://github.com/dknauss/Author-Identity
+ * Plugin URI:        https://github.com/dknauss/author-identity
  * Description:       Enriches feeds and singular content with structured author identity metadata using Byline, JSON-LD, and fediverse attribution output.
  * Version:           0.1.0-rc2
  * Requires at least: 6.0

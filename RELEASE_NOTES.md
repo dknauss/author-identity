@@ -63,8 +63,8 @@ Byline Feed 0.1.0-rc2 is the second release candidate for the Author Identity pl
 
 ### Links
 
-- Playground demo: https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2Fdknauss%2FAuthor-Identity%2Fcodex%2Fplayground-assets%2Fplayground%2Fpublic%2Foutput-demo.blueprint.json&url=%2F%3Fp%3D1&mode=browser-full-screen&login=no
-- Release feedback / stabilization: https://github.com/dknauss/Author-Identity/issues/17
+- Playground demo: https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2Fdknauss%2Fauthor-identity%2Fcodex%2Fplayground-assets%2Fplayground%2Fpublic%2Foutput-demo.blueprint.json&url=%2F%3Fp%3D1&mode=browser-full-screen&login=no
+- Release feedback / stabilization: https://github.com/dknauss/author-identity/issues/17
 - Attached checksum: `byline-feed-0.1.0-rc2.zip.sha256`
 
 ### AI assistance note
