@@ -63,9 +63,9 @@ class Adapter_PPA implements Adapter {
 			$is_guest = true;
 		}
 
-			$user_id = $author->user_id ?? 0;
-			$user    = $user_id ? get_userdata( $user_id ) : null;
-			$term_id = $author->term_id ?? 0;
+		$user_id = $author->user_id ?? 0;
+		$user    = $user_id ? get_userdata( $user_id ) : null;
+		$term_id = $author->term_id ?? 0;
 
 		$role = $is_guest ? 'guest' : get_byline_role_from_user( $user );
 		$role = apply_filters( 'byline_feed_role', $role, $author, null );
