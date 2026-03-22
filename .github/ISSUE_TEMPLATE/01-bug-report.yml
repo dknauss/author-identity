@@ -1,0 +1,86 @@
+name: Bug report
+description: Report a defect in the plugin, docs, release packaging, or demo surface.
+title: "[Bug] "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this form for reproducible defects in the shipped plugin, release artifacts, or public demo/docs.
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: Short description of the bug.
+      placeholder: The JSON Feed output drops `_byline.rights` on denied items.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Provide the minimum sequence needed to reproduce the issue.
+      placeholder: |
+        1. Activate Byline Feed with PublishPress Authors.
+        2. Set a denied per-post AI consent override.
+        3. Load /feed/json/ and inspect the affected item.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+    validations:
+      required: true
+  - type: dropdown
+    id: surface
+    attributes:
+      label: Affected surface
+      description: Where did you observe the problem?
+      options:
+        - Plugin runtime
+        - Feed output
+        - Singular meta / JSON-LD
+        - WordPress admin UI
+        - Playground demo
+        - Release packaging
+        - Documentation
+    validations:
+      required: true
+  - type: input
+    id: wordpress
+    attributes:
+      label: WordPress version
+      placeholder: 6.9.5
+  - type: input
+    id: php
+    attributes:
+      label: PHP version
+      placeholder: 8.2
+  - type: input
+    id: plugin_version
+    attributes:
+      label: Byline Feed version
+      placeholder: 0.1.0-rc2
+  - type: dropdown
+    id: multi_author_plugin
+    attributes:
+      label: Multi-author plugin in use
+      options:
+        - None / core WordPress only
+        - Co-Authors Plus
+        - PublishPress Authors
+        - HM Authorship
+        - Other
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional context
+      description: Include links, screenshots, feed fragments, or related issue references if helpful.

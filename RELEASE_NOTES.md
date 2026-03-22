@@ -10,8 +10,10 @@ For each real release:
 2. Create or update the matching version section in [CHANGELOG.md](CHANGELOG.md).
 3. Summarize only the externally meaningful changes in the GitHub release notes.
 4. Reuse the changelog categories where practical (`Added`, `Changed`, `Fixed`, `Security`, `Docs`).
-5. Include the AI-assistance note below when AI materially affected the shipped release.
-6. Do not imply AI ownership; keep accountability with the human maintainer.
+5. Link directly to the active Playground demo and release-feedback/stabilization issue when they exist.
+6. Mention the attached checksum asset when distributing a release zip.
+7. Include the AI-assistance note below when AI materially affected the shipped release.
+8. Do not imply AI ownership; keep accountability with the human maintainer.
 
 ## Recommended note
 
@@ -58,6 +60,12 @@ Byline Feed 0.1.0-rc2 is the second release candidate for the Author Identity pl
 - AI-consent signaling with per-author and per-post resolution, denied-item feed rights metadata, `robots` meta, `TDMRep`, `ai.txt`, and admin-side audit logging
 - Docker-backed local PHPUnit workflow plus green CI across the supported PHP/WordPress matrix, adapter integrations, and Playwright E2E coverage
 - Refreshed public Playground demo routes aligned with the current release candidate
+
+### Links
+
+- Playground demo: https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2Fdknauss%2FAuthor-Identity%2Fcodex%2Fplayground-assets%2Fplayground%2Fpublic%2Foutput-demo.blueprint.json&url=%2F%3Fp%3D1&mode=browser-full-screen&login=no
+- Release feedback / stabilization: https://github.com/dknauss/Author-Identity/issues/17
+- Attached checksum: `byline-feed-0.1.0-rc2.zip.sha256`
 
 ### AI assistance note
 

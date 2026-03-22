@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: RC feedback and stabilization
+    url: https://github.com/dknauss/Author-Identity/issues/17
+    about: Use the active release-candidate tracking issue for consolidated prerelease feedback.

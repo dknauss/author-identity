@@ -21,6 +21,7 @@ bin/build-plugin-zip.sh
 Expected output:
 
 - `dist/byline-feed-<version>.zip`
+- `dist/byline-feed-<version>.zip.sha256`
 
 ## Sanity check
 
@@ -43,10 +44,11 @@ It should not contain development-only material such as:
 
 ## Publish
 
-1. Create a GitHub release or prerelease with the built zip attached.
+1. Create a GitHub release or prerelease with both the built zip and `.sha256` checksum attached.
 2. Use the summary from [`RELEASE_NOTES.md`](../../RELEASE_NOTES.md).
-3. Include the AI-assistance disclosure note when applicable.
-4. If this is a prerelease, open or refresh a public stabilization/feedback issue.
+3. Include direct links to the current Playground demo and release-feedback issue.
+4. Include the AI-assistance disclosure note when applicable.
+5. If this is a prerelease, open or refresh a public stabilization/feedback issue.
 
 ## Post-release
 

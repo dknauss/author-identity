@@ -1,0 +1,52 @@
+name: Feature request
+description: Propose a new capability or workflow improvement.
+title: "[Feature] "
+labels:
+  - enhancement
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this form for product, interoperability, documentation, or release-workflow improvements.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What problem or limitation are you trying to solve?
+      placeholder: The public Playground demo does not currently showcase adapter-specific behavior.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed change
+      description: Describe the capability or change you want.
+    validations:
+      required: true
+  - type: textarea
+    id: value
+    attributes:
+      label: Why it matters
+      description: Explain the user, adopter, or maintainer value.
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Plugin runtime
+        - Adapter support
+        - Feed / schema output
+        - Admin UX
+        - Playground demo
+        - Release process
+        - Documentation
+        - Research / roadmap
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope notes
+      description: Mention constraints, dependencies, or prior discussion if relevant.

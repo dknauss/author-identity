@@ -17,8 +17,9 @@ fi
 DIST_DIR="${PLUGIN_DIR}/dist"
 STAGE_DIR="${DIST_DIR}/byline-feed"
 ARCHIVE_PATH="${DIST_DIR}/byline-feed-${VERSION}.zip"
+CHECKSUM_PATH="${ARCHIVE_PATH}.sha256"
 
-rm -rf "${STAGE_DIR}" "${ARCHIVE_PATH}"
+rm -rf "${STAGE_DIR}" "${ARCHIVE_PATH}" "${CHECKSUM_PATH}"
 mkdir -p "${STAGE_DIR}"
 
 for path in byline-feed.php readme.txt build inc; do
@@ -30,4 +31,10 @@ done
 	COPYFILE_DISABLE=1 zip -X -rq "$(basename "${ARCHIVE_PATH}")" byline-feed
 )
 
+(
+	cd "${DIST_DIR}"
+	shasum -a 256 "$(basename "${ARCHIVE_PATH}")" > "$(basename "${CHECKSUM_PATH}")"
+)
+
 echo "Built ${ARCHIVE_PATH}"
+echo "Built ${CHECKSUM_PATH}"
