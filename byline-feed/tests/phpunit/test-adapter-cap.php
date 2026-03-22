@@ -10,6 +10,7 @@ namespace Byline_Feed\Tests;
 use Byline_Feed\Adapter_CAP;
 use ReflectionClass;
 use WP_UnitTestCase;
+use function Byline_Feed\get_byline_feed_ap_actor_url_for_user;
 
 class Test_Adapter_CAP extends WP_UnitTestCase {
 
@@ -77,7 +78,7 @@ class Test_Adapter_CAP extends WP_UnitTestCase {
 		$this->assertSame( 'staff', $author->role );
 		$this->assertFalse( $author->is_guest );
 		$this->assertSame( '@jane@example.social', $author->fediverse );
-		$this->assertSame( '', $author->ap_actor_url );
+		$this->assertSame( get_byline_feed_ap_actor_url_for_user( $user_id ), $author->ap_actor_url );
 		$this->assertSame( 'allow', $author->ai_consent );
 		$this->assertSame( 'https://example.com/jane/social', $author->profiles[0]['href'] );
 		$this->assertSame( 'me', $author->profiles[0]['rel'] );

@@ -14,6 +14,7 @@ use function Byline_Feed\byline_feed_get_authors;
 use function Byline_Feed\byline_feed_get_perspective;
 use function Byline_Feed\Feed_Common\esc_xml_value;
 use function Byline_Feed\Feed_Common\output_person;
+use function Byline_Feed\Rights\get_feed_rights;
 use function Byline_Feed\Rights\resolve_ai_consent;
 use function Byline_Feed\Rights\get_policy_url;
 
@@ -45,11 +46,17 @@ function output_contributors(): void {
 		return;
 	}
 
-	$seen    = array();
-	$persons = array();
+	$seen       = array();
+	$persons    = array();
+	$feed_posts = array();
 
 	foreach ( $wp_query->posts as $post ) {
-		$authors = byline_feed_get_authors( $post );
+		if ( ! $post instanceof \WP_Post ) {
+			continue;
+		}
+
+			$feed_posts[] = $post;
+			$authors      = byline_feed_get_authors( $post );
 
 		foreach ( $authors as $author ) {
 			if ( isset( $seen[ $author->id ] ) ) {
@@ -60,22 +67,38 @@ function output_contributors(): void {
 		}
 	}
 
-	if ( empty( $persons ) ) {
+		$rights = get_feed_rights( $feed_posts );
+
+	if ( empty( $persons ) && empty( $rights ) ) {
 		return;
 	}
 
-	echo "\t\t<byline:contributors>\n";
+	if ( ! empty( $persons ) ) {
+		echo "\t\t<byline:contributors>\n";
 
-	foreach ( $persons as $author ) {
-		output_person( $author );
+		foreach ( $persons as $author ) {
+			output_person( $author );
+		}
+
+		echo "\t\t</byline:contributors>\n";
+
+		/**
+		 * Fires after the <byline:contributors> block is output in the Atom feed head.
+		 */
+		do_action( 'byline_feed_after_atom_contributors' );
 	}
 
-	echo "\t\t</byline:contributors>\n";
+	if ( ! empty( $rights ) ) {
+		$xml = "\t\t<byline:rights consent=\"" . esc_attr( $rights['consent'] ) . '"';
 
-	/**
-	 * Fires after the <byline:contributors> block is output in the Atom feed head.
-	 */
-	do_action( 'byline_feed_after_atom_contributors' );
+		if ( ! empty( $rights['policy'] ) ) {
+			$xml .= ' policy="' . esc_url( $rights['policy'] ) . '"';
+		}
+
+		$xml .= "/>\n";
+
+		echo $xml; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- XML attributes are escaped above.
+	}
 }
 
 /**

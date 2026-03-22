@@ -23,6 +23,26 @@ test( 'user profile ai consent field saves and persists', async ( {
 	await expect( consentField ).toHaveValue( 'deny' );
 } );
 
+test( 'user profile fediverse field saves and persists', async ( { page } ) => {
+	await login( page, '/wp-admin/profile.php' );
+
+	const fediverseField = page.locator(
+		'input[name="byline_feed_fediverse"]'
+	);
+
+	await expect( fediverseField ).toBeVisible();
+	await fediverseField.fill( '@reporter@example.social' );
+
+	await page.getByRole( 'button', { name: /update profile/i } ).click();
+
+	await expect(
+		page.locator( '#message.updated, .notice-success' ).first()
+	).toBeVisible();
+
+	await page.reload();
+	await expect( fediverseField ).toHaveValue( '@reporter@example.social' );
+} );
+
 test( 'classic editor ai consent metabox saves and persists', async ( {
 	page,
 } ) => {

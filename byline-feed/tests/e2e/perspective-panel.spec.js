@@ -36,3 +36,31 @@ test( 'perspective panel saves and persists post meta', async ( { page } ) => {
 	await openPerspectivePanel( page );
 	await expect( perspectiveField ).toHaveValue( 'analysis' );
 } );
+
+test( 'classic editor perspective metabox saves and persists', async ( {
+	page,
+} ) => {
+	const postId = getFixturePostId();
+
+	await login(
+		page,
+		`/wp-admin/post.php?post=${ postId }&action=edit&byline_force_classic=1`
+	);
+
+	const perspectiveField = page.locator(
+		'select[name="byline_feed_perspective"]'
+	);
+
+	await expect( perspectiveField ).toBeVisible();
+	await perspectiveField.selectOption( 'tutorial' );
+
+	const saveButton = page.locator( '#save-post, #publish' ).first();
+	await Promise.all( [
+		page.waitForNavigation( { waitUntil: 'domcontentloaded' } ),
+		saveButton.click(),
+	] );
+
+	await expect( page ).toHaveURL( /post\.php\?post=\d+&action=edit/ );
+	await page.reload();
+	await expect( perspectiveField ).toHaveValue( 'tutorial' );
+} );

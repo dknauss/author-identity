@@ -44,11 +44,11 @@ Release notes complement, but do not replace:
 - the dated version entries in `CHANGELOG.md`
 
 
-## Draft: 0.1.0-rc2
+## Draft: 0.1.0-rc3
 
 ### Summary
 
-Byline Feed 0.1.0-rc2 is the second release candidate for the Author Identity plugin suite. It keeps the same core output surface as rc1 while hardening the release around shipped schema enrichment, rights signaling, integration coverage, Playground validation, and local test reproducibility.
+Byline Feed 0.1.0-rc3 is the third release candidate for the Author Identity plugin suite. It completes the current advisory WP-06 surface with feed-level rights summaries, expands real-plugin integration coverage for ActivityPub, and closes the remaining browser-hardening gaps in the editor/profile UI.
 
 ### Highlights
 
@@ -57,15 +57,15 @@ Byline Feed 0.1.0-rc2 is the second release candidate for the Author Identity pl
 - Fediverse author attribution via `fediverse:creator`
 - Ordered multi-author JSON-LD `Article` + `Person` output, including Yoast SEO and Rank Math enrichment modes
 - Editorial `Content Perspective` field with block-editor and classic-editor support
-- AI-consent signaling with per-author and per-post resolution, denied-item feed rights metadata, `robots` meta, `TDMRep`, `ai.txt`, and admin-side audit logging
-- Docker-backed local PHPUnit workflow plus green CI across the supported PHP/WordPress matrix, adapter integrations, and Playwright E2E coverage
+- AI-consent signaling with per-author and per-post resolution, feed-level and denied-item rights metadata, `robots` meta, `TDMRep`, `ai.txt`, and admin-side audit logging
+- Docker-backed local PHPUnit workflow plus green CI across the supported PHP/WordPress matrix, including real ActivityPub integration coverage and expanded Playwright E2E coverage
 - Refreshed public Playground demo routes aligned with the current release candidate
 
 ### Links
 
 - Playground demo: https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2Fdknauss%2Fauthor-identity%2Fcodex%2Fplayground-assets%2Fplayground%2Fpublic%2Foutput-demo.blueprint.json&url=%2F%3Fp%3D1&mode=browser-full-screen&login=no
 - Release feedback / stabilization: https://github.com/dknauss/author-identity/issues/17
-- Attached checksum: `byline-feed-0.1.0-rc2.zip.sha256`
+- Attached checksum: `byline-feed-0.1.0-rc3.zip.sha256`
 
 ### AI assistance note
 

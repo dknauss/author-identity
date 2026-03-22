@@ -290,6 +290,7 @@ function render_author_meta_fields( \WP_User $user ): void {
 	$uses_url  = get_byline_feed_uses_url_for_user( $user->ID );
 	$fediverse = get_byline_feed_fediverse_for_user( $user->ID );
 	$consent   = get_byline_feed_ai_consent_for_user( $user->ID );
+	$policy    = Rights\get_policy_url();
 
 	$profile_lines = array_map(
 		static function ( array $profile ): string {
@@ -335,7 +336,13 @@ function render_author_meta_fields( \WP_User $user ): void {
 					<option value="allow" <?php selected( 'allow', $consent ); ?>><?php esc_html_e( 'Allow', 'byline-feed' ); ?></option>
 					<option value="deny" <?php selected( 'deny', $consent ); ?>><?php esc_html_e( 'Deny', 'byline-feed' ); ?></option>
 				</select>
-				<p class="description"><?php esc_html_e( 'Advisory preference used for machine-readable AI training signals on content attributed to you.', 'byline-feed' ); ?></p>
+				<p class="description"><?php esc_html_e( 'Advisory preference used for machine-readable AI training signals on content attributed to you, including feed-level summaries when your work appears in a feed.', 'byline-feed' ); ?></p>
+				<?php if ( '' !== $policy ) : ?>
+					<p class="description">
+						<?php esc_html_e( 'Current site policy endpoint:', 'byline-feed' ); ?>
+						<code><?php echo esc_html( $policy ); ?></code>
+					</p>
+				<?php endif; ?>
 			</td>
 		</tr>
 	</table>

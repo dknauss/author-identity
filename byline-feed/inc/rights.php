@@ -100,6 +100,19 @@ function sanitize_ai_consent( $value ): string {
 }
 
 /**
+ * Sanitize a feed-level AI-consent summary value.
+ *
+ * Feed-level consent can summarize multiple items, so it accepts `mixed`
+ * in addition to the item-level `allow` / `deny` values.
+ *
+ * @param mixed $value Candidate value.
+ * @return string
+ */
+function sanitize_feed_ai_consent( $value ): string {
+	return in_array( $value, array( 'allow', 'deny', 'mixed' ), true ) ? (string) $value : '';
+}
+
+/**
  * Resolve the effective AI-consent value for a post.
  *
  * Most restrictive author preference wins when there is no post override.
@@ -147,6 +160,97 @@ function resolve_ai_consent( WP_Post $post ): string {
 }
 
 /**
+ * Return feed-level rights metadata for a collection of posts.
+ *
+ * The summary is:
+ * - `deny` when every explicit item-level signal is deny.
+ * - `allow` when every explicit item-level signal is allow.
+ * - `mixed` when the feed contains a combination of deny/allow/unset states.
+ *
+ * @param array<int, mixed> $posts Candidate posts in the current feed.
+ * @return array<string, string>
+ */
+function get_feed_rights( array $posts ): array {
+	$has_deny  = false;
+	$has_allow = false;
+	$has_unset = false;
+
+	foreach ( $posts as $post ) {
+		if ( ! $post instanceof WP_Post ) {
+			continue;
+		}
+
+		$consent = resolve_ai_consent( $post );
+
+		if ( 'deny' === $consent ) {
+			$has_deny = true;
+		} elseif ( 'allow' === $consent ) {
+			$has_allow = true;
+		} else {
+			$has_unset = true;
+		}
+	}
+
+	$consent = '';
+
+	if ( $has_deny && ! $has_allow && ! $has_unset ) {
+		$consent = 'deny';
+	} elseif ( $has_allow && ! $has_deny && ! $has_unset ) {
+		$consent = 'allow';
+	} elseif ( $has_deny || $has_allow ) {
+		$consent = 'mixed';
+	}
+
+	if ( '' === $consent ) {
+		return array();
+	}
+
+	$rights = array(
+		'consent' => $consent,
+	);
+
+	$policy_url = get_policy_url();
+
+	if ( '' !== $policy_url ) {
+		$rights['policy'] = $policy_url;
+	}
+
+	/**
+	 * Filters feed-level rights metadata derived from the current feed posts.
+	 *
+	 * @param array<string, string> $rights Feed-level rights metadata.
+	 * @param array<int, mixed>     $posts  Posts considered for the summary.
+	 */
+	$rights = apply_filters( 'byline_feed_feed_rights', $rights, $posts );
+
+	if ( ! is_array( $rights ) ) {
+		return array();
+	}
+
+	$normalized_consent = isset( $rights['consent'] ) && is_string( $rights['consent'] )
+		? sanitize_feed_ai_consent( $rights['consent'] )
+		: '';
+
+	if ( '' === $normalized_consent ) {
+		return array();
+	}
+
+	$normalized = array(
+		'consent' => $normalized_consent,
+	);
+
+	if ( isset( $rights['policy'] ) && is_string( $rights['policy'] ) ) {
+		$policy = esc_url_raw( $rights['policy'] );
+
+		if ( '' !== $policy ) {
+			$normalized['policy'] = $policy;
+		}
+	}
+
+	return $normalized;
+}
+
+/**
  * Register the classic editor metabox for per-post AI-consent overrides.
  */
 function register_metabox(): void {
@@ -171,6 +275,7 @@ function register_metabox(): void {
  */
 function render_metabox( WP_Post $post ): void {
 	$current = sanitize_ai_consent( get_post_meta( $post->ID, '_byline_ai_consent', true ) );
+	$policy  = get_policy_url( $post );
 
 	wp_nonce_field( 'byline_feed_ai_consent', 'byline_feed_ai_consent_nonce' );
 	?>
@@ -179,7 +284,13 @@ function render_metabox( WP_Post $post ): void {
 		<option value="allow" <?php selected( 'allow', $current ); ?>><?php esc_html_e( 'Allow AI training', 'byline-feed' ); ?></option>
 		<option value="deny" <?php selected( 'deny', $current ); ?>><?php esc_html_e( 'Deny AI training', 'byline-feed' ); ?></option>
 	</select>
-	<p class="description"><?php esc_html_e( 'Controls machine-readable AI training signals for this post. When unset, the most restrictive linked-author preference wins.', 'byline-feed' ); ?></p>
+	<p class="description"><?php esc_html_e( 'Controls advisory machine-readable AI training signals for this post and any feed items generated from it. When unset, the most restrictive linked-author preference wins.', 'byline-feed' ); ?></p>
+	<?php if ( '' !== $policy ) : ?>
+		<p class="description">
+			<?php esc_html_e( 'Current site policy endpoint:', 'byline-feed' ); ?>
+			<code><?php echo esc_html( $policy ); ?></code>
+		</p>
+	<?php endif; ?>
 	<?php
 }
 

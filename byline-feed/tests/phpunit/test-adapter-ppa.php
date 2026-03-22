@@ -10,6 +10,7 @@ namespace Byline_Feed\Tests;
 use Byline_Feed\Adapter_PPA;
 use ReflectionClass;
 use WP_UnitTestCase;
+use function Byline_Feed\get_byline_feed_ap_actor_url_for_user;
 
 class Test_Adapter_PPA extends WP_UnitTestCase {
 
@@ -87,7 +88,7 @@ class Test_Adapter_PPA extends WP_UnitTestCase {
 		$this->assertSame( 'contributor', $author->role );
 		$this->assertFalse( $author->is_guest );
 		$this->assertSame( '@alex@example.social', $author->fediverse );
-		$this->assertSame( '', $author->ap_actor_url );
+		$this->assertSame( get_byline_feed_ap_actor_url_for_user( $user_id ), $author->ap_actor_url );
 		$this->assertSame( 'deny', $author->ai_consent );
 		$this->assertSame( 'https://example.com/alex/social', $author->profiles[0]['href'] );
 		$this->assertSame( 'me', $author->profiles[0]['rel'] );

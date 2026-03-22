@@ -32,14 +32,12 @@ This repository has two related parts:
 - Emit multi-author JSON-LD Article + Person output for singular content, including Yoast SEO and Rank Math schema integration modes.
 - Enrich Yoast SEO and Rank Math schema output when present, or emit standalone multi-author JSON-LD when no schema-owning SEO plugin is active.
 - Preserve all standard feed elements so Byline output remains additive.
-- Initial rights signaling: per-author and per-post AI consent, denied-item feed rights metadata, `robots` meta for denied posts, `TDMRep` headers, `ai.txt`, and admin-side audit logging.
+- AI-consent signaling: per-author and per-post consent, feed-level and denied-item rights metadata, `robots` meta for denied posts, `TDMRep` headers, `ai.txt`, and admin-side audit logging.
 
 ### Next planned tranches:
 
-- Additional rights work:
-  - Feed-level rights metadata
-  - Richer editor UI
 - Molongui adapter support
+- Pre-1.0 Byline spec alignment and terminology cleanup
 
 Longer-range identity work such as `did:web:` remains in the vision/research layer, not the active roadmap. Current work focuses on the output and adapter tranches without expanding the active roadmap into broader identity-framework work.
 
@@ -61,8 +59,8 @@ Longer-range identity work such as `did:web:` remains in the vision/research lay
 
 | Status | Items |
 | --- | --- |
-| Implemented | adapter interface plus core, Co-Authors Plus, PublishPress Authors, and HM Authorship adapters<br>RSS2, Atom, JSON Feed, and JSON-LD output, including `profile` / `now` / `uses` for linked WordPress users via plugin-owned meta<br>Yoast SEO and Rank Math schema integration modes for multi-author JSON-LD enrichment<br>content perspective storage and editor UI<br>`fediverse:creator` meta tags for authors with configured fediverse handles<br>conservative `ap_actor_url` resolution for linked WordPress users when ActivityPub identity can be resolved<br>initial rights signaling: per-author/per-post AI consent, `robots` meta output, `TDMRep` headers, `ai.txt`, and admin-side audit logging<br>runtime validation for the normalized author contract<br>PHPUnit, PHPCS, Playwright E2E, and GitHub Actions CI scaffolding |
-| Not yet implemented | feed-level rights metadata and richer rights/editor UI<br>Molongui adapter |
+| Implemented | adapter interface plus core, Co-Authors Plus, PublishPress Authors, and HM Authorship adapters<br>RSS2, Atom, JSON Feed, and JSON-LD output, including `profile` / `now` / `uses` for linked WordPress users via plugin-owned meta<br>Yoast SEO and Rank Math schema integration modes for multi-author JSON-LD enrichment<br>content perspective storage and editor UI<br>`fediverse:creator` meta tags for authors with configured fediverse handles<br>conservative `ap_actor_url` resolution for linked WordPress users when ActivityPub identity can be resolved<br>AI-consent signaling: per-author/per-post consent, feed-level and denied-item rights metadata, `robots` meta output, `TDMRep` headers, `ai.txt`, and admin-side audit logging<br>runtime validation for the normalized author contract<br>PHPUnit, PHPCS, Playwright E2E, and GitHub Actions CI scaffolding |
+| Not yet implemented | Molongui adapter |
 | Primary references | [byline-feed/](byline-feed/)<br>[byline-feed/docs/output-reference.md](byline-feed/docs/output-reference.md)<br>[implementation-spec.md](implementation-strategy/implementation-spec.md)<br>[wp-01.md](implementation-strategy/wp-01.md) to [wp-06.md](implementation-strategy/wp-06.md) |
 
 For a maintained repository tree, see [docs/codebase-map.md](docs/codebase-map.md).
@@ -150,7 +148,7 @@ The public `Try in Playground` CTA now targets the stable `codex/playground-asse
 
 ## Current RC
 
-- Pre-release: [Byline Feed 0.1.0-rc2](https://github.com/dknauss/author-identity/releases/tag/v0.1.0-rc2)
+- Pre-release: [Byline Feed 0.1.0-rc3](https://github.com/dknauss/author-identity/releases/tag/v0.1.0-rc3)
 - Feedback and stabilization: [issue #17](https://github.com/dknauss/author-identity/issues/17)
 
 ## Governance

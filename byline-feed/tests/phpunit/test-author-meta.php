@@ -189,10 +189,16 @@ class Test_Author_Meta extends WP_UnitTestCase {
 		$this->assertSame( 'deny', get_byline_feed_ai_consent_for_user( $user_id ) );
 	}
 
-	public function test_get_ap_actor_url_returns_empty_when_activitypub_is_unavailable(): void {
+	public function test_get_ap_actor_url_returns_empty_or_site_fallback_when_activitypub_actor_is_unavailable(): void {
 		$user_id = self::factory()->user->create();
 
-		$this->assertSame( '', get_byline_feed_ap_actor_url_for_user( $user_id ) );
+		$expected = '';
+
+		if ( defined( 'ACTIVITYPUB_REST_NAMESPACE' ) ) {
+			$expected = rest_url( trailingslashit( constant( 'ACTIVITYPUB_REST_NAMESPACE' ) ) . 'users/' . $user_id );
+		}
+
+		$this->assertSame( $expected, get_byline_feed_ap_actor_url_for_user( $user_id ) );
 	}
 
 	public function test_get_ap_actor_url_can_be_overridden_by_filter(): void {

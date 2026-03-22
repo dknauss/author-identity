@@ -22,7 +22,9 @@ use function Byline_Feed\Rights\render_robots_meta;
 use function Byline_Feed\Rights\resolve_ai_consent;
 use function Byline_Feed\Rights\save_metabox;
 use function Byline_Feed\Feed_RSS2\output_item as rss2_output_item;
+use function Byline_Feed\Feed_RSS2\output_contributors as rss2_output_contributors;
 use function Byline_Feed\Feed_Atom\output_entry as atom_output_entry;
+use function Byline_Feed\Feed_Atom\output_contributors as atom_output_contributors;
 use function Byline_Feed\Feed_JSON\build_author_byline_extension;
 
 class Test_Rights extends WP_UnitTestCase {
@@ -36,6 +38,7 @@ class Test_Rights extends WP_UnitTestCase {
 		remove_all_filters( 'byline_feed_ai_consent_audit_entry' );
 		remove_all_filters( 'byline_feed_ai_txt_content' );
 		remove_all_filters( 'byline_feed_ai_txt_should_exit' );
+		remove_all_filters( 'byline_feed_feed_rights' );
 		clear_audit_log_entries();
 		wp_set_current_user( 0 );
 		$_POST                  = array();
@@ -513,6 +516,86 @@ class Test_Rights extends WP_UnitTestCase {
 		$this->assertStringContainsString( '<byline:rights consent="deny"', $output );
 	}
 
+	public function test_rss2_head_includes_feed_level_rights_summary_for_mixed_feed(): void {
+		$deny_post_id  = self::factory()->post->create( array( 'post_status' => 'publish' ) );
+		$allow_post_id = self::factory()->post->create( array( 'post_status' => 'publish' ) );
+
+		add_filter(
+			'byline_feed_authors',
+			static function ( array $authors, WP_Post $filtered_post ) use ( $deny_post_id, $allow_post_id ): array {
+				if ( $filtered_post->ID === $deny_post_id ) {
+					return array(
+						(object) array(
+							'id'           => 'deny-author',
+							'display_name' => 'Deny Author',
+							'ai_consent'   => 'deny',
+						),
+					);
+				}
+
+				if ( $filtered_post->ID === $allow_post_id ) {
+					return array(
+						(object) array(
+							'id'           => 'allow-author',
+							'display_name' => 'Allow Author',
+							'ai_consent'   => 'allow',
+						),
+					);
+				}
+
+				return $authors;
+			},
+			10,
+			2
+		);
+
+		global $wp_query;
+
+		$wp_query        = new \WP_Query();
+		$wp_query->posts = array( get_post( $deny_post_id ), get_post( $allow_post_id ) );
+
+		$output = $this->capture_output( static function () {
+			rss2_output_contributors();
+		} );
+
+		$this->assertStringContainsString( '<byline:rights consent="mixed"', $output );
+		$this->assertStringContainsString( 'policy=', $output );
+	}
+
+	public function test_atom_head_includes_feed_level_rights_summary_for_uniform_allow_feed(): void {
+		$allow_post_id = self::factory()->post->create( array( 'post_status' => 'publish' ) );
+
+		add_filter(
+			'byline_feed_authors',
+			static function ( array $authors, WP_Post $filtered_post ) use ( $allow_post_id ): array {
+				if ( $filtered_post->ID !== $allow_post_id ) {
+					return $authors;
+				}
+
+				return array(
+					(object) array(
+						'id'           => 'allow-author',
+						'display_name' => 'Allow Author',
+						'ai_consent'   => 'allow',
+					),
+				);
+			},
+			10,
+			2
+		);
+
+		global $wp_query;
+
+		$wp_query        = new \WP_Query();
+		$wp_query->posts = array( get_post( $allow_post_id ) );
+
+		$output = $this->capture_output( static function () {
+			atom_output_contributors();
+		} );
+
+		$this->assertStringContainsString( '<byline:rights consent="allow"', $output );
+	}
+
 	public function test_json_feed_item_includes_rights_for_denied_post(): void {
 		$post_id = self::factory()->post->create( array( 'post_status' => 'publish' ) );
 		$post    = get_post( $post_id );
@@ -547,6 +630,24 @@ class Test_Rights extends WP_UnitTestCase {
 		} else {
 			$this->assertTrue( true ); // No _byline key at all is also correct.
 		}
+	}
+
+	public function test_json_feed_channel_includes_feed_level_rights_summary(): void {
+		$deny_post_id = self::factory()->post->create( array( 'post_status' => 'publish' ) );
+
+		update_post_meta( $deny_post_id, '_byline_ai_consent', 'deny' );
+
+		global $wp_query;
+
+		$wp_query        = new \WP_Query();
+		$wp_query->posts = array( get_post( $deny_post_id ) );
+
+		$channel = \Byline_Feed\Feed_JSON\filter_json_feed_channel( array() );
+
+		$this->assertArrayHasKey( '_byline', $channel );
+		$this->assertArrayHasKey( 'rights', $channel['_byline'] );
+		$this->assertSame( 'deny', $channel['_byline']['rights']['consent'] );
+		$this->assertSame( home_url( '/ai.txt' ), $channel['_byline']['rights']['policy'] );
 	}
 
 	public function test_enqueue_editor_assets_registers_script_when_asset_file_exists(): void {

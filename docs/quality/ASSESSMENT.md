@@ -7,7 +7,7 @@ The Byline Feed plugin addresses a real interoperability gap: WordPress sites wi
 The project is no longer deciding whether the MVP is viable. The main question is execution order after the current adapter/output baseline:
 
 1. keep WP-04 and WP-05 maintained as shipped output channels
-2. start WP-06 without inflating it into a general-purpose policy framework
+2. keep the current WP-06 advisory surface maintained without inflating it into a general-purpose policy framework
 3. keep future adapter expansion disciplined after the HM Authorship tranche
 
 ## Scope and key components
@@ -17,7 +17,7 @@ The project is no longer deciding whether the MVP is viable. The main question i
 - **Perspective meta field:** Per-post editorial intent with block editor support and feed output.
 - **fediverse:creator output:** HTML meta tags for Mastodon-style author attribution on singular content. `ap_actor_url` is a supporting cross-cutting design field for this and WP-05, not a separate roadmap item.
 - **JSON-LD schema output:** Multi-author Article + Person structured data on singular content, with conservative coexistence rules for known schema-owning SEO plugins.
-- **AI consent and rights:** Per-author/per-post training consent, `robots` meta, `TDMRep` headers, `ai.txt`, denied-item feed rights metadata, and admin-side audit logging now exist. Channel-wide/feed-wide rights metadata and richer UI remain later WP-06 work.
+- **AI consent and rights:** Per-author/per-post training consent, `robots` meta, `TDMRep` headers, `ai.txt`, feed-level and denied-item rights metadata, and admin-side audit logging now ship as the current advisory WP-06 surface.
 
 ## Data flows
 
@@ -32,7 +32,7 @@ Output channels:
     → JSON Feed: _byline extension objects on authors and items
     → HTML head: fediverse:creator meta tags (WP-04, implemented)
     → HTML head / JSON-LD: Article + Person graph (WP-05, implemented)
-    → HTTP headers / meta / files: rights and consent signals (WP-06, initial slice implemented)
+    → HTTP headers / meta / files: rights and consent signals (WP-06, current advisory surface implemented)
 ```
 
 ## Current state
@@ -44,7 +44,7 @@ Output channels:
 | Perspective field (WP-03) | Implemented, covered in PHPUnit and Playwright, and manually verified on the local Studio site |
 | fediverse:creator (WP-04) | Implemented with PHPUnit coverage and user-profile field support |
 | JSON-LD schema (WP-05) | Implemented with PHPUnit coverage and conservative Yoast/Rank Math coexistence |
-| AI consent (WP-06) | Current slice implemented; channel-wide/feed-wide rights metadata and richer UI remain |
+| AI consent (WP-06) | Implemented for the current advisory output surface; future work is settings/standards refinement rather than a missing channel |
 | CI/CD | Present and passing on supported PHP/WP matrix combinations |
 | Documentation | Strong project/governance docs; consumer output reference exists and now covers feeds plus HTML-head outputs |
 
@@ -72,7 +72,7 @@ That means the earlier CAP/PPA discrepancy for linked-user `url` normalization i
 
 1. **Treat HM Authorship as shipped and verified.** Keep its integration tests in the normal CI path so upstream drift is caught early.
 2. **Keep WP-04/WP-05 maintenance factual and conservative.** The handle-based meta tags and JSON-LD schema now ship; deeper ActivityPub federation alignment still belongs to the separate upstream integration conversation.
-3. **Keep UI hardening targeted.** The block-editor perspective path is now browser-covered; the remaining UI backlog is the fediverse profile field and classic-editor metabox fallback.
+3. **Keep UI hardening targeted.** The block-editor and classic-editor perspective paths now have browser coverage, and the fediverse profile UI is covered as well. Remaining UI work should be settings/policy refinement only when it clearly improves operator ergonomics.
 4. **Expand tests and docs in lockstep.** New output channels should land with their test files and consumer docs rather than being documented later.
 5. **Keep using the new governance files.** `CHANGELOG.md`, `RELEASE_NOTES.md`, templates, and contributor guidance only matter if they become part of normal release practice.
 

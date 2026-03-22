@@ -17,7 +17,7 @@
 | Node build | **Covered** | CI job runs `npm run build` and the local build command is defined. |
 | PHPCS automation | **Covered** | `composer lint` configured with correct excludes. CI job runs PHPCS with `cs2pr` formatter. |
 | Composer test script | **Covered** | `composer test` points to `phpunit --configuration=phpunit.xml.dist`. |
-| Browser E2E harness | **Covered** | `playwright.config.js`, `.wp-env.json`, and `tests/e2e/perspective-panel.spec.js` provide a self-contained editor test path. |
+| Browser E2E harness | **Covered** | `playwright.config.js`, `.wp-env.json`, and the Playwright specs provide a self-contained editor/profile test path. |
 
 ## Core domains — MVP (WP-01/02/03)
 
@@ -60,6 +60,7 @@
 | Perspective — filter override | **Covered** | `test-perspective.php` | Filter can replace value. |
 | Perspective — empty when unset | **Covered** | `test-perspective.php` | No meta returns empty. |
 | Perspective — block editor panel | **Covered** | `tests/e2e/perspective-panel.spec.js` | Playwright + `wp-env` verifies panel render, selection, save, and persistence after reload. |
+| Perspective — classic editor metabox | **Covered** | `tests/e2e/perspective-panel.spec.js` | Playwright verifies the fallback metabox saves and persists through a classic-editor reload. |
 
 ## Core domains — Post-MVP (WP-04/05/06)
 
@@ -67,8 +68,8 @@
 | --- | --- | --- | --- |
 | fediverse:creator meta tag output | **Covered** | `test-fediverse.php` | Singular output, multi-author output, filter overrides, and non-singular omission are covered. |
 | fediverse handle normalization | **Covered** | `test-fediverse.php`, `test-author-meta.php` | Handles normalize to leading `@` on save and before output. |
-| fediverse user profile field | **Covered** | `test-author-meta.php` | Render, save, normalization, delete, and meta registration are covered. |
-| ActivityPub actor URL resolution for WP-04/05 | **Partial** | `test-author-meta.php` | Empty fallback and filter override are covered. Positive integration against the real ActivityPub plugin is still missing. |
+| fediverse user profile field | **Covered** | `test-author-meta.php`, `ai-consent-ui.spec.js` | PHPUnit + Playwright cover render/save/normalization and browser persistence. |
+| ActivityPub actor URL resolution for WP-04/05 | **Covered** | `test-author-meta.php`, `test-integration-activitypub.php` | Empty fallback, filter override, and positive integration against the real ActivityPub plugin are covered. |
 | JSON-LD Article + Person schema | **Covered** | `test-schema.php` | Singular Article output, ordered multi-author `Person` arrays, publisher organization, and guest-author omission behavior are covered. |
 | JSON-LD sameAs from profiles | **Covered** | `test-schema.php` | `sameAs` is populated from normalized `profiles[]` entries. |
 | JSON-LD sameAs extension with `ap_actor_url` | **Covered** | `test-schema.php` | `ap_actor_url` is added only when present and never inferred from other profile URLs. `did:web:` remains intentionally outside the active matrix. |
@@ -84,20 +85,17 @@
 | ai.txt generation | **Covered** | `test-rights.php` | Default generated content and direct render path are covered. |
 | AI consent block editor panel | **Covered** | `test-rights.php` | Script enqueue test verifies asset registration when build artifacts exist. |
 | AI consent classic editor metabox | **Covered** | `test-rights.php` | Render, nonce, save, and delete are covered. |
-| Feed-level rights (RSS2) | **Covered** | `test-rights.php` | `<byline:rights consent="deny" policy="..."/>` emitted for denied posts; omitted for allow/unset. |
-| Feed-level rights (Atom) | **Covered** | `test-rights.php` | Same pattern as RSS2 — rights element present on denied, absent on allowed. |
-| Feed-level rights (JSON Feed) | **Covered** | `test-rights.php` | `_byline.rights` object with consent and policy fields emitted for denied posts. |
+| Feed-level rights (RSS2) | **Covered** | `test-rights.php` | Denied items emit `<byline:rights consent="deny" .../>`, and feed heads emit `allow` / `deny` / `mixed` summaries when explicit consent signals exist. |
+| Feed-level rights (Atom) | **Covered** | `test-rights.php` | Same pattern as RSS2 for item-level rights plus feed-level summaries. |
+| Feed-level rights (JSON Feed) | **Covered** | `test-rights.php` | Item `_byline.rights` covers denied posts, and top-level `_byline.rights` summarizes the current feed. |
 | AI consent user profile field | **Covered** | `test-author-meta.php`, `ai-consent-ui.spec.js` | PHPUnit + Playwright coverage for save/persist/render. |
 | Consent audit logging | **Covered** | `test-rights.php` | User and post consent changes are recorded in an admin-only audit log and covered by PHPUnit. |
 
 ## Priority backlog (highest impact first)
 
-1. ~~**Add feed-level rights metadata coverage.**~~ ✅ Resolved (2026-03-20). RSS2, Atom, and JSON Feed rights tests are in `test-rights.php`.
-2. **Add empty-author and special-character hardening coverage across remaining output paths.** These are stability-focused edge cases rather than feature gaps.
-3. **Add real ActivityPub-plugin integration checks for `ap_actor_url`.** The current WP-04/WP-05 suite intentionally keeps actor resolution conservative and only partially covered.
-4. **Add browser coverage for the fediverse profile field.** The save/normalization logic is covered in PHPUnit, but the user-profile UI is not yet covered in a browser run.
-5. **Add browser coverage for the classic editor perspective metabox.** Lower priority than the block editor path, but still useful as fallback hardening.
-6. **Optional later hardening:** add deeper Byline spec-conformance and round-trip parsing tests for feed output.
+1. **Add empty-author and special-character hardening coverage across remaining output paths.** These are stability-focused edge cases rather than feature gaps.
+2. **Add CAP ordering integration coverage.** The adapter normalization is covered, but a real `get_coauthors()` ordering assertion still remains.
+3. **Optional later hardening:** add deeper Byline spec-conformance and round-trip parsing tests for feed output.
 
 ## Quality target
 

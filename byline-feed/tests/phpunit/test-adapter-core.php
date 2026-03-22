@@ -9,6 +9,7 @@ namespace Byline_Feed\Tests;
 
 use Byline_Feed\Adapter_Core;
 use WP_UnitTestCase;
+use function Byline_Feed\get_byline_feed_ap_actor_url_for_user;
 
 class Test_Adapter_Core extends WP_UnitTestCase {
 
@@ -96,7 +97,7 @@ class Test_Adapter_Core extends WP_UnitTestCase {
 		$this->assertSame( '', $author->now_url );
 		$this->assertSame( '', $author->uses_url );
 		$this->assertSame( '', $author->fediverse );
-		$this->assertSame( '', $author->ap_actor_url );
+		$this->assertSame( get_byline_feed_ap_actor_url_for_user( $user_id ), $author->ap_actor_url );
 		$this->assertSame( '', $author->ai_consent );
 	}
 
@@ -135,6 +136,6 @@ class Test_Adapter_Core extends WP_UnitTestCase {
 		$this->assertSame( 'me', $author->profiles[0]['rel'] );
 		$this->assertSame( 'https://example.com/now/', $author->now_url );
 		$this->assertSame( 'https://example.com/uses/', $author->uses_url );
-		$this->assertSame( '', $author->ap_actor_url );
+		$this->assertSame( get_byline_feed_ap_actor_url_for_user( $user_id ), $author->ap_actor_url );
 	}
 }

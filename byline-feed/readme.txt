@@ -26,7 +26,7 @@ The plugin currently supports:
 * Content Perspective editorial field
 * `fediverse:creator` meta tags for authors with configured fediverse handles
 * Multi-author JSON-LD Article + Person output on singular views, including Yoast SEO and Rank Math enrichment modes
-* Initial AI-consent signaling with denied-item feed rights metadata, `robots` meta, `TDMRep` headers, `ai.txt`, and admin-side audit logging
+* AI-consent signaling with feed-level and denied-item rights metadata, `robots` meta, `TDMRep` headers, `ai.txt`, and admin-side audit logging
 * Filter and action hooks for output customization
 
 Byline Feed is additive. It preserves core feed elements such as `<author>` and `<dc:creator>` and adds Byline metadata alongside them.
@@ -95,6 +95,13 @@ Co-Authors Plus, PublishPress Authors, and HM Authorship are supported directly.
 Content Perspective is an editorial field that communicates the intent behind a piece of content, such as reporting, analysis, opinion, or satire. Feed consumers can use it to distinguish content types more clearly.
 
 == Changelog ==
+
+= 0.1.0-rc3 =
+* Third release candidate.
+* Feed-level rights summaries now ship in RSS2, Atom, and JSON Feed alongside the existing denied-item rights metadata.
+* ActivityPub integration coverage now runs against the real plugin in CI, and adapter tests now accept plugin-derived `ap_actor_url` values when present.
+* Playwright coverage now includes the fediverse profile field and the classic-editor Content Perspective metabox fallback.
+* The self-contained `wp-env` E2E harness now defaults to port `8896` to avoid the earlier `8886` conflict in local environments with active tunnels or forwarded services.
 
 = 0.1.0-rc2 =
 * Second release candidate.

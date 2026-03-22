@@ -13,14 +13,14 @@ Current shipped output:
 - JSON Feed 1.1 output with `_byline` extensions
 - `fediverse:creator` meta tags on singular HTML views
 - JSON-LD Article + Person schema on singular HTML views
-- initial rights signals on singular/content-policy routes and denied feed items
+- advisory rights signals on singular/content-policy routes, denied items, and feed-level summaries
 - admin-side consent audit logging
 - Perspective post meta and feed output
 - Public filters and actions for feed customization
 
 Not yet shipped:
 
-- channel-wide or feed-wide rights metadata beyond denied-item signaling
+- standards-based license declarations beyond the current Byline rights summaries
 
 ## Output model
 
@@ -94,7 +94,9 @@ Current behavior:
 - consent resolution uses the most restrictive linked-author preference when there is no post override
 - denied posts emit `<meta name="robots" content="noai, noimageai">`
 - denied posts emit a `TDMRep` header pointing to the policy URL
+- RSS2 and Atom feed heads emit `<byline:rights consent="allow|deny|mixed" policy="..."/>` when the current feed has explicit consent signals
 - denied RSS2 and Atom items emit `<byline:rights consent="deny" policy="..."/>`
+- JSON Feed top-level `_byline.rights` summarizes the current feed with `allow`, `deny`, or `mixed`
 - denied JSON Feed items emit `_byline.rights` with `consent` and `policy`
 - `/ai.txt` is generated dynamically and is filterable
 - consent changes are stored in an admin-only audit log at `Tools > AI Consent Audit Log`
@@ -111,10 +113,16 @@ Example header:
 TDMRep: https://example.com/ai.txt
 ```
 
+Example feed-level summary:
+
+```xml
+<byline:rights consent="mixed" policy="https://example.com/ai.txt" />
+```
+
 Current limitations:
 
 - these are advisory machine-readable signals, not enforcement
-- no channel-wide or feed-wide rights metadata is emitted yet beyond denied-item signaling
+- the current feed-level summary is Byline-specific rather than a standards-based license declaration
 
 ## JSON-LD output
 

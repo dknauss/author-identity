@@ -21,6 +21,25 @@ When cutting a release:
 
 No unreleased entries yet.
 
+## 0.1.0-rc3 - 2026-03-21
+
+### Added
+
+- feed-level rights summaries in RSS2, Atom, and JSON Feed using the existing Byline rights vocabulary with `allow`, `deny`, and `mixed` consent states
+- real ActivityPub integration coverage in CI plus PHPUnit integration tests for plugin-derived `ap_actor_url` resolution
+- Playwright coverage for the fediverse profile field and the classic-editor Content Perspective metabox fallback
+
+### Changed
+
+- AI-consent admin UI now surfaces the current policy endpoint alongside the existing post/user controls
+- local `wp-env` / Playwright defaults now use port `8896` instead of `8886` to avoid the earlier port collision in environments with forwarded services or tunnels
+- adapter/unit expectations for `ap_actor_url` now accept plugin-derived values when ActivityPub is active instead of assuming an empty field
+
+### Docs
+
+- synced root/plugin status docs, output reference, assessment notes, gap analysis, and implementation schedule to reflect the completed WP-06 advisory surface
+- drafted rc3 release notes and updated the plugin readme changelog for the new release candidate
+
 ## 0.1.0-rc2 - 2026-03-21
 
 ### Added

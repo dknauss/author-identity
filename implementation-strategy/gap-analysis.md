@@ -15,7 +15,7 @@
 | WP-03: Perspective Field | PHP + TSX present | PHPUnit + Playwright coverage | Implemented | Browser-verified in a self-contained `wp-env` harness |
 | WP-04: fediverse:creator | Output module + user meta/UI | Meta-tag, normalization, and profile-field tests | Implemented | Automated coverage exists; ActivityPub integration remains conservative |
 | WP-05: JSON-LD Schema | All three modes | 29 schema tests covering all modes | Implemented | Mode A (Yoast enrichment via `wpseo_schema_article`), Mode B (Rank Math via `rank_math/json_ld`), and Mode C (standalone) all ship. Person objects include `bylineRole`, `aiTrainingConsent`, and fediverse `sameAs`. Article includes `bylinePerspective`. Live-verified with Yoast SEO 27.2. |
-| WP-06: Rights & AI Consent | All output modules + block editor panel | 17 rights tests + E2E | Mostly implemented | HTML/header/`ai.txt`/denied-item feed rights ship; block editor consent panel ships; audit logging now ships; channel-wide/feed-wide rights metadata remains |
+| WP-06: Rights & AI Consent | All output modules + block editor panel | Rights PHPUnit + Playwright coverage | Implemented for current advisory scope | HTML/header/`ai.txt` output, denied-item rights, feed-level rights summaries, consent UI, and audit logging all ship |
 
 ---
 
@@ -34,7 +34,7 @@ Files still planned by the implementation strategy that do not yet exist:
 
 These are the meaningful remaining gaps after WP-04 completion.
 
-### 1. WP-04 and WP-05 are fully implemented; WP-06 is mostly implemented
+### 1. WP-04, WP-05, and the current WP-06 advisory surface are implemented
 
 WP-04 is no longer a gap. The plugin now has:
 
@@ -59,23 +59,24 @@ WP-06 now covers:
 - Consent resolution logic (most-restrictive-wins for multi-author, post override beats author)
 - HTML `noai, noimageai` robots meta tag and HTTP `TDMRep` header on denied posts
 - `ai.txt` endpoint with configurable policy URL
+- Feed-head / feed-level rights summaries for RSS2, Atom, and JSON Feed (`allow`, `deny`, or `mixed`)
 - Feed-level `<byline:rights consent="deny" policy="..."/>` in RSS2 and Atom items
 - JSON Feed `_byline.rights` object with consent and policy fields
-- 17 PHPUnit tests covering resolution, output, metabox save/load, feed rights, and editor script
-- 2 Playwright E2E tests for user profile and classic editor consent fields
+- expanded PHPUnit coverage for resolution, output, metabox save/load, feed rights, and editor script
+- Playwright E2E coverage for user-profile AI consent, fediverse profile save/persist, classic-editor AI consent, block-editor perspective, and classic-editor perspective fallback
 
-The remaining WP-06 gap is: channel-wide or feed-wide rights metadata beyond the current denied-item feed signaling, plus richer rights UI hardening.
+The remaining WP-06 work is now settings/policy refinement or future standards-based rights output, not a missing advisory output channel.
 
 `ap_actor_url` is now part of the official WP-04/WP-05 design boundary, but only as a cross-cutting field for those work packages. It is not a standalone roadmap item. `did:web:` remains vision-level future work and should not be treated as an active post-Gate-A deliverable.
 
-### 2. WP-03 now has automated block-editor coverage; remaining UI hardening is narrower
+### 2. UI hardening has moved out of the immediate backlog
 
 The perspective feature has now been manually verified on the local Studio site and covered by a committed Playwright test that runs against a self-contained `wp-env` environment. Regressions in panel registration, UI labels, save behavior, and post-reload persistence are now caught automatically.
 
-The remaining UI hardening items are now narrower and lower priority:
+The previously named UI hardening items are now delivered:
 
-- add browser coverage for the fediverse profile field
-- add browser coverage for the classic editor perspective metabox fallback
+- browser coverage for the fediverse profile field
+- browser coverage for the classic editor perspective metabox fallback
 
 ### 3. Gate A status
 
@@ -98,9 +99,9 @@ Human Made Authorship is no longer a planned tranche. It now ships as a supporte
 
 What remains after that tranche is:
 
-- the remaining WP-06 work beyond the current HTML/header/`ai.txt` slice
 - future adapter expansion such as Molongui
 - continued live verification against supported upstream plugins
+- standards/settings refinement where the current advisory rights surface needs it
 
 ---
 
@@ -135,9 +136,8 @@ Related scope rule:
 
 The remaining testing work is no longer "add more tests" in the abstract. The roadmap should keep naming the concrete testing tranches that matter:
 
-- real ActivityPub-plugin integration coverage for `ap_actor_url`
-- fediverse profile field browser coverage
-- classic editor metabox browser coverage
+- CAP ordering integration coverage
+- empty-author and special-character hardening across remaining paths
 - optional later spec-conformance and round-trip parsing tests for Byline output
 
 ### 9. Playground roadmap should stay two-tiered
@@ -173,6 +173,9 @@ The following items appeared in earlier audits but are now resolved:
 - The perspective panel builds successfully.
 - The AI consent block editor panel builds and enqueues alongside the perspective panel.
 - Feed-level rights metadata (`<byline:rights>` in RSS2/Atom, `_byline.rights` in JSON Feed) emits for denied posts and is absent for allowed/unset posts. Live-verified on `single-instance.local`.
+- Feed-head / feed-level rights summaries now emit in RSS2, Atom, and JSON Feed when the current feed contains explicit consent signals.
+- ActivityPub integration coverage now runs against the real plugin in CI, and adapter expectations accept plugin-derived `ap_actor_url` values.
+- Playwright now covers the fediverse profile field and the classic-editor perspective metabox fallback.
 - Public-repo governance files are present and tracked.
 
 ---
@@ -185,7 +188,7 @@ The following items appeared in earlier audits but are now resolved:
 | **Immediate hardening** | ~~P1 source fixes~~ ✅ resolved; P1 E2E feed-output tests ✅ resolved | All P1 source issues and feed-output E2E coverage verified 2026-03-20 |
 | **Current next roadmap work** | ~~WP-05 Modes A/B~~ ✅ implemented | Yoast/Rank Math enrichment and standalone field enrichment all ship; byline data now reaches NLWeb agents on Yoast installs |
 | **Post-Gate-A hardening** | #8, #9 (specific testing roadmap and staged Playground demos) | Keep extending verification depth and demo quality without reopening Gate A |
-| **WP-06 continuation** | ~~denied-item feed rights~~ ✅ implemented; ~~block editor consent UI~~ ✅ implemented; ~~audit logging~~ ✅ implemented; channel-wide/feed-wide rights metadata remains | Denied-item rights in RSS2/Atom/JSON Feed, block editor consent panel, and admin-side audit logging now ship; remaining work is broader feed-wide rights expression |
+| **WP-06 continuation** | ~~denied-item feed rights~~ ✅ implemented; ~~feed-wide rights summaries~~ ✅ implemented; ~~block editor consent UI~~ ✅ implemented; ~~audit logging~~ ✅ implemented | The current advisory rights surface now ships end-to-end; any further WP-06 work is settings or standards refinement |
 | **Later adapter work** | Molongui and any other unsupported multi-author plugins | Lower priority than WP-05/WP-06 and should meet the same real-plugin validation bar HM now has |
 | **Pre-1.0 spec alignment** | Multi-author-per-item divergence, JSON Feed structure divergence, terminology drift (`organization` / `publication` / `publisher`) | Resolve the known Byline-spec structural and terminology issues with the spec author before calling the plugin a stable 1.0 implementation |
 | **Process hygiene** | #5, #6 (track dev-tooling advisories, use changelog consistently) | Keeps maintenance and release quality disciplined without blocking feature work |

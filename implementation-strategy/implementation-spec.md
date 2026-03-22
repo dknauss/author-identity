@@ -240,6 +240,7 @@ The plugin exposes the following public API for theme and plugin developers:
 - `byline_feed_schema_person` — modify the JSON-LD Person object. Receives `( $person_array, $author_object )`.
 - `byline_feed_schema_article` — modify the JSON-LD Article object. Receives `( $article_array, $post )`.
 - `byline_feed_ai_consent` — override AI consent per author per post. Receives `( $consent, $author_object, $post )`.
+- `byline_feed_feed_rights` — modify feed-level rights summary metadata before RSS2/Atom/JSON Feed output. Receives `( $rights, $posts )`.
 - `byline_feed_fediverse_handle` — override fediverse handle per author. Receives `( $handle, $author_object )`.
 
 ### Actions
@@ -310,10 +311,12 @@ byline-feed/
 │   ├── fediverse.php                   # WP-04 singular HTML head output
 │   ├── schema.php                      # WP-05 singular JSON-LD output
 │   ├── author-meta.php                 # Canonical author metadata (profile, now, uses) storage
+│   ├── rights.php                      # WP-06 consent, feed rights, ai.txt, audit logging
 │   └── perspective.php                 # Perspective meta field registration
 │
 ├── src/
-│   └── perspective-panel.tsx           # Block editor sidebar for perspective
+│   ├── perspective-panel.tsx           # Block editor sidebar for perspective
+│   └── ai-consent-panel.tsx            # Block editor sidebar for AI consent
 │
 └── tests/
     └── phpunit/
@@ -326,16 +329,16 @@ byline-feed/
         ├── test-feed-atom.php
         ├── test-feed-json.php
         ├── test-fediverse.php
+        ├── test-rights.php
         ├── test-schema.php
-        └── test-perspective.php
+        ├── test-perspective.php
+        └── test-integration-activitypub.php
 ```
 
 Planned later-package additions:
 
 ```text
 byline-feed/inc/class-adapter-molongui.php     # Molongui adapter
-byline-feed/inc/rights.php                     # WP-06
-byline-feed/tests/phpunit/test-rights.php      # WP-06
 ```
 
 ## Acceptance criteria for wp.org submission (MVP)
@@ -556,9 +559,9 @@ Based on the [gap analysis](gap-analysis.md) — what exists, what remains, and 
 | | | | | |
 | **WP-04: fediverse:creator** | Implemented | Keep docs current and add deeper ActivityPub integration coverage only when the real plugin is in play | Ongoing maintenance | WP-01 |
 | **WP-05: JSON-LD schema** | Implemented | Keep consumer docs current and add deeper real-plugin coexistence checks only when needed | Ongoing maintenance | WP-01 |
-| **WP-06: AI consent** | Partial | Current slice ships per-author/per-post consent, resolution logic, HTML/header output, denied-item feed rights, `TDMRep`, `ai.txt`, and admin-side audit logging; remaining work is channel-wide/feed-wide rights metadata and richer UI | 2–4 days | WP-01 |
+| **WP-06: AI consent** | Implemented for current advisory scope | Per-author/per-post consent, HTML/header output, feed-level rights summaries, denied-item rights, `TDMRep`, `ai.txt`, consent UI, and audit logging now ship; future work is settings or standards refinement | Ongoing maintenance | WP-01 |
 | **Gate B': adapter-proven expansion** | Complete | WP-04 + WP-05 + HM Authorship shipped | After Gate A | WP-04/05 + HM Authorship |
-| **Gate D: rights expansion** | — | WP-06 HTML/header signals after B'; feed-level rights after Gate C | After Gate B' / Gate C | WP-06 |
+| **Gate D: rights expansion** | In progress | Current advisory rights surface ships now; any standards-based rights expansion beyond the Byline summaries still waits on clearer consumer demand | After Gate B' / Gate C | WP-06 |
 
 ### Milestone timeline
 
@@ -569,14 +572,14 @@ Based on the [gap analysis](gap-analysis.md) — what exists, what remains, and 
 | **WP-04: fediverse:creator** | Implemented |
 | **WP-05: JSON-LD schema** | Implemented |
 | **HM Authorship adapter** | Implemented |
-| **WP-06: AI consent** | +2–4 days from current state for the remaining slice |
+| **WP-06: AI consent** | Implemented for the current advisory surface |
 | **Gate B': adapter-proven expansion** | Complete |
-| **Gate D: rights expansion** | After WP-06 HTML/header signals; feed-level rights still wait for Gate C |
+| **Gate D: rights expansion** | Current advisory rights surface complete; standards-based expansion still depends on clearer reader demand |
 
 ### Caveats
 
 - **Integration testing against real CAP/PPA installations** could surface adapter bugs that take unpredictable time to fix. The adapters were written against API contracts, not tested against real plugin behavior. Budget an extra 2–3 days for this.
-- **WP-06 is the riskiest work package.** The consent resolution logic (most-restrictive-wins across co-authors, post-level override, retroactive consent changes, and any future channel-wide rights expansion) has the most complex state management. The estimate assumes no scope surprises.
-- **Gate C (reader-side signal)** is externally dependent and has no ETA. The feed-level rights portion of WP-06 / Gate D ships only after at least one feed reader indicates Byline parsing interest. This could be weeks or months.
+- **WP-06 remains the most stateful work package.** The consent resolution logic (most-restrictive-wins across co-authors, post-level override, retroactive consent changes, and any future standards-based rights expansion) still deserves careful maintenance even though the current advisory surface now ships.
+- **Gate C (reader-side signal)** is externally dependent and has no ETA. The current Byline-based feed summaries now ship, but any move toward standards-based license declarations or broader reader-facing rights semantics still depends on real consumer demand.
 - **Estimates do not include time for Byline spec validation tooling.** If bylinespec.org publishes an XSD or RelaxNG schema during development, integrating schema validation into the test suite would add 1–2 days.
 - **Estimates assume the adapters work correctly against current CAP/PPA versions.** If either plugin has changed its return shapes since the adapters were written, debugging and updating could add 2–3 days per adapter.

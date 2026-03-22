@@ -55,6 +55,7 @@ byline-feed/vendor/
 byline-feed/.npm-cache/
 byline-feed/.phpunit.result.cache
 byline-feed/.tmp/
+byline-feed/dist/
 byline-feed/test-results/
 byline-feed/playwright-report/
 playground/dist/

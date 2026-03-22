@@ -17,6 +17,7 @@ namespace Byline_Feed\Feed_JSON;
 
 use function Byline_Feed\byline_feed_get_authors;
 use function Byline_Feed\byline_feed_get_perspective;
+use function Byline_Feed\Rights\get_feed_rights;
 use function Byline_Feed\Rights\resolve_ai_consent;
 use function Byline_Feed\Rights\get_policy_url;
 
@@ -203,6 +204,8 @@ function filter_json_feed_item( array $item, \WP_Post $post ): array {
  * @return array Modified channel.
  */
 function filter_json_feed_channel( array $channel ): array {
+	global $wp_query;
+
 	$channel['_byline'] = array(
 		'spec_version' => '1.0',
 	);
@@ -217,6 +220,18 @@ function filter_json_feed_channel( array $channel ): array {
 				'url'  => $site_url,
 			)
 		);
+	}
+
+	$feed_posts = array();
+
+	if ( isset( $wp_query->posts ) && is_array( $wp_query->posts ) ) {
+		$feed_posts = $wp_query->posts;
+	}
+
+	$rights = get_feed_rights( $feed_posts );
+
+	if ( ! empty( $rights ) ) {
+		$channel['_byline']['rights'] = $rights;
 	}
 
 	return $channel;
@@ -341,6 +356,12 @@ function render_json_feed(): void {
 		),
 		'items'         => $items,
 	);
+
+	$feed_rights = get_feed_rights( $posts );
+
+	if ( ! empty( $feed_rights ) ) {
+		$feed['_byline']['rights'] = $feed_rights;
+	}
 
 	/**
 	 * Filters the complete JSON Feed output before encoding.
