@@ -17,6 +17,7 @@ These are the documents that should remain linked from the main README and plann
 | [`current/landscape.md`](current/landscape.md) | Ecosystem sizing, plugin prioritization, and historical lineage |
 | [`current/known-gaps.md`](current/known-gaps.md) | HM Authorship risks and hardening notes |
 | [`current/metadata-models-for-publishers.md`](current/metadata-models-for-publishers.md) | Best background input for WP-05 JSON-LD and future publication/organization modeling |
+| [`current/canonical-author-identity-model.md`](current/canonical-author-identity-model.md) | Recommended internal source model based on the protocol and scholarly metadata research |
 | [`current/authorship-architecture.mermaid`](current/authorship-architecture.mermaid) | Diagram source for the HM Authorship architecture review |
 
 ## Exploratory semantic-publishing notes
