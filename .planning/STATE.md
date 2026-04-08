@@ -11,8 +11,8 @@ See: .planning/PROJECT.md (updated 2026-03-29)
 
 Phase: 1 of 4 (Verification Hardening)
 Plan: 0 of 2 in current phase
-Status: Ready to plan
-Last activity: 2026-03-29 — Assessed repo state, release readiness, and initialized GSD planning for the brownfield project.
+Status: Ready to execute
+Last activity: 2026-04-08 — Reviewed repo/CI state and created Phase 1 execution plans (01-01 coverage hardening, 01-02 verification entrypoints and CI policy).
 
 Progress: [░░░░░░░░░░] 0%
 
@@ -49,11 +49,11 @@ None yet.
 
 ### Blockers/Concerns
 
-- Local Docker-backed PHPUnit helper did not bring MySQL ready on 2026-03-29, so local integration verification is currently environment-blocked until that path is debugged or replaced.
-- The latest `main` commit (2026-03-29, `a77e8af`) changed only `CLAUDE.md`, so the most recent `CI` workflow run on `main` remains 2026-03-22 for `41b5c3d`.
+- Local Docker-backed verification remains an explicit Phase 1 concern: single-site and multisite/integration commands need a maintained runbook or exact blocker record.
+- Latest `main` CI is now green on 2026-04-08 for `739d17f`; the remaining issue is making the local-to-CI verification path explicit and reproducible.
 
 ## Session Continuity
 
-Last session: 2026-03-29 17:00
-Stopped at: Planning initialized; Phase 1 is ready for discussion/planning.
+Last session: 2026-04-08 12:00
+Stopped at: Phase 1 plans created; next recommended execution is 01-01 coverage hardening.
 Resume file: None
