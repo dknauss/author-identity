@@ -40,6 +40,14 @@ async function login( page, targetPath = '/wp-admin/' ) {
 			.getByLabel( /^password$/i )
 			.fill( process.env.WP_E2E_PASSWORD || 'password' );
 		await page.getByRole( 'button', { name: /log in/i } ).click();
+		await page.waitForLoadState( 'domcontentloaded' );
+
+		if ( page.url().includes( '/wp-login.php' ) ) {
+			throw new Error(
+				'Login failed — still on wp-login.php after submitting credentials. ' +
+					'Check that the WordPress environment is running and the admin password is set.'
+			);
+		}
 	}
 
 	await expect( page ).toHaveURL( /\/wp-admin\// );

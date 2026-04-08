@@ -392,11 +392,21 @@ jobs:
       - name: Install Node dependencies
         run: npm ci
 
+      - name: Verify Docker is available
+        run: docker info > /dev/null 2>&1 || { echo "Docker is not running"; exit 1; }
+
+      - name: Start WordPress environment
+        run: npx @wordpress/env start
+        timeout-minutes: 5
+
+      - name: Configure WordPress for E2E
+        run: bash bin/setup-e2e.sh --skip-start
+
       - name: Install Playwright browser dependencies
         run: npx playwright install --with-deps chromium
 
-      - name: Run Playwright E2E suite
-        run: npm run test:e2e
+      - name: Run Playwright tests
+        run: npx playwright test
 
       - name: Upload Playwright artifacts
         if: always()

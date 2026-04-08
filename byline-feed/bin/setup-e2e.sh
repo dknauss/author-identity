@@ -7,12 +7,22 @@ TMP_DIR="${PLUGIN_DIR}/.tmp"
 POST_ID_FILE="${TMP_DIR}/e2e-post-id"
 MU_PLUGIN_FILE='/var/www/html/wp-content/mu-plugins/byline-feed-e2e-tools.php'
 
+SKIP_START=false
+for arg in "$@"; do
+  case "$arg" in
+    --skip-start) SKIP_START=true ;;
+  esac
+done
+
 mkdir -p "${TMP_DIR}"
 
 cd "${PLUGIN_DIR}"
 
 npm run build
-npx @wordpress/env start
+
+if [[ "${SKIP_START}" != "true" ]]; then
+  npx @wordpress/env start
+fi
 
 npx @wordpress/env run cli wp plugin activate byline-feed --allow-root
 npx @wordpress/env run cli wp option update permalink_structure '/%postname%/' --allow-root
