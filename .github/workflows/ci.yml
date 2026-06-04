@@ -396,7 +396,7 @@ jobs:
         run: docker info > /dev/null 2>&1 || { echo "Docker is not running"; exit 1; }
 
       - name: Start WordPress environment
-        run: npx @wordpress/env start
+        run: npm run env:start
         timeout-minutes: 5
 
       - name: Configure WordPress for E2E
