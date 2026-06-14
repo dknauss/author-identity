@@ -1,6 +1,6 @@
 # Author Identity
 
-[![CI](https://github.com/dknauss/author-identity/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/dknauss/author-identity/actions/workflows/ci.yml)
+[![CI](https://github.com/dknauss/author-identity/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/dknauss/author-identity/actions/workflows/ci.yml) [![Latest Tag](https://img.shields.io/github/v/tag/dknauss/author-identity)](https://github.com/dknauss/author-identity/tags) [![Security Policy](https://img.shields.io/badge/security-policy-4c1)](SECURITY.md)
 [![License: GPL-2.0-or-later](https://img.shields.io/badge/License-GPL%202.0%2B-blue.svg)](LICENSE)
 [![PHP 7.4+](https://img.shields.io/badge/PHP-7.4%2B-777BB4?logo=php&logoColor=white)](byline-feed/composer.json)
 [![WordPress 6.0+](https://img.shields.io/badge/WordPress-6.0%2B-21759B?logo=wordpress&logoColor=white)](byline-feed/readme.txt)
