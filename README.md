@@ -124,7 +124,7 @@ The output-demo README includes direct inspection routes for:
 
 The public Playground demo runs the actual `byline-feed` plugin code, but uses synthetic fixture authors/content via a small demo mu-plugin so the inspection routes stay deterministic.
 
-[![Try in Playground](https://img.shields.io/badge/Try%20in-Playground-21759B?logo=wordpress&logoColor=white)](https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2Fdknauss%2Fauthor-identity%2Fcodex%2Fplayground-assets%2Fplayground%2Fpublic%2Foutput-demo.blueprint.json&url=%2F%3Fp%3D1&mode=browser-full-screen&login=no)
+[![Try in Playground](https://img.shields.io/badge/Try%20in-Playground-21759B?logo=wordpress&logoColor=white)](https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2Fdknauss%2Fauthor-identity%2Fmain%2Fplayground%2Foutput-demo.blueprint.json&url=%2F%3Fp%3D1&mode=browser-full-screen&login=no)
 
 Use the output-demo bundle locally with:
 
@@ -144,7 +144,7 @@ Refresh the published public demo assets with:
 playground/bin/publish-output-demo.sh
 ```
 
-The public `Try in Playground` CTA now targets the stable `codex/playground-assets` blueprint URL. Each refresh republishes that stable blueprint while pinning the installed plugin to a fresh immutable source tag for the current commit. Local snapshot ZIPs remain useful for offline sharing, archived demos, and reproducible local inspection.
+The public `Try in Playground` CTA targets the blueprint at `playground/output-demo.blueprint.json` on `main`. It installs the `byline-feed` plugin from the pinned `v0.1.0-rc3` release ZIP through the WordPress Playground CORS proxy, then writes the demo mu-plugin inline for deterministic fixtures. Installing from a release asset (rather than an in-browser `git:directory` clone) is what keeps the live demo working. Local snapshot ZIPs remain useful for offline sharing, archived demos, and reproducible local inspection.
 
 ## Current RC
 
