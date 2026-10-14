@@ -133,6 +133,8 @@ add_filter( 'byline_feed_author_mode', function ( $mode, $post, $stored ) {
 }, 10, 3 );
 ```
 
+[First Person](https://github.com/dknauss/first-person-byline) is the reference suggester: it attributes a post to the site when the post is not written in the first person, defers to a choice made by hand, and hides the visible byline from this same resolved answer, so what readers see and what machines read agree. Neither plugin requires the other.
+
 Other plugins can read the resolved answer with `\Byline_Feed\byline_feed_get_author_mode( $post )` (check `function_exists()` first), so a visible byline and the metadata never disagree.
 
 ## Rights output

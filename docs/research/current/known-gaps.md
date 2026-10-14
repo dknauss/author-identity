@@ -161,6 +161,18 @@ Article-level `bylinePerspective` is injected as `additionalProperty` in all thr
 
 Standalone output now gives the Article `@id` `<permalink>#article` and the publisher Organization `@id` `<home>/#organization`, so other plugins can reference them. byline-feed still does not generate `@id` URIs for author entities. In Yoast integration mode (Mode A), the spec references existing Yoast `@id` values. In standalone mode, the current output uses inline Person objects without `@id` — valid schema, but entities are not referenceable across the graph. If standalone schema output needs to be consumed as a graph (e.g., by a future non-Yoast schemamap implementation), an `@id` scheme will be needed.
 
+### Feeds ignore `organization` author mode
+
+**Status:** Open
+
+JSON-LD and head tags follow `byline_feed_get_author_mode()`, but RSS2, Atom, and JSON Feed still list a post's resolved authors when the post is attributed to the site. Options: emit the publisher as the sole Byline person for such items, or omit item-level author blocks. Decide with the Byline spec's guidance on organizational authors (its FAQ suggests a `person` representing the organization).
+
+### Borges `citation` attachment
+
+**Status:** Open — future integration
+
+Borges (bibliography block) now nests cited works in a JSON-LD `ItemList`. With the article's stable `@id`, the natural next step is for Borges to attach that list as the article's `citation` through `byline_feed_schema_article` when Byline Feed is active, so the page has one Article node that names its sources.
+
 ### `worksFor` / affiliation gap
 
 **Status:** Open — future opportunity
