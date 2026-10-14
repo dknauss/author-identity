@@ -46,6 +46,7 @@ require_once BYLINE_FEED_PLUGIN_DIR . 'inc/schema.php';
 require_once BYLINE_FEED_PLUGIN_DIR . 'inc/head-meta.php';
 require_once BYLINE_FEED_PLUGIN_DIR . 'inc/rights.php';
 require_once BYLINE_FEED_PLUGIN_DIR . 'inc/perspective.php';
+require_once BYLINE_FEED_PLUGIN_DIR . 'inc/author-mode.php';
 
 // Bootstrap.
 add_action( 'plugins_loaded', 'Byline_Feed\\bootstrap' );
