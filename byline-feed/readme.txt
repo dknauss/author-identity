@@ -96,6 +96,12 @@ Content Perspective is an editorial field that communicates the intent behind a 
 
 == Changelog ==
 
+= 0.1.0-rc4 =
+* Fourth release candidate.
+* New Attribution setting (block editor sidebar and classic-editor metabox): credit a post to its authors or to the site. With "the site", JSON-LD names the publisher as author and no personal author tags or `fediverse:creator` are printed. Other plugins can suggest the choice through the `byline_feed_author_mode` filter; a choice made by hand always wins.
+* Author meta tags on singular views (`author`, `og:author`, `article:author`), so link previews that skip JSON-LD articles, such as Mastodon's, credit the right people.
+* Stable JSON-LD `@id`s for the article and the publisher.
+
 = 0.1.0-rc3 =
 * Third release candidate.
 * Feed-level rights summaries now ship in RSS2, Atom, and JSON Feed alongside the existing denied-item rights metadata.

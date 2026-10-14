@@ -44,6 +44,28 @@ Release notes complement, but do not replace:
 - the dated version entries in `CHANGELOG.md`
 
 
+## Draft: 0.1.0-rc4
+
+### Summary
+
+Byline Feed 0.1.0-rc4 adds attribution: who a post is credited to in structured data and link previews.
+
+### Highlights
+
+- Attribution setting per post: its authors, or the site (organization mode). Organization mode names the publisher as the JSON-LD author and suppresses personal author tags and `fediverse:creator`.
+- Companion plugins can suggest the mode through `byline_feed_author_mode`; an editor's choice made by hand always wins. First Person (dknauss/first-person-byline) is the reference companion.
+- Author meta tags (`author`, `og:author`, `article:author`) for link-preview readers that ignore JSON-LD articles, including Mastodon.
+- Stable JSON-LD `@id`s for the article and publisher.
+- Feeds do not yet follow organization mode.
+
+### Links
+
+- Attached checksum: `byline-feed-0.1.0-rc4.zip.sha256`
+
+### AI assistance note
+
+> Portions of this release were developed with AI coding assistance (Claude). Repository ownership, review, and merge accountability remain with the human maintainer.
+
 ## Draft: 0.1.0-rc3
 
 ### Summary
