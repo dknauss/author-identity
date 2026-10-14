@@ -5,12 +5,12 @@ on:
     branches: [main]
     paths:
       - 'byline-feed/**'
-      - '.github/workflows/ci.yml'
+      - '.github/workflows/**'
   pull_request:
     branches: [main]
     paths:
       - 'byline-feed/**'
-      - '.github/workflows/ci.yml'
+      - '.github/workflows/**'
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
