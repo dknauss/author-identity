@@ -1,0 +1,61 @@
+name: Release
+
+# Pushing a tag like v0.1.0-rc4 builds the plugin ZIP with
+# byline-feed/bin/build-plugin-zip.sh and publishes a GitHub release with the
+# ZIP and its checksum. The body is that version's "## Draft: <version>"
+# section from RELEASE_NOTES.md. Tags containing "-" (rc, beta) are marked
+# as pre-releases.
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Build and publish release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Check the plugin version matches the tag
+        run: |
+          version="$(sed -n "s/^define( 'BYLINE_FEED_VERSION', '\(.*\)' );$/\1/p" byline-feed/byline-feed.php)"
+          if [ "v${version}" != "${GITHUB_REF_NAME}" ]; then
+            echo "Tag ${GITHUB_REF_NAME} does not match BYLINE_FEED_VERSION ${version}" >&2
+            exit 1
+          fi
+
+      - name: Build plugin ZIP
+        run: bash byline-feed/bin/build-plugin-zip.sh
+
+      - name: Extract release notes
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          awk -v head="## Draft: ${version}" '
+            $0 == head { found = 1; next }
+            found && /^## / { exit }
+            found { print }
+          ' RELEASE_NOTES.md > release-notes.md
+          if [ ! -s release-notes.md ]; then
+            echo "RELEASE_NOTES.md has no '## Draft: ${version}' section" >&2
+            exit 1
+          fi
+
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          prerelease=""
+          case "$version" in *-*) prerelease="--prerelease" ;; esac
+          gh release create "$GITHUB_REF_NAME" \
+            "byline-feed/dist/byline-feed-${version}.zip" \
+            "byline-feed/dist/byline-feed-${version}.zip.sha256" \
+            --title "Byline Feed ${version}" \
+            --notes-file release-notes.md \
+            $prerelease
