@@ -44,6 +44,24 @@ Release notes complement, but do not replace:
 - the dated version entries in `CHANGELOG.md`
 
 
+## Draft: 0.1.0-rc5
+
+### Summary
+
+Byline Feed 0.1.0-rc5 keeps Jetpack from crediting a person on posts attributed to the site.
+
+### Highlights
+
+- Jetpack Social adds `fediverse:creator` from a connected Mastodon account without knowing who a post is attributed to. Byline Feed now removes that tag in organization mode, and whenever it prints its own handles.
+
+### Links
+
+- Attached checksum: `byline-feed-0.1.0-rc5.zip.sha256`
+
+### AI assistance note
+
+> Portions of this release were developed with AI coding assistance (Claude). Repository ownership, review, and merge accountability remain with the human maintainer.
+
 ## Draft: 0.1.0-rc4
 
 ### Summary

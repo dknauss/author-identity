@@ -21,6 +21,12 @@ When cutting a release:
 
 No unreleased entries yet.
 
+## 0.1.0-rc5 - 2026-10-14
+
+### Fixed
+
+- Jetpack's `fediverse:creator` tag (from a Jetpack Social Mastodon connection) no longer credits a person on posts in `organization` author mode. It is also removed when Byline Feed prints its own handles, so pages carry no duplicate or conflicting handle. Jetpack's tag stays when Byline Feed has no handle for the post.
+
 ## 0.1.0-rc4 - 2026-10-14
 
 ### Added
