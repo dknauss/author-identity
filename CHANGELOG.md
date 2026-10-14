@@ -19,6 +19,10 @@ When cutting a release:
 
 ## Unreleased
 
+No unreleased entries yet.
+
+## 0.1.0-rc4 - 2026-10-14
+
 ### Added
 
 - `organization` author mode (`byline_feed_author_mode` filter, `byline_feed_get_author_mode()`): for writing in an institutional or collective voice, JSON-LD names the publisher as author (a reference to the publisher node under Yoast SEO and Rank Math), and no `fediverse:creator` or author meta tags are printed. Feeds are not yet affected.

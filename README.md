@@ -148,7 +148,7 @@ The public `Try in Playground` CTA targets the blueprint at `playground/output-d
 
 ## Current RC
 
-- Pre-release: [Byline Feed 0.1.0-rc3](https://github.com/dknauss/author-identity/releases/tag/v0.1.0-rc3)
+- Pre-release: [Byline Feed 0.1.0-rc4](https://github.com/dknauss/author-identity/releases/tag/v0.1.0-rc4)
 - Feedback and stabilization: [issue #17](https://github.com/dknauss/author-identity/issues/17)
 
 ## Governance
