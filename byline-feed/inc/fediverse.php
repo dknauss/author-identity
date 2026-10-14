@@ -19,6 +19,43 @@ defined( 'ABSPATH' ) || exit;
  */
 function register_hooks(): void {
 	add_action( 'wp_head', __NAMESPACE__ . '\\render_meta_tags' );
+	add_filter( 'jetpack_open_graph_tags', __NAMESPACE__ . '\\filter_jetpack_open_graph_tags', 20 );
+}
+
+/**
+ * Remove Jetpack's `fediverse:creator` tag where this plugin decides instead.
+ *
+ * Jetpack (13.8+) adds `fediverse:creator` from a Jetpack Social Mastodon
+ * connection: the post author's own, or else a site-wide one. It does not
+ * know who a post is attributed to, so it credits that handle even on posts
+ * attributed to the site. The tag is removed:
+ *   - in `organization` mode, where no personal creator is credited;
+ *   - when this plugin prints its own handles, which already name every
+ *     author, so the page does not carry a duplicate or a different one.
+ * Otherwise Jetpack's tag is left alone.
+ *
+ * @param array $tags Jetpack Open Graph tags.
+ * @return array
+ */
+function filter_jetpack_open_graph_tags( $tags ) {
+	if ( ! is_array( $tags ) || ! isset( $tags['fediverse:creator'] ) || ! is_singular() ) {
+		return $tags;
+	}
+
+	$post = get_queried_object();
+
+	if ( ! $post instanceof WP_Post ) {
+		return $tags;
+	}
+
+	if (
+		'organization' === byline_feed_get_author_mode( $post )
+		|| array() !== get_handles_for_post( $post )
+	) {
+		unset( $tags['fediverse:creator'] );
+	}
+
+	return $tags;
 }
 
 /**

@@ -96,6 +96,10 @@ Content Perspective is an editorial field that communicates the intent behind a 
 
 == Changelog ==
 
+= 0.1.0-rc5 =
+* Fifth release candidate.
+* Jetpack Social's `fediverse:creator` tag no longer credits a person on posts attributed to the site, and gives way to Byline Feed's own handles where it prints them.
+
 = 0.1.0-rc4 =
 * Fourth release candidate.
 * New Attribution setting (block editor sidebar and classic-editor metabox): credit a post to its authors or to the site. With "the site", JSON-LD names the publisher as author and no personal author tags or `fediverse:creator` are printed. Other plugins can suggest the choice through the `byline_feed_author_mode` filter; a choice made by hand always wins.
