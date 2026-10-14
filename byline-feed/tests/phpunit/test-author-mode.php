@@ -23,6 +23,7 @@ class Test_Author_Mode extends WP_UnitTestCase {
 		remove_all_filters( 'byline_feed_schema_mode' );
 		remove_all_filters( 'byline_feed_author_meta_tags_enabled' );
 		remove_all_filters( 'byline_feed_author_meta_tags' );
+		remove_all_filters( 'byline_feed_author_mode_test_seen' );
 		parent::tear_down();
 	}
 
@@ -91,6 +92,58 @@ class Test_Author_Mode extends WP_UnitTestCase {
 		);
 
 		$this->assertSame( 'person', byline_feed_get_author_mode( $post ) );
+	}
+
+	// ────────────────────────────────────────────────────────────
+	// Stored choice (Attribution panel)
+	// ────────────────────────────────────────────────────────────
+
+	public function test_stored_choice_sets_the_mode(): void {
+		$post = get_post( $this->post_with_authors( array( $this->dan() ) ) );
+
+		update_post_meta( $post->ID, '_byline_author_mode', 'organization' );
+
+		$this->assertSame( 'organization', byline_feed_get_author_mode( $post ) );
+	}
+
+	public function test_filter_sees_the_stored_choice_so_automatic_answers_can_defer(): void {
+		$post = get_post( $this->post_with_authors( array( $this->dan() ) ) );
+
+		// An automatic suggester that respects a choice made by hand.
+		add_filter(
+			'byline_feed_author_mode',
+			static function ( $mode, $post, $stored ) {
+				return '' !== $stored ? $mode : 'organization';
+			},
+			10,
+			3
+		);
+
+		$this->assertSame( 'organization', byline_feed_get_author_mode( $post ), 'No stored choice: the suggestion applies.' );
+
+		update_post_meta( $post->ID, '_byline_author_mode', 'person' );
+
+		$this->assertSame( 'person', byline_feed_get_author_mode( $post ), 'Stored choice: the suggestion defers.' );
+	}
+
+	public function test_invalid_stored_values_are_ignored(): void {
+		$post = get_post( $this->post_with_authors( array( $this->dan() ) ) );
+
+		update_post_meta( $post->ID, '_byline_author_mode', 'collective' );
+
+		$this->assertSame( '', \Byline_Feed\Author_Mode\get_stored_author_mode( $post ) );
+		$this->assertSame( 'person', byline_feed_get_author_mode( $post ) );
+		$this->assertSame( '', \Byline_Feed\Author_Mode\sanitize_author_mode( 'collective' ) );
+	}
+
+	public function test_stored_choice_is_registered_for_rest(): void {
+		\Byline_Feed\Author_Mode\register_meta();
+
+		$registered = get_registered_meta_keys( 'post', '' );
+
+		$this->assertArrayHasKey( '_byline_author_mode', $registered );
+		$this->assertTrue( (bool) $registered['_byline_author_mode']['show_in_rest'] );
+		$this->assertSame( '', $registered['_byline_author_mode']['default'] );
 	}
 
 	// ────────────────────────────────────────────────────────────

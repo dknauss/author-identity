@@ -116,13 +116,24 @@ Behavior:
 - no `fediverse:creator` or author meta tags are printed
 - feed output is not yet affected: feeds still list the post's resolved authors
 
-The decision is post-level, not a field of the normalized author contract. A site typically derives it from whatever already decides whether a post shows a visible byline:
+The decision is post-level, not a field of the normalized author contract. It is resolved in this order:
+
+1. **The editor's choice.** The Attribution panel (block editor sidebar, or a classic-editor metabox) stores `person` or `organization` in the `_byline_author_mode` post meta. "Automatic" stores nothing. The meta is registered for REST.
+2. **The `byline_feed_author_mode` filter.** It receives the stored choice (or `person` when none is stored), the post, and the stored value itself (`''` when the editor has not chosen).
+3. **Default:** `person`.
+
+Code that suggests an answer automatically (for example from whether the post is written in the first person) should defer to a choice made by hand:
 
 ```php
-add_filter( 'byline_feed_author_mode', function ( $mode, $post ) {
+add_filter( 'byline_feed_author_mode', function ( $mode, $post, $stored ) {
+	if ( '' !== $stored ) {
+		return $mode; // The editor chose; leave it.
+	}
 	return my_site_post_has_byline( $post ) ? 'person' : 'organization';
-}, 10, 2 );
+}, 10, 3 );
 ```
+
+Other plugins can read the resolved answer with `\Byline_Feed\byline_feed_get_author_mode( $post )` (check `function_exists()` first), so a visible byline and the metadata never disagree.
 
 ## Rights output
 
@@ -529,7 +540,7 @@ Invalid values are silently dropped from output.
 | `byline_feed_adapter` | `( Adapter $adapter )` | Override the auto-detected adapter instance |
 | `byline_feed_authors` | `( object[] $authors, WP_Post $post )` | Modify normalized authors before validation and output |
 | `byline_feed_perspective` | `( string $perspective, WP_Post $post )` | Compute or override the perspective value |
-| `byline_feed_author_mode` | `( string $mode, WP_Post $post )` | Attribute a post to its people (`person`, default) or to the publisher (`organization`) |
+| `byline_feed_author_mode` | `( string $mode, WP_Post $post, string $stored )` | Attribute a post to its people (`person`, default) or to the publisher (`organization`); `$stored` is the editor's choice or `''` |
 | `byline_feed_person_xml` | `( string $xml, object $author )` | Modify a single emitted `byline:person` XML fragment |
 | `byline_feed_item_xml` | `( string $xml, WP_Post $post, object[] $authors )` | Modify RSS2 item XML |
 | `byline_feed_atom_entry_xml` | `( string $xml, WP_Post $post, object[] $authors )` | Modify Atom entry XML |

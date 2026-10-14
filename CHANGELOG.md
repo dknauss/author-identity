@@ -25,6 +25,8 @@ When cutting a release:
 - Author meta tags on singular views: `author` and `og:author` with the authors' names, and one `article:author` per author profile URL. Mastodon's link cards fall back to `og:author` because they read JSON-LD bylines only from `WebPage` or `NewsArticle` nodes. Printed by default only in standalone schema mode (`byline_feed_author_meta_tags_enabled`, `byline_feed_author_meta_tags`).
 - Standalone JSON-LD gives the article a stable `@id` (`<permalink>#article`) and `mainEntityOfPage`, and the publisher the `@id` `<home>/#organization`, so other plugins (a bibliography's `citation` list, say) can reference them rather than emit competing page-level nodes.
 
+- Attribution panel (block editor sidebar and classic-editor metabox) storing an editor's explicit author mode in `_byline_author_mode` (REST-registered). "Automatic" stores nothing and leaves the decision to the `byline_feed_author_mode` filter, which now also receives the stored choice so automatic suggesters can defer to it.
+
 ### Docs
 
 - `docs/output-reference.md` said the plugin disables its schema output under Yoast SEO or Rank Math; it enriches their Article node instead. Corrected, with the new output documented.

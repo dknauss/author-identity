@@ -40,6 +40,9 @@ function bootstrap(): void {
 
 	// Register perspective meta field.
 	Perspective\register_hooks();
+
+	// Register author mode meta field.
+	Author_Mode\register_hooks();
 }
 
 /**
@@ -121,22 +124,29 @@ function byline_feed_get_authors( \WP_Post $post ): array {
  * or author meta tags are printed. Feed output is not yet affected.
  *
  * The decision is post-level, not an author field, so it is not part of the
- * normalized author contract. Sites decide it with the filter, for example
- * from whatever already decides whether a post shows a visible byline.
+ * normalized author contract. An editor's explicit choice is stored in the
+ * `_byline_author_mode` post meta (the Attribution panel). Without one, the
+ * filter decides, for example from whatever already decides whether a post
+ * shows a visible byline.
  *
  * @param \WP_Post $post The post.
  * @return string 'person' or 'organization'.
  */
 function byline_feed_get_author_mode( \WP_Post $post ): string {
+	$stored = Author_Mode\get_stored_author_mode( $post );
+
 	/**
 	 * Filters who a post is attributed to.
 	 *
-	 * Any value other than 'organization' is treated as 'person'.
+	 * Any value other than 'organization' is treated as 'person'. Callbacks
+	 * that supply an automatic answer should return `$mode` unchanged when
+	 * `$stored` is not empty, so an editor's choice made by hand stands.
 	 *
-	 * @param string   $mode 'person' (default) or 'organization'.
-	 * @param \WP_Post $post The post.
+	 * @param string   $mode   The stored choice, or 'person' when none is stored.
+	 * @param \WP_Post $post   The post.
+	 * @param string   $stored The editor's stored choice: 'person', 'organization', or ''.
 	 */
-	$mode = apply_filters( 'byline_feed_author_mode', 'person', $post );
+	$mode = apply_filters( 'byline_feed_author_mode', '' !== $stored ? $stored : 'person', $post, $stored );
 
 	return 'organization' === $mode ? 'organization' : 'person';
 }
