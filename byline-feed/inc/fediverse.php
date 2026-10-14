@@ -9,6 +9,7 @@ namespace Byline_Feed\Fediverse;
 
 use WP_Post;
 use function Byline_Feed\byline_feed_get_authors;
+use function Byline_Feed\byline_feed_get_author_mode;
 use function Byline_Feed\normalize_byline_feed_fediverse;
 
 defined( 'ABSPATH' ) || exit;
@@ -51,6 +52,11 @@ function render_meta_tags(): void {
  * @return string[]
  */
 function get_handles_for_post( WP_Post $post ): array {
+	// A post attributed to the site has no personal creator to credit.
+	if ( 'organization' === byline_feed_get_author_mode( $post ) ) {
+		return array();
+	}
+
 	$authors = byline_feed_get_authors( $post );
 	$handles = array();
 

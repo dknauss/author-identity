@@ -19,7 +19,15 @@ When cutting a release:
 
 ## Unreleased
 
-No unreleased entries yet.
+### Added
+
+- `organization` author mode (`byline_feed_author_mode` filter, `byline_feed_get_author_mode()`): for writing in an institutional or collective voice, JSON-LD names the publisher as author (a reference to the publisher node under Yoast SEO and Rank Math), and no `fediverse:creator` or author meta tags are printed. Feeds are not yet affected.
+- Author meta tags on singular views: `author` and `og:author` with the authors' names, and one `article:author` per author profile URL. Mastodon's link cards fall back to `og:author` because they read JSON-LD bylines only from `WebPage` or `NewsArticle` nodes. Printed by default only in standalone schema mode (`byline_feed_author_meta_tags_enabled`, `byline_feed_author_meta_tags`).
+- Standalone JSON-LD gives the article a stable `@id` (`<permalink>#article`) and `mainEntityOfPage`, and the publisher the `@id` `<home>/#organization`, so other plugins (a bibliography's `citation` list, say) can reference them rather than emit competing page-level nodes.
+
+### Docs
+
+- `docs/output-reference.md` said the plugin disables its schema output under Yoast SEO or Rank Math; it enriches their Article node instead. Corrected, with the new output documented.
 
 ## 0.1.0-rc3 - 2026-03-21
 

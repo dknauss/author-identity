@@ -12,7 +12,9 @@ Current shipped output:
 - Atom Byline namespace and metadata
 - JSON Feed 1.1 output with `_byline` extensions
 - `fediverse:creator` meta tags on singular HTML views
+- author meta tags (`author`, `og:author`, `article:author`) on singular HTML views
 - JSON-LD Article + Person schema on singular HTML views
+- an `organization` author mode for posts in an institutional or collective voice
 - advisory rights signals on singular/content-policy routes, denied items, and feed-level summaries
 - admin-side consent audit logging
 - Perspective post meta and feed output
@@ -82,6 +84,45 @@ Behavior:
 - handles are normalized to include a leading `@`
 - `profiles[]` and `ap_actor_url` do not substitute for the `fediverse` handle
 - per-author handle output can be overridden with `byline_feed_fediverse_handle`
+- omitted for posts in `organization` author mode
+
+### Author meta tags
+
+The plugin also prints plain author meta tags for link-preview readers that ignore JSON-LD `Article` nodes. Mastodon's link cards, for example, read a byline from JSON-LD only when the node is typed `WebPage` or `NewsArticle`, and otherwise fall back to `og:author`.
+
+Example:
+
+```html
+<meta name="author" content="Jane Doe, Alex Smith" />
+<meta property="og:author" content="Jane Doe, Alex Smith" />
+<meta property="article:author" content="https://example.com/author/jane-doe/" />
+```
+
+Behavior:
+
+- only emitted on singular views of public post types
+- `author` and `og:author` carry every author's name, comma-separated, in byline order
+- one `article:author` per author with a profile URL (the author's `url`, else their author archive); Open Graph expects profile URLs here
+- printed by default only in standalone schema mode, because Yoast SEO and Rank Math print their own author tags; override with `byline_feed_author_meta_tags_enabled`
+- the tag list can be changed with `byline_feed_author_meta_tags`; entries without a key or content are dropped
+- omitted for posts in `organization` author mode
+
+## Author mode
+
+`byline_feed_get_author_mode( $post )` returns `person` (the default) or `organization`, set with the `byline_feed_author_mode` filter. Use `organization` for writing in an institutional or collective voice that carries no personal byline:
+
+- JSON-LD names the publisher `Organization` as the article's `author` (in Yoast SEO and Rank Math modes, a reference to their own publisher node)
+- standalone JSON-LD is emitted even when no authors resolve
+- no `fediverse:creator` or author meta tags are printed
+- feed output is not yet affected: feeds still list the post's resolved authors
+
+The decision is post-level, not a field of the normalized author contract. A site typically derives it from whatever already decides whether a post shows a visible byline:
+
+```php
+add_filter( 'byline_feed_author_mode', function ( $mode, $post ) {
+	return my_site_post_has_byline( $post ) ? 'person' : 'organization';
+}, 10, 2 );
+```
 
 ## Rights output
 
@@ -130,14 +171,16 @@ The plugin hooks `wp_head` and emits one `<script type="application/ld+json">` b
 
 Behavior:
 
-- emits `Article` schema with an ordered `author` array of `Person` objects
+- emits `Article` schema with an ordered `author` array of `Person` objects, or the publisher `Organization` in `organization` author mode
+- gives the article a stable `@id` (`<permalink>#article`) and `mainEntityOfPage`, and the publisher `@id` `<home>/#organization`, so other plugins can reference them instead of emitting their own page-level nodes
 - uses the same normalized author contract as the feed outputs
 - includes `profiles[]` in `sameAs`
 - includes `ap_actor_url` in `sameAs` only when that URL is already available from trusted adapter/meta resolution
-- disables its own schema output by default when known schema-owning SEO plugins are active:
-  - Yoast SEO
-  - Rank Math
-- schema output can be force-enabled or disabled with `byline_feed_schema_enabled`
+- does not print its own block when a known schema-owning SEO plugin is active; it enriches that plugin's Article node instead (authors, perspective):
+  - Yoast SEO (`wpseo_schema_article`)
+  - Rank Math (`rank_math/json_ld`)
+- the mode can be forced with `byline_feed_schema_mode` (`yoast`, `rankmath`, or `standalone`)
+- standalone output can be disabled per post with `byline_feed_schema_enabled`
 
 Example:
 
@@ -145,10 +188,15 @@ Example:
 {
   "@context": "https://schema.org",
   "@type": "Article",
+  "@id": "https://example.com/city-budget-passes-council/#article",
   "headline": "City budget passes council",
   "datePublished": "2026-03-15T12:00:00+00:00",
   "dateModified": "2026-03-15T12:00:00+00:00",
   "url": "https://example.com/city-budget-passes-council/",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://example.com/city-budget-passes-council/"
+  },
   "author": [
     {
       "@type": "Person",
@@ -168,6 +216,7 @@ Example:
   ],
   "publisher": {
     "@type": "Organization",
+    "@id": "https://example.com/#organization",
     "name": "Example Site",
     "url": "https://example.com/",
     "logo": {
@@ -480,6 +529,7 @@ Invalid values are silently dropped from output.
 | `byline_feed_adapter` | `( Adapter $adapter )` | Override the auto-detected adapter instance |
 | `byline_feed_authors` | `( object[] $authors, WP_Post $post )` | Modify normalized authors before validation and output |
 | `byline_feed_perspective` | `( string $perspective, WP_Post $post )` | Compute or override the perspective value |
+| `byline_feed_author_mode` | `( string $mode, WP_Post $post )` | Attribute a post to its people (`person`, default) or to the publisher (`organization`) |
 | `byline_feed_person_xml` | `( string $xml, object $author )` | Modify a single emitted `byline:person` XML fragment |
 | `byline_feed_item_xml` | `( string $xml, WP_Post $post, object[] $authors )` | Modify RSS2 item XML |
 | `byline_feed_atom_entry_xml` | `( string $xml, WP_Post $post, object[] $authors )` | Modify Atom entry XML |
@@ -489,6 +539,9 @@ Invalid values are silently dropped from output.
 | `byline_feed_schema_enabled` | `( bool $enabled, WP_Post $post )` | Enable or disable JSON-LD output for the current singular post |
 | `byline_feed_schema_person` | `( array $person, object $author )` | Modify one JSON-LD `Person` object |
 | `byline_feed_schema_article` | `( array $article, WP_Post $post )` | Modify the full JSON-LD `Article` object |
+| `byline_feed_schema_mode` | `( string $mode )` | Force `yoast`, `rankmath`, or `standalone` schema mode |
+| `byline_feed_author_meta_tags_enabled` | `( bool $enabled, WP_Post $post )` | Print author meta tags (default: standalone schema mode only) |
+| `byline_feed_author_meta_tags` | `( array $tags, WP_Post $post )` | Modify the author meta tags (`attribute`, `key`, `content`) before output |
 
 ### Actions
 

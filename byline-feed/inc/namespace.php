@@ -34,6 +34,7 @@ function bootstrap(): void {
 	Feed_JSON\register_hooks();
 	Fediverse\register_hooks();
 	Schema\register_hooks();
+	Head_Meta\register_hooks();
 	Rights\register_hooks();
 	register_author_meta_hooks();
 
@@ -108,6 +109,36 @@ function byline_feed_get_authors( \WP_Post $post ): array {
 	$authors = apply_filters( 'byline_feed_authors', $authors, $post );
 
 	return validate_author_objects( $authors, $post );
+}
+
+/**
+ * Returns who a post is attributed to: its people, or the site itself.
+ *
+ * `person` (the default) attributes the post to its normalized authors.
+ * `organization` attributes it to the publishing organization alone, for
+ * writing in an institutional or collective voice that carries no personal
+ * byline: JSON-LD names the publisher as author, and no `fediverse:creator`
+ * or author meta tags are printed. Feed output is not yet affected.
+ *
+ * The decision is post-level, not an author field, so it is not part of the
+ * normalized author contract. Sites decide it with the filter, for example
+ * from whatever already decides whether a post shows a visible byline.
+ *
+ * @param \WP_Post $post The post.
+ * @return string 'person' or 'organization'.
+ */
+function byline_feed_get_author_mode( \WP_Post $post ): string {
+	/**
+	 * Filters who a post is attributed to.
+	 *
+	 * Any value other than 'organization' is treated as 'person'.
+	 *
+	 * @param string   $mode 'person' (default) or 'organization'.
+	 * @param \WP_Post $post The post.
+	 */
+	$mode = apply_filters( 'byline_feed_author_mode', 'person', $post );
+
+	return 'organization' === $mode ? 'organization' : 'person';
 }
 
 /**
