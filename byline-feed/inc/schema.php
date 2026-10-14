@@ -5,7 +5,8 @@
  * Three modes:
  * (A) Yoast SEO active → enrich Yoast's schema graph via filters.
  * (B) Rank Math active → enrich Rank Math's JSON-LD via filter.
- * (C) No SEO plugin   → standalone Article + Person JSON-LD block.
+ * (C) No SEO plugin   → standalone Article + Person JSON-LD block
+ *     (or Article + publisher Organization in organization author mode).
  *
  * @package Byline_Feed
  */
@@ -14,6 +15,7 @@ namespace Byline_Feed\Schema;
 
 use WP_Post;
 use function Byline_Feed\byline_feed_get_authors;
+use function Byline_Feed\byline_feed_get_author_mode;
 use function Byline_Feed\byline_feed_get_perspective;
 
 defined( 'ABSPATH' ) || exit;
@@ -25,14 +27,7 @@ defined( 'ABSPATH' ) || exit;
  * so SEO plugin constants and classes are available for detection.
  */
 function register_hooks(): void {
-	$mode = detect_schema_mode();
-
-	/**
-	 * Filters the schema output mode.
-	 *
-	 * @param string $mode Detected mode: 'yoast', 'rankmath', or 'standalone'.
-	 */
-	$mode = apply_filters( 'byline_feed_schema_mode', $mode );
+	$mode = get_schema_mode();
 
 	switch ( $mode ) {
 		case 'yoast':
@@ -49,6 +44,22 @@ function register_hooks(): void {
 			add_action( 'wp_head', __NAMESPACE__ . '\\render_schema_script' );
 			break;
 	}
+}
+
+/**
+ * Return the schema mode in effect, after the `byline_feed_schema_mode` filter.
+ *
+ * @return string 'yoast', 'rankmath', or 'standalone'.
+ */
+function get_schema_mode(): string {
+	/**
+	 * Filters the schema output mode.
+	 *
+	 * @param string $mode Detected mode: 'yoast', 'rankmath', or 'standalone'.
+	 */
+	$mode = apply_filters( 'byline_feed_schema_mode', detect_schema_mode() );
+
+	return is_string( $mode ) ? $mode : 'standalone';
 }
 
 /**
@@ -269,35 +280,49 @@ function get_article_schema_for_post( WP_Post $post ): array {
 		return array();
 	}
 
-	$authors = byline_feed_get_authors( $post );
+	$publisher = get_publisher_schema();
 
-	if ( empty( $authors ) ) {
-		return array();
-	}
+	if ( 'organization' === byline_feed_get_author_mode( $post ) ) {
+		// Institutional or collective voice: the publisher is the author.
+		$author_objects = array( $publisher );
+	} else {
+		$authors = byline_feed_get_authors( $post );
 
-	$person_objects = array();
+		if ( empty( $authors ) ) {
+			return array();
+		}
 
-	foreach ( $authors as $author ) {
-		$person = get_person_schema( $author );
+		$author_objects = array();
 
-		if ( ! empty( $person ) ) {
-			$person_objects[] = $person;
+		foreach ( $authors as $author ) {
+			$person = get_person_schema( $author );
+
+			if ( ! empty( $person ) ) {
+				$author_objects[] = $person;
+			}
+		}
+
+		if ( empty( $author_objects ) ) {
+			return array();
 		}
 	}
 
-	if ( empty( $person_objects ) ) {
-		return array();
-	}
+	$permalink = get_permalink( $post );
 
 	$article = array(
-		'@context'      => 'https://schema.org',
-		'@type'         => 'Article',
-		'headline'      => wp_strip_all_tags( get_the_title( $post ) ),
-		'datePublished' => get_post_time( DATE_W3C, true, $post ),
-		'dateModified'  => get_post_modified_time( DATE_W3C, true, $post ),
-		'url'           => get_permalink( $post ),
-		'author'        => $person_objects,
-		'publisher'     => get_publisher_schema(),
+		'@context'         => 'https://schema.org',
+		'@type'            => 'Article',
+		'@id'              => get_article_id( $post ),
+		'headline'         => wp_strip_all_tags( get_the_title( $post ) ),
+		'datePublished'    => get_post_time( DATE_W3C, true, $post ),
+		'dateModified'     => get_post_modified_time( DATE_W3C, true, $post ),
+		'url'              => $permalink,
+		'mainEntityOfPage' => array(
+			'@type' => 'WebPage',
+			'@id'   => $permalink,
+		),
+		'author'           => $author_objects,
+		'publisher'        => $publisher,
 	);
 
 	// Add bylinePerspective as Article-level additionalProperty when WP-03 meta is set.
@@ -322,6 +347,29 @@ function get_article_schema_for_post( WP_Post $post ): array {
 	$article = apply_filters( 'byline_feed_schema_article', $article, $post );
 
 	return is_array( $article ) ? $article : array();
+}
+
+/**
+ * Return the JSON-LD `@id` of a post's standalone Article node.
+ *
+ * Stable and fragment-scoped to the permalink, so other plugins can point at
+ * the article (for example a bibliography's `citation` list) without
+ * duplicating it.
+ *
+ * @param WP_Post $post Post object.
+ * @return string
+ */
+function get_article_id( WP_Post $post ): string {
+	return get_permalink( $post ) . '#article';
+}
+
+/**
+ * Return the JSON-LD `@id` of the site's publisher Organization.
+ *
+ * @return string
+ */
+function get_publisher_id(): string {
+	return home_url( '/#organization' );
 }
 
 /**
@@ -453,6 +501,7 @@ function get_perspective_additional_property( WP_Post $post ): array {
 function get_publisher_schema(): array {
 	$publisher = array(
 		'@type' => 'Organization',
+		'@id'   => get_publisher_id(),
 		'name'  => get_bloginfo( 'name' ),
 		'url'   => home_url( '/' ),
 	);

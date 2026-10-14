@@ -16,6 +16,8 @@ namespace Byline_Feed\Schema_Rankmath;
 
 use WP_Post;
 use function Byline_Feed\byline_feed_get_authors;
+use function Byline_Feed\byline_feed_get_author_mode;
+use function Byline_Feed\Schema\get_publisher_schema;
 use function Byline_Feed\Schema\get_person_schema;
 use function Byline_Feed\Schema\get_perspective_additional_property;
 
@@ -52,18 +54,29 @@ function enrich_json_ld( array $data, $_jsonld ): array {
 		return $data;
 	}
 
-	$authors = byline_feed_get_authors( $post );
+	$authors = array();
 
-	if ( empty( $authors ) ) {
-		return $data;
+	if ( 'organization' === byline_feed_get_author_mode( $post ) ) {
+		// Institutional or collective voice: the publisher is the author.
+		// Point at Rank Math's own publisher node when the graph has one;
+		// otherwise inline ours so the reference never dangles.
+		$author_objects = isset( $data['publisher']['@id'] ) && is_string( $data['publisher']['@id'] )
+			? array( '@id' => $data['publisher']['@id'] )
+			: get_publisher_schema();
+	} else {
+		$authors = byline_feed_get_authors( $post );
+
+		if ( empty( $authors ) ) {
+			return $data;
+		}
+
+		$author_objects = array_map(
+			function ( $author ) {
+				return get_person_schema( $author );
+			},
+			$authors
+		);
 	}
-
-	$person_objects = array_map(
-		function ( $author ) {
-			return get_person_schema( $author );
-		},
-		$authors
-	);
 
 	foreach ( $data as $key => $node ) {
 		if ( ! is_array( $node ) || ! isset( $node['@type'] ) ) {
@@ -76,8 +89,8 @@ function enrich_json_ld( array $data, $_jsonld ): array {
 			continue;
 		}
 
-		// Replace Rank Math's author with our multi-author array.
-		$data[ $key ]['author'] = $person_objects;
+		// Replace Rank Math's author with our multi-author array, or the publisher.
+		$data[ $key ]['author'] = $author_objects;
 
 		// Add bylinePerspective as Article-level additionalProperty.
 		$perspective_props = get_perspective_additional_property( $post );

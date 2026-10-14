@@ -13,6 +13,8 @@ namespace Byline_Feed\Schema_Yoast;
 
 use WP_Post;
 use function Byline_Feed\byline_feed_get_authors;
+use function Byline_Feed\byline_feed_get_author_mode;
+use function Byline_Feed\Schema\get_publisher_schema;
 use function Byline_Feed\Schema\get_person_schema;
 use function Byline_Feed\Schema\get_perspective_additional_property;
 
@@ -44,21 +46,28 @@ function enrich_article( array $data, $context ): array {
 		return $data;
 	}
 
-	$authors = byline_feed_get_authors( $post );
+	$authors = array();
 
-	if ( empty( $authors ) ) {
-		return $data;
+	if ( 'organization' === byline_feed_get_author_mode( $post ) ) {
+		// Institutional or collective voice: point at Yoast's own publisher node.
+		$data['author'] = isset( $data['publisher'] ) ? $data['publisher'] : get_publisher_schema();
+	} else {
+		$authors = byline_feed_get_authors( $post );
+
+		if ( empty( $authors ) ) {
+			return $data;
+		}
+
+		// Replace Yoast's single @id reference with full Person objects.
+		// Using inline objects so the data is self-contained when NLWeb
+		// ingests the schemamap endpoint.
+		$data['author'] = array_map(
+			function ( $author ) {
+				return get_person_schema( $author );
+			},
+			$authors
+		);
 	}
-
-	// Replace Yoast's single @id reference with full Person objects.
-	// Using inline objects so the data is self-contained when NLWeb
-	// ingests the schemamap endpoint.
-	$data['author'] = array_map(
-		function ( $author ) {
-			return get_person_schema( $author );
-		},
-		$authors
-	);
 
 	// Add bylinePerspective as Article-level additionalProperty.
 	$perspective_props = get_perspective_additional_property( $post );

@@ -157,9 +157,9 @@ Article-level `bylinePerspective` is injected as `additionalProperty` in all thr
 
 ### `@id` graph URI generation
 
-**Status:** Open — not yet designed
+**Status:** Partly addressed — article and publisher have `@id`s; Person entities do not
 
-byline-feed does not generate `@id` URIs for author entities. In Yoast integration mode (Mode A), the spec references existing Yoast `@id` values. In standalone mode, the current output uses inline Person objects without `@id` — valid schema, but entities are not referenceable across the graph. If standalone schema output needs to be consumed as a graph (e.g., by a future non-Yoast schemamap implementation), an `@id` scheme will be needed.
+Standalone output now gives the Article `@id` `<permalink>#article` and the publisher Organization `@id` `<home>/#organization`, so other plugins can reference them. byline-feed still does not generate `@id` URIs for author entities. In Yoast integration mode (Mode A), the spec references existing Yoast `@id` values. In standalone mode, the current output uses inline Person objects without `@id` — valid schema, but entities are not referenceable across the graph. If standalone schema output needs to be consumed as a graph (e.g., by a future non-Yoast schemamap implementation), an `@id` scheme will be needed.
 
 ### `worksFor` / affiliation gap
 
