@@ -56,6 +56,15 @@ Hard boundary. Do not cross it.
 
 No mechanism currently exists for our multi-author data to influence the AP plugin's `attributedTo` output. That requires a filter hook the AP plugin would need to expose. Do not attempt to work around this. Document it for users instead. See `known-gaps.md § ActivityPub plugin: attributedTo is out of scope`.
 
+## Author mode (attribution) — post-level, stored once
+
+- `byline_feed_get_author_mode()` returns `person` or `organization`. Resolution: the editor's choice in `_byline_author_mode` (Attribution panel), then the `byline_feed_author_mode` filter (which receives `$stored`), then `person`.
+- It is a post-level decision, not a field of the normalized author contract. Do not add it to author objects.
+- In `organization` mode: JSON-LD `author` is the publisher Organization; no `fediverse:creator`, `og:author`, `article:author`, or `<meta name="author">`. Feeds do not follow it yet (open work; see `known-gaps.md`).
+- Suggesters (e.g. First Person, `dknauss/first-person-byline`) answer the filter and must defer when `$stored` is not empty. Byline Feed must never depend on any suggester; it only offers the filter and the public function.
+- Stable `@id`s: article `<permalink>#article`, publisher `<home>/#organization`. Other plugins (e.g. Borges) attach to these rather than emitting page-level nodes.
+- Why: a shared counterfoil.org note was credited "by Albertina" because a cited `WebPage` was a top-level JSON-LD node, and Mastodon reads the first top-level `WebPage`/`NewsArticle` node's author, falling back to `og:author` (`mastodon/mastodon` `app/lib/link_details_extractor.rb`).
+
 ## Key cross-references
 
 - Architectural decisions in full: `../docs/vision/author-identity-vision.md § WordPress as a Personal Data Server`
