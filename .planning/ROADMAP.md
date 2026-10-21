@@ -2,7 +2,7 @@
 
 ## Overview
 
-This roadmap picks up from a brownfield RC state rather than a blank slate. The near-term path is to harden verification, turn known pre-1.0 spec questions into explicit decisions, reconcile release artifacts with current `main`, and then make an intentional next-cut decision for the Byline Feed plugin.
+This roadmap picks up from a brownfield RC state rather than a blank slate (`v0.1.0-rc5` as of 2026-10-14). Its target is the stable Byline Feed `0.1.0` release. Cross-repo context and release order live in [SUITE.md](SUITE.md). The near-term path is to harden verification, turn known pre-1.0 spec questions into explicit decisions, reconcile release artifacts with current `main`, and then make an intentional next-cut decision for the Byline Feed plugin.
 
 ## Phases
 
@@ -68,7 +68,7 @@ Plans:
 **Requirements:** [REL-03, REL-04]
 **Success Criteria** (what must be TRUE):
   1. Feedback from the active RC issue is triaged into concrete ship, block, or defer decisions.
-  2. The unreleased changes after `v0.1.0-rc3` are explicitly accounted for in the release decision.
+  2. The changes after `v0.1.0-rc3` (rc4 and rc5) are explicitly accounted for in the release decision.
   3. The project has a documented next-cut decision with supporting verification evidence.
 **Plans:** 2 plans
 
