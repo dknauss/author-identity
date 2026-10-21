@@ -19,7 +19,10 @@ When cutting a release:
 
 ## Unreleased
 
-No unreleased entries yet.
+### Changed
+
+- `byline-feed` declares `Tested up to: 7.2`, verified against WordPress 7.2 Beta 1 (`7.2-beta1-64674`): PHPUnit and the Playwright E2E suite pass, and the editor panels render and save in 7.2's new DataForm post sidebar.
+- CI adds WordPress trunk lanes for PHPUnit (PHP 8.3) and Playwright E2E, so upcoming-release breakage shows up before a release lands.
 
 ## 0.1.0-rc5 - 2026-10-14
 

@@ -57,6 +57,9 @@ jobs:
           # PHP 8.3
           - php: '8.3'
             wp: 'latest'
+          # Upcoming release (WordPress trunk, currently 7.2 beta)
+          - php: '8.3'
+            wp: 'trunk'
 
     services:
       mysql:
@@ -373,11 +376,22 @@ jobs:
         run: npm run build
 
   e2e:
-    name: E2E — Playwright
+    name: E2E — Playwright (WP ${{ matrix.wp }})
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: byline-feed
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # Latest stable WordPress, wp-env's default.
+          - wp: 'latest'
+            core: ''
+          # Upcoming release (WordPress trunk, currently 7.2 beta).
+          - wp: 'trunk'
+            core: 'WordPress/WordPress#master'
 
     steps:
       - name: Checkout
@@ -400,6 +414,8 @@ jobs:
       - name: Start WordPress environment
         run: npm run env:start
         timeout-minutes: 5
+        env:
+          WP_ENV_CORE: ${{ matrix.core }}
 
       - name: Configure WordPress for E2E
         run: bash bin/setup-e2e.sh --skip-start
@@ -414,7 +430,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v7
         with:
-          name: playwright-artifacts
+          name: playwright-artifacts-wp-${{ matrix.wp }}
           path: |
             byline-feed/playwright-report
             byline-feed/test-results
