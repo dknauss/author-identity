@@ -58,6 +58,8 @@ Authorship (data: who is attributed)          Byline spec (vocabulary)
 
 ## Status log
 
+- 2026-10-21: Byline Feed 0.1.0 prepared in author-identity#73 (verification,
+  spec decisions, release docs); merging it publishes the release.
 - 2026-10-21: Planning hub created. Byline Feed 0.1.0 milestone opened
   (verification hardening, spec alignment decisions, release reconciliation,
   release cut). rc4 and rc5 shipped 2026-10-14 and are folded into the 0.1.0

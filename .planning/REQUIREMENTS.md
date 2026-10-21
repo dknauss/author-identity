@@ -20,10 +20,10 @@
 
 ### Release Readiness
 
-- [ ] **REL-01**: Maintainer can build a release zip from current `main` and match it to versioned docs, changelog, and release notes.
-- [ ] **REL-02**: Release checklist and smoke-test evidence are current for the next RC or stable cut.
-- [ ] **REL-03**: Feedback from the active RC issue is triaged into concrete ship, block, or defer decisions.
-- [ ] **REL-04**: Current `main` has a documented next-cut decision that accounts for unreleased post-`rc3` changes and latest CI evidence.
+- [x] **REL-01**: Maintainer can build a release zip from current `main` and match it to versioned docs, changelog, and release notes.
+- [x] **REL-02**: Release checklist and smoke-test evidence are current for the next RC or stable cut.
+- [x] **REL-03**: Feedback from the active RC issue is triaged into concrete ship, block, or defer decisions.
+- [x] **REL-04**: Current `main` has a documented next-cut decision that accounts for unreleased post-`rc3` changes and latest CI evidence.
 
 ## v2 Requirements
 
@@ -58,10 +58,10 @@
 | SPEC-01 | Phase 2 | Complete |
 | SPEC-02 | Phase 2 | Complete |
 | SPEC-03 | Phase 2 | Complete |
-| REL-01 | Phase 3 | Pending |
-| REL-02 | Phase 3 | Pending |
-| REL-03 | Phase 4 | Pending |
-| REL-04 | Phase 4 | Pending |
+| REL-01 | Phase 3 | Complete |
+| REL-02 | Phase 3 | Complete |
+| REL-03 | Phase 4 | Complete |
+| REL-04 | Phase 4 | Complete |
 
 **Coverage:**
 - v1 requirements: 11 total

@@ -14,8 +14,8 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Verification Hardening** - Close the remaining automated coverage gaps and stabilize release verification.
 - [x] **Phase 2: Spec Alignment Decisions** - Convert known Byline-spec and terminology drift into explicit, test-backed release decisions.
-- [ ] **Phase 3: Release Surface Reconciliation** - Make the packaged artifact, release docs, and smoke-test evidence match current `main`.
-- [ ] **Phase 4: RC Closure and Next Cut** - Triage feedback, resolve blockers, and decide the next RC or stable release move.
+- [x] **Phase 3: Release Surface Reconciliation** - Make the packaged artifact, release docs, and smoke-test evidence match current `main`.
+- [x] **Phase 4: RC Closure and Next Cut** - Triage feedback, resolve blockers, and decide the next RC or stable release move.
 
 ## Phase Details
 
@@ -59,8 +59,8 @@ Plans:
 **Plans:** 2 plans
 
 Plans:
-- [ ] 03-01: Refresh packaging, installation, and smoke-test verification for the next cut.
-- [ ] 03-02: Reconcile changelog, release notes, README, and checklist content with the intended artifact.
+- [x] 03-01: Refresh packaging, installation, and smoke-test verification for the next cut.
+- [x] 03-02: Reconcile changelog, release notes, README, and checklist content with the intended artifact.
 
 ### Phase 4: RC Closure and Next Cut
 **Goal:** Convert release-candidate feedback and current branch state into an explicit next action: new RC, continued RC stabilization, or stable release prep.
@@ -73,8 +73,8 @@ Plans:
 **Plans:** 2 plans
 
 Plans:
-- [ ] 04-01: Triage RC feedback, open blockers, and known release questions.
-- [ ] 04-02: Prepare and document the next-cut decision package.
+- [x] 04-01: Triage RC feedback, open blockers, and known release questions.
+- [x] 04-02: Prepare and document the next-cut decision package.
 
 ## Progress
 
@@ -85,5 +85,5 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 |-------|----------------|--------|-----------|
 | 1. Verification Hardening | 2/2 | Complete | 2026-10-21 |
 | 2. Spec Alignment Decisions | 2/2 | Complete | 2026-10-21 |
-| 3. Release Surface Reconciliation | 0/2 | Not started | - |
-| 4. RC Closure and Next Cut | 0/2 | Not started | - |
+| 3. Release Surface Reconciliation | 2/2 | Complete | 2026-10-21 |
+| 4. RC Closure and Next Cut | 2/2 | Complete: next cut is 0.1.0 stable (PR #73) | 2026-10-21 |
