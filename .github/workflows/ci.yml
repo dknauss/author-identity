@@ -376,7 +376,8 @@ jobs:
         run: npm run build
 
   e2e:
-    name: E2E — Playwright (WP ${{ matrix.wp }})
+    # The latest lane keeps the bare name, which branch protection requires.
+    name: ${{ matrix.wp == 'latest' && 'E2E — Playwright' || format('E2E — Playwright (WP {0})', matrix.wp) }}
     runs-on: ubuntu-latest
     defaults:
       run:
