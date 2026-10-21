@@ -13,7 +13,8 @@
 | --- | --- | --- |
 | PHPUnit configuration | **Covered** | `phpunit.xml.dist` exists with `failOnRisky` and `failOnWarning` enabled. |
 | WordPress test harness | **Covered** | `bin/install-wp-tests.sh` and `tests/phpunit/bootstrap.php` created. |
-| CI pipeline | **Covered** | `.github/workflows/ci.yml` — PHPUnit matrix (PHP 7.4–8.3 × WP 6.0–latest), PHPCS, Node build. |
+| CI pipeline | **Covered** | `.github/workflows/ci.yml` — PHPUnit matrix (PHP 7.4–8.3 × WP 6.0–latest), a multisite lane, real-plugin integration jobs, PHPCS, Node build, Playwright E2E. Runs by hand via `workflow_dispatch`. |
+| Local verification contract | **Covered** | [`LOCAL_VERIFICATION.md`](LOCAL_VERIFICATION.md) maps each local command to its CI job. |
 | Node build | **Covered** | CI job runs `npm run build` and the local build command is defined. |
 | PHPCS automation | **Covered** | `composer lint` configured with correct excludes. CI job runs PHPCS with `cs2pr` formatter. |
 | Composer test script | **Covered** | `composer test` points to `phpunit --configuration=phpunit.xml.dist`. |
@@ -28,7 +29,7 @@
 | Core adapter — role mapping | **Covered** | `test-adapter-core.php` | Editor → staff, Author → contributor. |
 | CAP adapter — mixed user/guest authors | **Covered** | `test-adapter-cap.php` | Normalization covered for both WP user and guest author objects. |
 | CAP adapter — guest author detection | **Covered** | `test-adapter-cap.php` | Guest objects map to `role=guest`, `is_guest=true`, and `user_id=0`. |
-| CAP adapter — author ordering | **Partial** | `test-adapter-cap.php` | Normalization covered; `get_coauthors()` ordering path still needs a function-level integration test. |
+| CAP adapter — author ordering | **Covered** | `test-adapter-cap.php`, `test-integration-cap.php` | Real CAP integration asserts the byline follows CAP's assignment order, not user ID. Until 0.1.0 the CAP integration suite skipped in CI; integration suites now fail when their plugin is requested but missing. |
 | HM Authorship adapter — ordered user resolution | **Covered** | `test-adapter-authorship.php`, `test-integration-authorship.php` | Ordered `WP_User` arrays and live-plugin integration are covered. |
 | HM Authorship adapter — guest author mapping | **Covered** | `test-adapter-authorship.php`, `test-integration-authorship.php` | Guest-author-role users map to `role=guest`, `is_guest=true`, while preserving real `user_id` and plugin-owned meta. |
 | HM Authorship adapter — linked user metadata | **Covered** | `test-adapter-authorship.php`, `test-integration-authorship.php` | `url`, `now_url`, `uses_url`, `fediverse`, and `ai_consent` fields are exposed from the linked user context. |
@@ -93,9 +94,9 @@
 
 ## Priority backlog (highest impact first)
 
-1. **Add empty-author and special-character hardening coverage across remaining output paths.** These are stability-focused edge cases rather than feature gaps.
-2. **Add CAP ordering integration coverage.** The adapter normalization is covered, but a real `get_coauthors()` ordering assertion still remains.
-3. **Optional later hardening:** add deeper Byline spec-conformance and round-trip parsing tests for feed output.
+1. ~~Empty-author and special-character hardening across output paths.~~ Done: RSS2, Atom, and JSON Feed (`test-feed-*.php`), author meta tags (`test-author-mode.php`), and standalone JSON-LD (`test-schema.php`, which also found and fixed a `</script>` breakout in 0.1.0).
+2. ~~CAP ordering integration coverage.~~ Done for 0.1.0.
+3. **Optional later hardening:** deeper Byline spec-conformance and round-trip parsing tests for feed output.
 
 ## Quality target
 

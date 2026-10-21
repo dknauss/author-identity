@@ -239,6 +239,11 @@ class Test_Author_Meta extends WP_UnitTestCase {
 		$admin_id = self::factory()->user->create( array( 'role' => 'administrator' ) );
 		$user_id  = self::factory()->user->create();
 
+		// On multisite only a super admin may edit another user's profile.
+		if ( is_multisite() ) {
+			grant_super_admin( $admin_id );
+		}
+
 		wp_set_current_user( $admin_id );
 
 		$update_request = new WP_REST_Request( 'POST', '/wp/v2/users/' . $user_id );

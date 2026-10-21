@@ -12,7 +12,7 @@ This roadmap picks up from a brownfield RC state rather than a blank slate (`v0.
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Verification Hardening** - Close the remaining automated coverage gaps and stabilize release verification.
+- [x] **Phase 1: Verification Hardening** - Close the remaining automated coverage gaps and stabilize release verification.
 - [ ] **Phase 2: Spec Alignment Decisions** - Convert known Byline-spec and terminology drift into explicit, test-backed release decisions.
 - [ ] **Phase 3: Release Surface Reconciliation** - Make the packaged artifact, release docs, and smoke-test evidence match current `main`.
 - [ ] **Phase 4: RC Closure and Next Cut** - Triage feedback, resolve blockers, and decide the next RC or stable release move.
@@ -31,8 +31,8 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Plans:** 2 plans
 
 Plans:
-- [ ] 01-01: Close the remaining PHPUnit and E2E coverage gaps called out in the quality docs.
-- [ ] 01-02: Stabilize local verification entrypoints and CI trigger coverage for release-significant changes.
+- [x] 01-01: Close the remaining PHPUnit and E2E coverage gaps called out in the quality docs.
+- [x] 01-02: Stabilize local verification entrypoints and CI trigger coverage for release-significant changes.
 
 ### Phase 2: Spec Alignment Decisions
 **Goal:** Decide what must change before stable 1.0 and land the chosen output, terminology, and documentation updates coherently.
@@ -83,7 +83,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Verification Hardening | 0/2 | Not started | - |
+| 1. Verification Hardening | 2/2 | Complete | 2026-10-21 |
 | 2. Spec Alignment Decisions | 0/2 | Not started | - |
 | 3. Release Surface Reconciliation | 0/2 | Not started | - |
 | 4. RC Closure and Next Cut | 0/2 | Not started | - |

@@ -7,10 +7,10 @@
 
 ### Verification
 
-- [ ] **VER-01**: Maintainer can run a reliable single-site automated verification path for shipped plugin behavior before a release cut.
-- [ ] **VER-02**: Maintainer can run or clearly document a reliable multisite/integration verification path before a release cut.
-- [ ] **VER-03**: CI covers the code paths on `main` that can change shipped plugin behavior before the next release cut.
-- [ ] **VER-04**: Remaining edge cases for author ordering, empty fields, and special characters are covered by automated tests.
+- [x] **VER-01**: Maintainer can run a reliable single-site automated verification path for shipped plugin behavior before a release cut.
+- [x] **VER-02**: Maintainer can run or clearly document a reliable multisite/integration verification path before a release cut.
+- [x] **VER-03**: CI covers the code paths on `main` that can change shipped plugin behavior before the next release cut.
+- [x] **VER-04**: Remaining edge cases for author ordering, empty fields, and special characters are covered by automated tests.
 
 ### Spec Alignment
 
@@ -51,10 +51,10 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| VER-01 | Phase 1 | Pending |
-| VER-02 | Phase 1 | Pending |
-| VER-03 | Phase 1 | Pending |
-| VER-04 | Phase 1 | Pending |
+| VER-01 | Phase 1 | Complete |
+| VER-02 | Phase 1 | Complete |
+| VER-03 | Phase 1 | Complete |
+| VER-04 | Phase 1 | Complete |
 | SPEC-01 | Phase 2 | Pending |
 | SPEC-02 | Phase 2 | Pending |
 | SPEC-03 | Phase 2 | Pending |
