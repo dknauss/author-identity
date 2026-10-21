@@ -14,9 +14,9 @@
 
 ### Spec Alignment
 
-- [ ] **SPEC-01**: Maintainer has an explicit list of Byline-spec divergences that block stable 1.0 and which release they target.
-- [ ] **SPEC-02**: Plugin docs and user-facing terminology are consistent for author, publication, organization, and rights concepts.
-- [ ] **SPEC-03**: Any chosen pre-1.0 output or terminology changes land with tests and consumer-facing docs.
+- [x] **SPEC-01**: Maintainer has an explicit list of Byline-spec divergences that block stable 1.0 and which release they target.
+- [x] **SPEC-02**: Plugin docs and user-facing terminology are consistent for author, publication, organization, and rights concepts.
+- [x] **SPEC-03**: Any chosen pre-1.0 output or terminology changes land with tests and consumer-facing docs.
 
 ### Release Readiness
 
@@ -55,9 +55,9 @@
 | VER-02 | Phase 1 | Complete |
 | VER-03 | Phase 1 | Complete |
 | VER-04 | Phase 1 | Complete |
-| SPEC-01 | Phase 2 | Pending |
-| SPEC-02 | Phase 2 | Pending |
-| SPEC-03 | Phase 2 | Pending |
+| SPEC-01 | Phase 2 | Complete |
+| SPEC-02 | Phase 2 | Complete |
+| SPEC-03 | Phase 2 | Complete |
 | REL-01 | Phase 3 | Pending |
 | REL-02 | Phase 3 | Pending |
 | REL-03 | Phase 4 | Pending |

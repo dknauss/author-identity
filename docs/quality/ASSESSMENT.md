@@ -66,7 +66,7 @@ That means the earlier CAP/PPA discrepancy for linked-user `url` normalization i
 2. **Upstream plugin drift.** CAP, PPA, and HM Authorship now have dedicated CI coverage against installed upstream plugins, but future adapter tranches such as Molongui will need the same level of real-plugin validation.
 3. **Unsupported-plugin behavior.** Live verification showed that sites using unsupported multi-author plugins can still have a mismatch between core author strings and Byline output. That remains expected today and argues for explicit backlog tracking of later adapter work.
 4. **WP-06 complexity.** Rights and consent remain the most stateful and policy-sensitive part of the roadmap.
-5. **Pre-1.0 spec divergence.** Multi-author item structure, JSON Feed structure, and terminology drift remain unresolved upstream issues.
+5. **Pre-1.0 spec divergence.** Decided for 0.1.0 in [spec-alignment-0.1.0.md](../planning/spec-alignment-0.1.0.md): JSON Feed aligned additively, terminology defined, multi-author item structure accepted as a documented divergence pending upstream.
 
 ## Recommendations
 

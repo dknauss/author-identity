@@ -55,7 +55,7 @@ Repository docs already identify the most relevant next work: remaining coverage
 | Treat optional multi-author plugins as adapters, not dependencies | Keeps the plugin usable on core WordPress and isolates upstream drift | ✓ Good |
 | Keep AI-consent features in an advisory signaling lane | Avoids overpromising enforcement and keeps scope bounded | ✓ Good |
 | Defer broader identity frameworks until output channels are solid and consumers are clear | Prevents premature scope expansion beyond the current roadmap | ✓ Good |
-| Treat pre-1.0 Byline-spec alignment as a deliberate release decision, not an implicit assumption | Stable-release claims depend on explicit handling of known divergences | — Pending |
+| Treat pre-1.0 Byline-spec alignment as a deliberate release decision, not an implicit assumption | Stable-release claims depend on explicit handling of known divergences | ✓ Decided for 0.1.0 (`docs/planning/spec-alignment-0.1.0.md`) |
 
 ---
 *Last updated: 2026-03-29 after initial GSD setup*

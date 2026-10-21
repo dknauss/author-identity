@@ -316,7 +316,7 @@ See `implementation-strategy/code-review-plan.md` for the complete prioritized b
 
 ## Pre-1.0 spec alignment
 
-**Status:** Open — requires upstream conversation with Byline spec author
+**Status:** Decided for Byline Feed 0.1.0 in [spec-alignment-0.1.0.md](../../planning/spec-alignment-0.1.0.md). Multi-author structure remains an upstream conversation.
 
 These are known structural divergences between the byline-feed implementation and the
 pre-1.0 Byline spec that should be resolved before the plugin claims stable spec

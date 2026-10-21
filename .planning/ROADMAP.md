@@ -13,7 +13,7 @@ This roadmap picks up from a brownfield RC state rather than a blank slate (`v0.
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Verification Hardening** - Close the remaining automated coverage gaps and stabilize release verification.
-- [ ] **Phase 2: Spec Alignment Decisions** - Convert known Byline-spec and terminology drift into explicit, test-backed release decisions.
+- [x] **Phase 2: Spec Alignment Decisions** - Convert known Byline-spec and terminology drift into explicit, test-backed release decisions.
 - [ ] **Phase 3: Release Surface Reconciliation** - Make the packaged artifact, release docs, and smoke-test evidence match current `main`.
 - [ ] **Phase 4: RC Closure and Next Cut** - Triage feedback, resolve blockers, and decide the next RC or stable release move.
 
@@ -45,8 +45,8 @@ Plans:
 **Plans:** 2 plans
 
 Plans:
-- [ ] 02-01: Turn the current spec/gap analysis into explicit stable-release decisions.
-- [ ] 02-02: Apply approved terminology and output updates across code, tests, and docs.
+- [x] 02-01: Turn the current spec/gap analysis into explicit stable-release decisions.
+- [x] 02-02: Apply approved terminology and output updates across code, tests, and docs.
 
 ### Phase 3: Release Surface Reconciliation
 **Goal:** Ensure the release artifact and release documentation describe the same thing as the code currently on `main`.
@@ -84,6 +84,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Verification Hardening | 2/2 | Complete | 2026-10-21 |
-| 2. Spec Alignment Decisions | 0/2 | Not started | - |
+| 2. Spec Alignment Decisions | 2/2 | Complete | 2026-10-21 |
 | 3. Release Surface Reconciliation | 0/2 | Not started | - |
 | 4. RC Closure and Next Cut | 0/2 | Not started | - |

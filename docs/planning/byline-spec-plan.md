@@ -53,6 +53,8 @@ That is meaningful because `perspective` is one of the strongest parts of the sp
 
 ## Current spec-alignment issues
 
+> **0.1.0 decisions:** each issue below now has a recorded decision (fixed, accepted, or deferred) in [spec-alignment-0.1.0.md](spec-alignment-0.1.0.md). JSON Feed structure was aligned additively in 0.1.0; multi-author items are an accepted divergence; terminology is defined there.
+
 These are the important issues that remain before a stable 1.0 positioning.
 
 ### 1. Multi-author-per-item structure

@@ -464,20 +464,47 @@ Example:
     }
   ],
   "_byline": {
+    "version": "https://bylinespec.org/1.0",
     "spec_version": "1.0",
     "org": {
       "name": "Example Site",
       "url": "https://example.com"
-    }
+    },
+    "contributors": [
+      {
+        "id": "jane-doe",
+        "name": "Jane Doe",
+        "context": "Reporter covering local government and housing.",
+        "url": "https://example.com/authors/jane-doe/",
+        "avatar": "https://example.com/avatar/jane.jpg",
+        "profiles": [
+          {
+            "href": "https://example.com/@jane",
+            "rel": "me"
+          }
+        ],
+        "now": "https://example.com/now/",
+        "uses": "https://example.com/uses/"
+      }
+    ]
   }
 }
 ```
+
+The top-level `_byline` follows the spec's JSON Feed model:
+
+- `version` is the Byline namespace URI. `spec_version` is kept for consumers of the release candidates.
+- `contributors` lists every author in the feed as a spec Person object, using the spec's keys (`context`, `avatar`, `now`, `uses`).
+- `org` names the site. It is not yet the spec's `organizations[]` model; see [spec-alignment-0.1.0.md](../../docs/planning/spec-alignment-0.1.0.md).
+- `authors[]._byline` is Byline Feed's own extension on JSON Feed author objects and keeps its earlier keys (`now_url`, `uses_url`, `is_guest`, `fediverse`).
 
 ### Item-level output
 
 Each item may include:
 
 - `authors`: one JSON Feed author entry per normalized author
+- `_byline.author`: the author's contributor `id` for a single-author item, as in the spec; for a multi-author item, an ordered array of ids (the spec defines one author per item, so this is a documented divergence)
+- `_byline.role`: the author's role, on single-author items only; on multi-author items each role is in `authors[]._byline.role`
 - `_byline.perspective`: when the perspective value is set and valid
 
 Example item fragment:
@@ -504,6 +531,7 @@ Example item fragment:
     }
   ],
   "_byline": {
+    "author": ["jane-doe", "alex-smith"],
     "perspective": "reporting"
   }
 }
