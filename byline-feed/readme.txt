@@ -2,7 +2,7 @@
 Contributors: dknauss
 Tags: rss, atom, byline, author, attribution, feeds
 Requires at least: 6.0
-Tested up to: 7.2
+Tested up to: 7.1
 Requires PHP: 7.4
 Stable tag: trunk
 License: GPLv2 or later
