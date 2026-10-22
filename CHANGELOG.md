@@ -21,7 +21,7 @@ When cutting a release:
 
 No unreleased entries yet.
 
-## 0.1.0 - 2026-10-21
+## 0.1.0 - 2026-10-22
 
 First stable release of Byline Feed. It includes everything shipped in the release candidates (rc2 to rc5) and the changes below.
 
@@ -29,6 +29,11 @@ First stable release of Byline Feed. It includes everything shipped in the relea
 
 - JSON Feed follows the Byline spec's JSON model alongside the existing output: feed-level `_byline.version` (the namespace URI) and `_byline.contributors[]` (spec Person objects with `context`, `avatar`, `now`, `uses`), and item-level `_byline.author` with `_byline.role` on single-author items. Multi-author items carry `_byline.author` as an ordered array of ids. `spec_version`, `org`, and `authors[]._byline` are unchanged.
 - CI: a multisite PHPUnit lane, and `workflow_dispatch` for on-demand release verification.
+
+### Changed
+
+- `byline-feed` verified against WordPress 7.2 Beta 1 (`7.2-beta1-64674`): PHPUnit and the Playwright E2E suite pass, and the editor panels render and save in 7.2's new DataForm post sidebar. The `Tested up to: 7.2` bump waits for 7.2 RC.
+- CI adds WordPress trunk lanes for PHPUnit (PHP 8.3) and Playwright E2E, so upcoming-release breakage shows up before a release lands.
 
 ### Security
 
