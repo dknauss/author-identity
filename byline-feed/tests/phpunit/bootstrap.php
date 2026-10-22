@@ -91,6 +91,25 @@ if ( $_activitypub_plugin && file_exists( $_activitypub_plugin ) ) {
 }
 
 /**
+ * Skip an integration test when its plugin is absent, or fail it when CI asked for that plugin.
+ *
+ * Integration jobs set BYLINE_*_PLUGIN. When that variable is set but the
+ * plugin's API is missing, the job would otherwise pass with every test
+ * skipped, so the test fails instead.
+ *
+ * @param \PHPUnit\Framework\TestCase $test    Test being set up.
+ * @param string                      $env_var Environment variable naming the plugin file.
+ * @param string                      $message Why the test cannot run.
+ */
+function byline_feed_tests_require_integration( $test, $env_var, $message ) {
+	if ( getenv( $env_var ) ) {
+		$test->fail( $message . " ({$env_var} is set, so this integration run must not skip.)" );
+	}
+
+	$test->markTestSkipped( $message );
+}
+
+/**
  * Manually load the plugin for testing.
  */
 tests_add_filter( 'muplugins_loaded', function () {

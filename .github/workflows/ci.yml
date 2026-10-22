@@ -11,6 +11,8 @@ on:
     paths:
       - 'byline-feed/**'
       - '.github/workflows/**'
+  # Run by hand for a fresh release-verification pass (docs/quality/LOCAL_VERIFICATION.md).
+  workflow_dispatch:
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
@@ -24,7 +26,7 @@ concurrency:
 
 jobs:
   phpunit:
-    name: PHPUnit — PHP ${{ matrix.php }} / WP ${{ matrix.wp }}
+    name: PHPUnit — PHP ${{ matrix.php }} / WP ${{ matrix.wp }}${{ matrix.multisite && ' / multisite' || '' }}
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -57,6 +59,10 @@ jobs:
           # PHP 8.3
           - php: '8.3'
             wp: 'latest'
+          # Multisite
+          - php: '8.3'
+            wp: 'latest'
+            multisite: '1'
           # Upcoming release (WordPress trunk, currently 7.2 beta)
           - php: '8.3'
             wp: 'trunk'
@@ -102,6 +108,7 @@ jobs:
         run: vendor/bin/phpunit
         env:
           WP_TESTS_DIR: /tmp/wordpress-tests-lib
+          WP_MULTISITE: ${{ matrix.multisite || '0' }}
 
   integration-cap:
     name: Integration — Co-Authors Plus

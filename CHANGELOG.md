@@ -19,10 +19,36 @@ When cutting a release:
 
 ## Unreleased
 
+No unreleased entries yet.
+
+## 0.1.0 - 2026-10-22
+
+First stable release of Byline Feed. It includes everything shipped in the release candidates (rc2 to rc5) and the changes below.
+
+### Added
+
+- JSON Feed follows the Byline spec's JSON model alongside the existing output: feed-level `_byline.version` (the namespace URI) and `_byline.contributors[]` (spec Person objects with `context`, `avatar`, `now`, `uses`), and item-level `_byline.author` with `_byline.role` on single-author items. Multi-author items carry `_byline.author` as an ordered array of ids. `spec_version`, `org`, and `authors[]._byline` are unchanged.
+- CI: a multisite PHPUnit lane, and `workflow_dispatch` for on-demand release verification.
+
 ### Changed
 
 - `byline-feed` verified against WordPress 7.2 Beta 1 (`7.2-beta1-64674`): PHPUnit and the Playwright E2E suite pass, and the editor panels render and save in 7.2's new DataForm post sidebar. The `Tested up to: 7.2` bump waits for 7.2 RC.
 - CI adds WordPress trunk lanes for PHPUnit (PHP 8.3) and Playwright E2E, so upcoming-release breakage shows up before a release lands.
+
+### Security
+
+- Standalone JSON-LD is encoded with `JSON_HEX_TAG`, so an author name containing `</script>` can no longer close the script element. Core WordPress strips tags from display names, so this mainly protects names from adapters, guest-author records, and the `byline_feed_authors` filter.
+
+### Fixed
+
+- The Co-Authors Plus integration suite never ran in CI: it checked for a global `add_coauthors()`, which CAP does not define. It now uses CAP's real API and covers byline order and guest authors. An integration suite now fails, rather than skips, when its plugin is requested but its API is missing.
+- The REST user-meta round-trip test failed on multisite, where only a super admin may edit another user.
+
+### Docs
+
+- `docs/planning/spec-alignment-0.1.0.md` records each difference from the Byline spec as fixed, accepted, or deferred, and defines the project's terms.
+- `docs/quality/LOCAL_VERIFICATION.md` maps each local check to its CI job; the release checklist describes the automated release workflow.
+- `.planning/SUITE.md` is the planning hub for the authorship repositories.
 
 ## 0.1.0-rc5 - 2026-10-14
 

@@ -259,7 +259,8 @@ class Test_Feed_JSON extends WP_UnitTestCase {
 		$items = $this->index_items_by_title( $feed['items'] );
 
 		$this->assertSame( 'analysis', $items['Perspective Post']['_byline']['perspective'] );
-		$this->assertArrayNotHasKey( '_byline', $items['No Perspective Post'] );
+		$this->assertArrayNotHasKey( 'perspective', $items['No Perspective Post']['_byline'] );
+		$this->assertSame( 'json-perspective-author', $items['No Perspective Post']['_byline']['author'] );
 	}
 
 	public function test_filter_json_feed_item_can_add_standalone_byline_data_without_breaking_feed_shape(): void {
@@ -352,6 +353,106 @@ class Test_Feed_JSON extends WP_UnitTestCase {
 		$this->assertSame( 'enabled', $feed['_byline']['custom_flag'] );
 		$this->assertSame( 'WebSub', $feed['hubs'][0]['type'] );
 		$this->assertSame( 'https://example.com/hub', $feed['hubs'][0]['url'] );
+	}
+
+	public function test_spec_keys_follow_the_byline_json_feed_model(): void {
+		$solo_id = self::factory()->post->create(
+			array(
+				'post_status' => 'publish',
+				'post_title'  => 'Spec Solo',
+				'post_date'   => '2026-03-14 10:00:00',
+			)
+		);
+
+		$pair_id = self::factory()->post->create(
+			array(
+				'post_status' => 'publish',
+				'post_title'  => 'Spec Pair',
+				'post_date'   => '2026-03-14 11:00:00',
+			)
+		);
+
+		$annie = (object) array(
+			'id'           => 'annie',
+			'display_name' => 'Annie Park',
+			'description'  => '<p>Designer and photographer.</p>',
+			'url'          => 'https://annie.example.com',
+			'avatar_url'   => 'https://annie.example.com/avatar.jpg',
+			'role'         => 'staff',
+			'profiles'     => array(
+				array(
+					'href' => 'https://mastodon.social/@annie',
+					'rel'  => 'mastodon',
+				),
+				array( 'href' => 'https://no-rel.example.com' ),
+			),
+			'now_url'      => 'https://annie.example.com/now',
+			'uses_url'     => 'https://annie.example.com/uses',
+		);
+
+		$sara = (object) array(
+			'id'           => 'guest-sara',
+			'display_name' => 'Sara Mitchell',
+			'role'         => 'guest',
+		);
+
+		add_filter(
+			'byline_feed_authors',
+			static function ( $authors, $post ) use ( $solo_id, $pair_id, $annie, $sara ) {
+				if ( $solo_id === $post->ID ) {
+					return array( $annie );
+				}
+
+				if ( $pair_id === $post->ID ) {
+					return array( $sara, $annie );
+				}
+
+				return $authors;
+			},
+			10,
+			2
+		);
+
+		$feed  = $this->render_feed();
+		$items = $this->index_items_by_title( $feed['items'] );
+
+		$this->assertSame( 'https://bylinespec.org/1.0', $feed['_byline']['version'] );
+
+		$contributors = array_column( $feed['_byline']['contributors'], null, 'id' );
+		$this->assertSame(
+			array(
+				'id'       => 'annie',
+				'name'     => 'Annie Park',
+				'context'  => 'Designer and photographer.',
+				'url'      => 'https://annie.example.com',
+				'avatar'   => 'https://annie.example.com/avatar.jpg',
+				'profiles' => array(
+					array(
+						'href' => 'https://mastodon.social/@annie',
+						'rel'  => 'mastodon',
+					),
+				),
+				'now'      => 'https://annie.example.com/now',
+				'uses'     => 'https://annie.example.com/uses',
+			),
+			$contributors['annie']
+		);
+		$this->assertSame(
+			array(
+				'id'   => 'guest-sara',
+				'name' => 'Sara Mitchell',
+			),
+			$contributors['guest-sara']
+		);
+
+		// Single author: the spec's string reference and item-level role.
+		$this->assertSame( 'annie', $items['Spec Solo']['_byline']['author'] );
+		$this->assertSame( 'staff', $items['Spec Solo']['_byline']['role'] );
+
+		// Multiple authors: ordered references, roles stay per author.
+		$this->assertSame( array( 'guest-sara', 'annie' ), $items['Spec Pair']['_byline']['author'] );
+		$this->assertArrayNotHasKey( 'role', $items['Spec Pair']['_byline'] );
+		$this->assertSame( 'guest', $items['Spec Pair']['authors'][0]['_byline']['role'] );
 	}
 
 	public function test_empty_author_array_keeps_json_feed_valid_and_omits_author_blocks(): void {

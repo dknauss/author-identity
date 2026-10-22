@@ -20,7 +20,7 @@ class Test_Integration_ActivityPub extends WP_UnitTestCase {
 		parent::set_up();
 
 		if ( ! class_exists( '\\Activitypub\\Collection\\Actors' ) || ! function_exists( '\\Activitypub\\user_can_activitypub' ) ) {
-			$this->markTestSkipped( 'ActivityPub is not active.' );
+			\byline_feed_tests_require_integration( $this, 'BYLINE_ACTIVITYPUB_PLUGIN', 'ActivityPub is not active.' );
 		}
 	}
 
