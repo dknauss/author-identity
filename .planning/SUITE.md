@@ -10,7 +10,7 @@ docs disagree with this file, this file wins and the local doc gets fixed.
 
 | Repository | What it is | Current release | Default branch | Local planning |
 |------------|------------|-----------------|----------------|----------------|
-| [dknauss/author-identity](https://github.com/dknauss/author-identity) | Research docs plus the **Byline Feed** plugin: one normalized author contract feeding RSS2/Atom/JSON Feed, JSON-LD, `fediverse:creator`, author meta tags, and AI-consent signals | Byline Feed `0.1.0-rc5` (2026-10-14) | `main` | [`.planning/`](./) (this folder) |
+| [dknauss/author-identity](https://github.com/dknauss/author-identity) | Research docs plus the **Byline Feed** plugin: one normalized author contract feeding RSS2/Atom/JSON Feed, JSON-LD, `fediverse:creator`, author meta tags, and AI-consent signals | Byline Feed [`0.1.0`](https://github.com/dknauss/author-identity/releases/tag/v0.1.0) (2026-10-22) | `main` | [`.planning/`](./) (this folder) |
 | [dknauss/authorship](https://github.com/dknauss/authorship) | Fork of Human Made's **Authorship** plugin: multi-author and guest-author attribution as the data source | `0.3.0-alpha` | `develop` | [`authorship/.planning/`](https://github.com/dknauss/authorship/tree/develop/.planning) |
 | [dknauss/byline](https://github.com/dknauss/byline) | Mirror of the **Byline** feed specification ([bylinespec.org](https://bylinespec.org)), upstream at `tgodier/byline` | Spec 1.0 (draft) | `main` | none; spec questions are tracked here |
 
@@ -36,12 +36,12 @@ Authorship (data: who is attributed)          Byline spec (vocabulary)
 
 ## Release order
 
-1. **Byline Feed 0.1.0 (stable)** — active. Roadmap: [ROADMAP.md](ROADMAP.md).
+1. **Byline Feed 0.1.0 (stable)** — released 2026-10-22. Roadmap: [ROADMAP.md](ROADMAP.md).
    Tracking issue [#69](https://github.com/dknauss/author-identity/issues/69)
    (verification [#70](https://github.com/dknauss/author-identity/issues/70),
    spec alignment [#71](https://github.com/dknauss/author-identity/issues/71),
    release [#72](https://github.com/dknauss/author-identity/issues/72)).
-2. **Authorship 0.3.x / 0.4.0** — next. Phase 05 (interoperability and
+2. **Authorship 0.3.x / 0.4.0** — active. Phase 05 (interoperability and
    primary-author compatibility) is planned in
    `authorship/.planning/phases/05-interoperability-and-compatibility-hardening-authorship/`.
 3. **Byline Feed 0.2.0** — after Authorship: Molongui adapter, feed handling
@@ -58,6 +58,10 @@ Authorship (data: who is attributed)          Byline spec (vocabulary)
 
 ## Status log
 
+- 2026-10-22: Byline Feed 0.1.0 released
+  ([v0.1.0](https://github.com/dknauss/author-identity/releases/tag/v0.1.0),
+  zip plus SHA-256). Issues #69–#72 closed. Still to do: open the Playground
+  demo in a browser and confirm it loads the v0.1.0 zip.
 - 2026-10-21: Byline Feed 0.1.0 prepared in author-identity#73 (verification,
   spec decisions, release docs); merging it publishes the release.
 - 2026-10-21: Planning hub created. Byline Feed 0.1.0 milestone opened

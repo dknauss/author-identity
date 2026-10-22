@@ -5,14 +5,14 @@
 See: .planning/PROJECT.md (updated 2026-03-29)
 
 **Core value:** Structured author identity must survive publication and syndication as portable, additive metadata from one trusted WordPress source of truth.
-**Current focus:** Byline Feed 0.1.0 release (PR #73)
+**Current focus:** Byline Feed 0.1.0 released; next is Authorship (see SUITE.md)
 
 ## Current Position
 
-Phase: 4 of 4 complete — Byline Feed 0.1.0 release prepared
+Phase: 4 of 4 complete — Byline Feed 0.1.0 released
 Plan: all v1 plans complete
-Status: Release PR #73 open; merging it publishes v0.1.0 through release.yml
-Last activity: 2026-10-21 — Verification hardening, spec alignment decisions, and release reconciliation done in one pass (tracking issue #69).
+Status: v0.1.0 published 2026-10-22 (https://github.com/dknauss/author-identity/releases/tag/v0.1.0), from PR #73
+Last activity: 2026-10-22 — v0.1.0 released. 2026-10-21 — Verification hardening, spec alignment decisions, and release reconciliation done in one pass (tracking issue #69).
 
 Progress: [██████████] 100%
 
