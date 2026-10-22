@@ -6,11 +6,10 @@ on:
     paths:
       - 'byline-feed/**'
       - '.github/workflows/**'
+  # No path filter on pull requests: main's ruleset requires these checks, so
+  # they must report on every PR, docs-only ones included.
   pull_request:
     branches: [main]
-    paths:
-      - 'byline-feed/**'
-      - '.github/workflows/**'
   # Run by hand for a fresh release-verification pass (docs/quality/LOCAL_VERIFICATION.md).
   workflow_dispatch:
 
