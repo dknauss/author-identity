@@ -5,12 +5,14 @@ on:
     branches: [main]
     paths:
       - 'byline-feed/**'
-      - '.github/workflows/ci.yml'
+      - '.github/workflows/**'
   pull_request:
     branches: [main]
     paths:
       - 'byline-feed/**'
-      - '.github/workflows/ci.yml'
+      - '.github/workflows/**'
+  # Run by hand for a fresh release-verification pass (docs/quality/LOCAL_VERIFICATION.md).
+  workflow_dispatch:
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
@@ -24,7 +26,7 @@ concurrency:
 
 jobs:
   phpunit:
-    name: PHPUnit — PHP ${{ matrix.php }} / WP ${{ matrix.wp }}
+    name: PHPUnit — PHP ${{ matrix.php }} / WP ${{ matrix.wp }}${{ matrix.multisite && ' / multisite' || '' }}
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -57,6 +59,13 @@ jobs:
           # PHP 8.3
           - php: '8.3'
             wp: 'latest'
+          # Multisite
+          - php: '8.3'
+            wp: 'latest'
+            multisite: '1'
+          # Upcoming release (WordPress trunk, currently 7.2 beta)
+          - php: '8.3'
+            wp: 'trunk'
 
     services:
       mysql:
@@ -99,6 +108,7 @@ jobs:
         run: vendor/bin/phpunit
         env:
           WP_TESTS_DIR: /tmp/wordpress-tests-lib
+          WP_MULTISITE: ${{ matrix.multisite || '0' }}
 
   integration-cap:
     name: Integration — Co-Authors Plus
@@ -361,7 +371,8 @@ jobs:
       - name: Set up Node
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
-          node-version: '20'
+          node-version: '24'
+          check-latest: true
           cache: 'npm'
           cache-dependency-path: byline-feed/package-lock.json
 
@@ -372,11 +383,23 @@ jobs:
         run: npm run build
 
   e2e:
-    name: E2E — Playwright
+    # The latest lane keeps the bare name, which branch protection requires.
+    name: ${{ matrix.wp == 'latest' && 'E2E — Playwright' || format('E2E — Playwright (WP {0})', matrix.wp) }}
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: byline-feed
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # Latest stable WordPress, wp-env's default.
+          - wp: 'latest'
+            core: ''
+          # Upcoming release (WordPress trunk, currently 7.2 beta).
+          - wp: 'trunk'
+            core: 'WordPress/WordPress#master'
 
     steps:
       - name: Checkout
@@ -385,7 +408,8 @@ jobs:
       - name: Set up Node
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
-          node-version: '20'
+          node-version: '24'
+          check-latest: true
           cache: 'npm'
           cache-dependency-path: byline-feed/package-lock.json
 
@@ -398,6 +422,8 @@ jobs:
       - name: Start WordPress environment
         run: npm run env:start
         timeout-minutes: 5
+        env:
+          WP_ENV_CORE: ${{ matrix.core }}
 
       - name: Configure WordPress for E2E
         run: bash bin/setup-e2e.sh --skip-start
@@ -412,7 +438,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v7
         with:
-          name: playwright-artifacts
+          name: playwright-artifacts-wp-${{ matrix.wp }}
           path: |
             byline-feed/playwright-report
             byline-feed/test-results

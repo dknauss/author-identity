@@ -316,7 +316,7 @@ See `implementation-strategy/code-review-plan.md` for the complete prioritized b
 
 ## Pre-1.0 spec alignment
 
-**Status:** Open — requires upstream conversation with Byline spec author
+**Status:** Decided for Byline Feed 0.1.0 in [spec-alignment-0.1.0.md](../../planning/spec-alignment-0.1.0.md). Multi-author structure remains an upstream conversation.
 
 These are known structural divergences between the byline-feed implementation and the
 pre-1.0 Byline spec that should be resolved before the plugin claims stable spec
@@ -335,9 +335,9 @@ conformance:
 
 ### WordPress version
 
-Authorship plugin header declares `Requires at least: 5.4`, tested up to 6.2. The 6.2 cap is stale — the plugin likely works with current WordPress but testing has not been updated.
+Authorship README declares `Tested up to: WordPress 6.6`; the bump to 7.2 waits for 7.2 RC. Verified 2026-10-21 against WordPress 7.2 Beta 1: the PHPUnit suite passes single-site and multisite, and the authors field renders, searches, saves, and reloads in 7.2's DataForm post sidebar. The pull-request CI lanes still pin WordPress 6.6; a trunk lane runs on every pull request alongside the weekly nightly workflow.
 
-byline-feed CI tests against WordPress 6.0 through latest.
+byline-feed CI tests against WordPress 6.0 through latest, plus a WordPress trunk lane for PHPUnit and Playwright E2E.
 
 ### PHP version
 

@@ -2,7 +2,7 @@
 
 ## Overview
 
-This roadmap picks up from a brownfield RC state rather than a blank slate. The near-term path is to harden verification, turn known pre-1.0 spec questions into explicit decisions, reconcile release artifacts with current `main`, and then make an intentional next-cut decision for the Byline Feed plugin.
+This roadmap picks up from a brownfield RC state rather than a blank slate (`v0.1.0-rc5` as of 2026-10-14). Its target is the stable Byline Feed `0.1.0` release. Cross-repo context and release order live in [SUITE.md](SUITE.md). The near-term path is to harden verification, turn known pre-1.0 spec questions into explicit decisions, reconcile release artifacts with current `main`, and then make an intentional next-cut decision for the Byline Feed plugin.
 
 ## Phases
 
@@ -12,10 +12,10 @@ This roadmap picks up from a brownfield RC state rather than a blank slate. The 
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Verification Hardening** - Close the remaining automated coverage gaps and stabilize release verification.
-- [ ] **Phase 2: Spec Alignment Decisions** - Convert known Byline-spec and terminology drift into explicit, test-backed release decisions.
-- [ ] **Phase 3: Release Surface Reconciliation** - Make the packaged artifact, release docs, and smoke-test evidence match current `main`.
-- [ ] **Phase 4: RC Closure and Next Cut** - Triage feedback, resolve blockers, and decide the next RC or stable release move.
+- [x] **Phase 1: Verification Hardening** - Close the remaining automated coverage gaps and stabilize release verification.
+- [x] **Phase 2: Spec Alignment Decisions** - Convert known Byline-spec and terminology drift into explicit, test-backed release decisions.
+- [x] **Phase 3: Release Surface Reconciliation** - Make the packaged artifact, release docs, and smoke-test evidence match current `main`.
+- [x] **Phase 4: RC Closure and Next Cut** - Triage feedback, resolve blockers, and decide the next RC or stable release move.
 
 ## Phase Details
 
@@ -31,8 +31,8 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Plans:** 2 plans
 
 Plans:
-- [ ] 01-01: Close the remaining PHPUnit and E2E coverage gaps called out in the quality docs.
-- [ ] 01-02: Stabilize local verification entrypoints and CI trigger coverage for release-significant changes.
+- [x] 01-01: Close the remaining PHPUnit and E2E coverage gaps called out in the quality docs.
+- [x] 01-02: Stabilize local verification entrypoints and CI trigger coverage for release-significant changes.
 
 ### Phase 2: Spec Alignment Decisions
 **Goal:** Decide what must change before stable 1.0 and land the chosen output, terminology, and documentation updates coherently.
@@ -45,8 +45,8 @@ Plans:
 **Plans:** 2 plans
 
 Plans:
-- [ ] 02-01: Turn the current spec/gap analysis into explicit stable-release decisions.
-- [ ] 02-02: Apply approved terminology and output updates across code, tests, and docs.
+- [x] 02-01: Turn the current spec/gap analysis into explicit stable-release decisions.
+- [x] 02-02: Apply approved terminology and output updates across code, tests, and docs.
 
 ### Phase 3: Release Surface Reconciliation
 **Goal:** Ensure the release artifact and release documentation describe the same thing as the code currently on `main`.
@@ -59,8 +59,8 @@ Plans:
 **Plans:** 2 plans
 
 Plans:
-- [ ] 03-01: Refresh packaging, installation, and smoke-test verification for the next cut.
-- [ ] 03-02: Reconcile changelog, release notes, README, and checklist content with the intended artifact.
+- [x] 03-01: Refresh packaging, installation, and smoke-test verification for the next cut.
+- [x] 03-02: Reconcile changelog, release notes, README, and checklist content with the intended artifact.
 
 ### Phase 4: RC Closure and Next Cut
 **Goal:** Convert release-candidate feedback and current branch state into an explicit next action: new RC, continued RC stabilization, or stable release prep.
@@ -68,13 +68,13 @@ Plans:
 **Requirements:** [REL-03, REL-04]
 **Success Criteria** (what must be TRUE):
   1. Feedback from the active RC issue is triaged into concrete ship, block, or defer decisions.
-  2. The unreleased changes after `v0.1.0-rc3` are explicitly accounted for in the release decision.
+  2. The changes after `v0.1.0-rc3` (rc4 and rc5) are explicitly accounted for in the release decision.
   3. The project has a documented next-cut decision with supporting verification evidence.
 **Plans:** 2 plans
 
 Plans:
-- [ ] 04-01: Triage RC feedback, open blockers, and known release questions.
-- [ ] 04-02: Prepare and document the next-cut decision package.
+- [x] 04-01: Triage RC feedback, open blockers, and known release questions.
+- [x] 04-02: Prepare and document the next-cut decision package.
 
 ## Progress
 
@@ -83,7 +83,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Verification Hardening | 0/2 | Not started | - |
-| 2. Spec Alignment Decisions | 0/2 | Not started | - |
-| 3. Release Surface Reconciliation | 0/2 | Not started | - |
-| 4. RC Closure and Next Cut | 0/2 | Not started | - |
+| 1. Verification Hardening | 2/2 | Complete | 2026-10-21 |
+| 2. Spec Alignment Decisions | 2/2 | Complete | 2026-10-21 |
+| 3. Release Surface Reconciliation | 2/2 | Complete | 2026-10-21 |
+| 4. RC Closure and Next Cut | 2/2 | Complete: next cut is 0.1.0 stable (PR #73) | 2026-10-21 |

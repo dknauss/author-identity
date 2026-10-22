@@ -49,7 +49,7 @@ Hard boundary. Do not cross it.
 
 | Signal | Owner |
 |---|---|
-| `fediverse:creator` meta tags (per author) | This plugin |
+| `fediverse:creator` meta tags (per author) | This plugin (it removes Jetpack Social's tag in organization mode, and when it prints its own) |
 | `ap_actor_url` in JSON-LD `sameAs` | This plugin |
 | `attributedTo` on federated AP object | ActivityPub plugin |
 | HTTP Signatures, WebFinger, actor JSON | ActivityPub plugin |

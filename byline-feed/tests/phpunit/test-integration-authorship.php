@@ -21,7 +21,7 @@ class Test_Integration_Authorship extends WP_UnitTestCase {
 		parent::set_up();
 
 		if ( ! function_exists( 'Authorship\\get_authors' ) || ! function_exists( 'Authorship\\set_authors' ) ) {
-			$this->markTestSkipped( 'Authorship is not active.' );
+			\byline_feed_tests_require_integration( $this, 'BYLINE_HM_PLUGIN', 'Authorship is not active.' );
 		}
 	}
 

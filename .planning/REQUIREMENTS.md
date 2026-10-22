@@ -7,23 +7,23 @@
 
 ### Verification
 
-- [ ] **VER-01**: Maintainer can run a reliable single-site automated verification path for shipped plugin behavior before a release cut.
-- [ ] **VER-02**: Maintainer can run or clearly document a reliable multisite/integration verification path before a release cut.
-- [ ] **VER-03**: CI covers the code paths on `main` that can change shipped plugin behavior before the next release cut.
-- [ ] **VER-04**: Remaining edge cases for author ordering, empty fields, and special characters are covered by automated tests.
+- [x] **VER-01**: Maintainer can run a reliable single-site automated verification path for shipped plugin behavior before a release cut.
+- [x] **VER-02**: Maintainer can run or clearly document a reliable multisite/integration verification path before a release cut.
+- [x] **VER-03**: CI covers the code paths on `main` that can change shipped plugin behavior before the next release cut.
+- [x] **VER-04**: Remaining edge cases for author ordering, empty fields, and special characters are covered by automated tests.
 
 ### Spec Alignment
 
-- [ ] **SPEC-01**: Maintainer has an explicit list of Byline-spec divergences that block stable 1.0 and which release they target.
-- [ ] **SPEC-02**: Plugin docs and user-facing terminology are consistent for author, publication, organization, and rights concepts.
-- [ ] **SPEC-03**: Any chosen pre-1.0 output or terminology changes land with tests and consumer-facing docs.
+- [x] **SPEC-01**: Maintainer has an explicit list of Byline-spec divergences that block stable 1.0 and which release they target.
+- [x] **SPEC-02**: Plugin docs and user-facing terminology are consistent for author, publication, organization, and rights concepts.
+- [x] **SPEC-03**: Any chosen pre-1.0 output or terminology changes land with tests and consumer-facing docs.
 
 ### Release Readiness
 
-- [ ] **REL-01**: Maintainer can build a release zip from current `main` and match it to versioned docs, changelog, and release notes.
-- [ ] **REL-02**: Release checklist and smoke-test evidence are current for the next RC or stable cut.
-- [ ] **REL-03**: Feedback from the active RC issue is triaged into concrete ship, block, or defer decisions.
-- [ ] **REL-04**: Current `main` has a documented next-cut decision that accounts for unreleased post-`rc3` changes and latest CI evidence.
+- [x] **REL-01**: Maintainer can build a release zip from current `main` and match it to versioned docs, changelog, and release notes.
+- [x] **REL-02**: Release checklist and smoke-test evidence are current for the next RC or stable cut.
+- [x] **REL-03**: Feedback from the active RC issue is triaged into concrete ship, block, or defer decisions.
+- [x] **REL-04**: Current `main` has a documented next-cut decision that accounts for unreleased post-`rc3` changes and latest CI evidence.
 
 ## v2 Requirements
 
@@ -51,17 +51,17 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| VER-01 | Phase 1 | Pending |
-| VER-02 | Phase 1 | Pending |
-| VER-03 | Phase 1 | Pending |
-| VER-04 | Phase 1 | Pending |
-| SPEC-01 | Phase 2 | Pending |
-| SPEC-02 | Phase 2 | Pending |
-| SPEC-03 | Phase 2 | Pending |
-| REL-01 | Phase 3 | Pending |
-| REL-02 | Phase 3 | Pending |
-| REL-03 | Phase 4 | Pending |
-| REL-04 | Phase 4 | Pending |
+| VER-01 | Phase 1 | Complete |
+| VER-02 | Phase 1 | Complete |
+| VER-03 | Phase 1 | Complete |
+| VER-04 | Phase 1 | Complete |
+| SPEC-01 | Phase 2 | Complete |
+| SPEC-02 | Phase 2 | Complete |
+| SPEC-03 | Phase 2 | Complete |
+| REL-01 | Phase 3 | Complete |
+| REL-02 | Phase 3 | Complete |
+| REL-03 | Phase 4 | Complete |
+| REL-04 | Phase 4 | Complete |
 
 **Coverage:**
 - v1 requirements: 11 total

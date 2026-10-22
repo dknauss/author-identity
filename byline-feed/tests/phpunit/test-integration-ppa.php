@@ -67,7 +67,7 @@ class Test_Integration_PPA extends WP_UnitTestCase {
 			&& ! function_exists( 'get_post_authors' )
 			&& ! class_exists( 'MultipleAuthors\\Classes\\Objects\\Author' )
 		) {
-			$this->markTestSkipped( 'PublishPress Authors is not active.' );
+			\byline_feed_tests_require_integration( $this, 'BYLINE_PPA_PLUGIN', 'PublishPress Authors is not active.' );
 		}
 	}
 

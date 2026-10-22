@@ -44,6 +44,73 @@ Release notes complement, but do not replace:
 - the dated version entries in `CHANGELOG.md`
 
 
+## Draft: 0.1.0
+
+### Summary
+
+Byline Feed 0.1.0 is the first stable release. It brings structured, multi-author identity to RSS2, Atom, and JSON Feed, JSON-LD, link previews, and the fediverse, from one normalized author source in WordPress.
+
+### Highlights
+
+- Byline metadata in RSS2, Atom, and JSON Feed, now including the Byline spec's JSON Feed model (`_byline.contributors`, `_byline.author`).
+- Multi-author support through Co-Authors Plus, PublishPress Authors, and Human Made Authorship, each tested against the real plugin in CI.
+- Ordered multi-author JSON-LD, standalone or enriching Yoast SEO and Rank Math; an `organization` mode for posts credited to the site.
+- `fediverse:creator` and author meta tags for link previews, with Jetpack's conflicting tag removed.
+- Content perspective, and advisory AI-consent signals (`robots`, `TDMRep`, `ai.txt`, feed rights) with an audit log.
+- Security hardening: author text can no longer break out of the JSON-LD script element.
+
+Known differences from the pre-1.0 Byline spec, and what is deferred to 0.2.0, are listed in `docs/planning/spec-alignment-0.1.0.md`.
+
+### Links
+
+- Playground demo: https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2Fdknauss%2Fauthor-identity%2Fmain%2Fplayground%2Foutput-demo.blueprint.json&url=%2F%3Fp%3D1&mode=browser-full-screen&login=no
+- Issues and feedback: https://github.com/dknauss/author-identity/issues
+- Attached checksum: `byline-feed-0.1.0.zip.sha256`
+
+### AI assistance note
+
+> Portions of this release were developed with AI coding assistance (Claude). Repository ownership, review, and merge accountability remain with the human maintainer.
+
+## Draft: 0.1.0-rc5
+
+### Summary
+
+Byline Feed 0.1.0-rc5 keeps Jetpack from crediting a person on posts attributed to the site.
+
+### Highlights
+
+- Jetpack Social adds `fediverse:creator` from a connected Mastodon account without knowing who a post is attributed to. Byline Feed now removes that tag in organization mode, and whenever it prints its own handles.
+
+### Links
+
+- Attached checksum: `byline-feed-0.1.0-rc5.zip.sha256`
+
+### AI assistance note
+
+> Portions of this release were developed with AI coding assistance (Claude). Repository ownership, review, and merge accountability remain with the human maintainer.
+
+## Draft: 0.1.0-rc4
+
+### Summary
+
+Byline Feed 0.1.0-rc4 adds attribution: who a post is credited to in structured data and link previews.
+
+### Highlights
+
+- Attribution setting per post: its authors, or the site (organization mode). Organization mode names the publisher as the JSON-LD author and suppresses personal author tags and `fediverse:creator`.
+- Companion plugins can suggest the mode through `byline_feed_author_mode`; an editor's choice made by hand always wins. First Person (dknauss/first-person-byline) is the reference companion.
+- Author meta tags (`author`, `og:author`, `article:author`) for link-preview readers that ignore JSON-LD articles, including Mastodon.
+- Stable JSON-LD `@id`s for the article and publisher.
+- Feeds do not yet follow organization mode.
+
+### Links
+
+- Attached checksum: `byline-feed-0.1.0-rc4.zip.sha256`
+
+### AI assistance note
+
+> Portions of this release were developed with AI coding assistance (Claude). Repository ownership, review, and merge accountability remain with the human maintainer.
+
 ## Draft: 0.1.0-rc3
 
 ### Summary

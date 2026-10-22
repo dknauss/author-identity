@@ -40,7 +40,12 @@ async function login( page, targetPath = '/wp-admin/' ) {
 			.getByLabel( /^password$/i )
 			.fill( process.env.WP_E2E_PASSWORD || 'password' );
 		await page.getByRole( 'button', { name: /log in/i } ).click();
-		await page.waitForLoadState( 'domcontentloaded' );
+
+		// Wait for the redirect away from wp-login.php. A bare load-state wait
+		// can resolve against the login page itself before the POST navigates.
+		await page
+			.waitForURL( ( url ) => ! url.pathname.endsWith( '/wp-login.php' ) )
+			.catch( () => {} );
 
 		if ( page.url().includes( '/wp-login.php' ) ) {
 			throw new Error(

@@ -86,6 +86,10 @@ Behavior:
 - per-author handle output can be overridden with `byline_feed_fediverse_handle`
 - omitted for posts in `organization` author mode
 
+Jetpack (13.8 and later) adds its own `fediverse:creator` tag from a Jetpack Social Mastodon connection: the post author's, or else a site-wide one. Jetpack does not know who a post is attributed to, so the plugin removes that tag (through `jetpack_open_graph_tags`, priority 20) in `organization` mode, and also whenever it prints handles of its own, so the page never carries a duplicate or a different handle. When the plugin has no handle for a `person`-mode post, Jetpack's tag stays.
+
+The ActivityPub plugin's own Open Graph integration (`activitypub_use_opengraph`) is outside this plugin's jurisdiction; Jetpack already stands down when it is on.
+
 ### Author meta tags
 
 The plugin also prints plain author meta tags for link-preview readers that ignore JSON-LD `Article` nodes. Mastodon's link cards, for example, read a byline from JSON-LD only when the node is typed `WebPage` or `NewsArticle`, and otherwise fall back to `og:author`.
@@ -113,7 +117,7 @@ Behavior:
 
 - JSON-LD names the publisher `Organization` as the article's `author` (in Yoast SEO and Rank Math modes, a reference to their own publisher node)
 - standalone JSON-LD is emitted even when no authors resolve
-- no `fediverse:creator` or author meta tags are printed
+- no `fediverse:creator` or author meta tags are printed, and Jetpack's `fediverse:creator` is removed
 - feed output is not yet affected: feeds still list the post's resolved authors
 
 The decision is post-level, not a field of the normalized author contract. It is resolved in this order:
@@ -460,20 +464,47 @@ Example:
     }
   ],
   "_byline": {
+    "version": "https://bylinespec.org/1.0",
     "spec_version": "1.0",
     "org": {
       "name": "Example Site",
       "url": "https://example.com"
-    }
+    },
+    "contributors": [
+      {
+        "id": "jane-doe",
+        "name": "Jane Doe",
+        "context": "Reporter covering local government and housing.",
+        "url": "https://example.com/authors/jane-doe/",
+        "avatar": "https://example.com/avatar/jane.jpg",
+        "profiles": [
+          {
+            "href": "https://example.com/@jane",
+            "rel": "me"
+          }
+        ],
+        "now": "https://example.com/now/",
+        "uses": "https://example.com/uses/"
+      }
+    ]
   }
 }
 ```
+
+The top-level `_byline` follows the spec's JSON Feed model:
+
+- `version` is the Byline namespace URI. `spec_version` is kept for consumers of the release candidates.
+- `contributors` lists every author in the feed as a spec Person object, using the spec's keys (`context`, `avatar`, `now`, `uses`).
+- `org` names the site. It is not yet the spec's `organizations[]` model; see [spec-alignment-0.1.0.md](../../docs/planning/spec-alignment-0.1.0.md).
+- `authors[]._byline` is Byline Feed's own extension on JSON Feed author objects and keeps its earlier keys (`now_url`, `uses_url`, `is_guest`, `fediverse`).
 
 ### Item-level output
 
 Each item may include:
 
 - `authors`: one JSON Feed author entry per normalized author
+- `_byline.author`: the author's contributor `id` for a single-author item, as in the spec; for a multi-author item, an ordered array of ids (the spec defines one author per item, so this is a documented divergence)
+- `_byline.role`: the author's role, on single-author items only; on multi-author items each role is in `authors[]._byline.role`
 - `_byline.perspective`: when the perspective value is set and valid
 
 Example item fragment:
@@ -500,6 +531,7 @@ Example item fragment:
     }
   ],
   "_byline": {
+    "author": ["jane-doe", "alex-smith"],
     "perspective": "reporting"
   }
 }

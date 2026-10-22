@@ -148,6 +148,148 @@ function build_json_author( object $author, ?\WP_Post $post = null ): array {
 }
 
 /**
+ * Build a Byline spec Person object for the feed-level `_byline.contributors` list.
+ *
+ * Uses the spec's JSON Feed keys (`context`, `avatar`, `now`, `uses`), unlike
+ * the plugin's own `authors[]._byline` extension, which predates them.
+ *
+ * @param object $author Normalized author object.
+ * @return array Byline Person object.
+ */
+function build_spec_person( object $author ): array {
+	$person = array(
+		'id'   => $author->id,
+		'name' => $author->display_name,
+	);
+
+	if ( ! empty( $author->description ) ) {
+		$person['context'] = mb_substr( wp_strip_all_tags( $author->description ), 0, 280 );
+	}
+
+	if ( ! empty( $author->url ) ) {
+		$person['url'] = $author->url;
+	}
+
+	if ( ! empty( $author->avatar_url ) ) {
+		$person['avatar'] = $author->avatar_url;
+	}
+
+	if ( ! empty( $author->profiles ) && is_array( $author->profiles ) ) {
+		$profiles = array_values(
+			array_filter(
+				$author->profiles,
+				static function ( $profile ) {
+					return is_array( $profile ) && ! empty( $profile['href'] ) && ! empty( $profile['rel'] );
+				}
+			)
+		);
+
+		if ( ! empty( $profiles ) ) {
+			$person['profiles'] = $profiles;
+		}
+	}
+
+	if ( ! empty( $author->now_url ) ) {
+		$person['now'] = $author->now_url;
+	}
+
+	if ( ! empty( $author->uses_url ) ) {
+		$person['uses'] = $author->uses_url;
+	}
+
+	return $person;
+}
+
+/**
+ * Build the spec's item-level author reference and role.
+ *
+ * A single-author item gets `author` (the person's id) and `role`, as in the
+ * spec. The spec defines only one author per item; a multi-author item gets
+ * `author` as an ordered array of ids, the JSON equivalent of the repeated
+ * `<byline:author>` elements in RSS and Atom, and no item-level `role`. Each
+ * author's role stays in `authors[]._byline.role`.
+ *
+ * @param object[] $authors Normalized authors, in byline order.
+ * @return array Keys to merge into the item's `_byline` object.
+ */
+function build_item_author_refs( array $authors ): array {
+	if ( empty( $authors ) ) {
+		return array();
+	}
+
+	if ( 1 === count( $authors ) ) {
+		$refs = array( 'author' => $authors[0]->id );
+
+		if ( ! empty( $authors[0]->role ) ) {
+			$refs['role'] = $authors[0]->role;
+		}
+
+		return $refs;
+	}
+
+	return array( 'author' => array_values( wp_list_pluck( $authors, 'id' ) ) );
+}
+
+/**
+ * Collect unique authors across posts, in first-seen order.
+ *
+ * @param \WP_Post[] $posts Posts in the feed.
+ * @return object[] Unique normalized authors.
+ */
+function collect_feed_authors( array $posts ): array {
+	$seen    = array();
+	$authors = array();
+
+	foreach ( $posts as $post ) {
+		if ( ! $post instanceof \WP_Post ) {
+			continue;
+		}
+
+		foreach ( byline_feed_get_authors( $post ) as $author ) {
+			if ( ! isset( $seen[ $author->id ] ) ) {
+				$seen[ $author->id ] = true;
+				$authors[]           = $author;
+			}
+		}
+	}
+
+	return $authors;
+}
+
+/**
+ * Build the feed-level `_byline` object.
+ *
+ * `version` is the spec's namespace URI. `spec_version` and `org` are kept
+ * for consumers of the 0.1.0 release candidates.
+ *
+ * @param object[] $authors Unique authors in the feed.
+ * @return array Feed-level `_byline` object.
+ */
+function build_feed_byline( array $authors ): array {
+	$byline = array(
+		'version'      => 'https://bylinespec.org/1.0',
+		'spec_version' => '1.0',
+	);
+
+	$org = array_filter(
+		array(
+			'name' => get_bloginfo( 'name' ),
+			'url'  => get_bloginfo( 'url' ),
+		)
+	);
+
+	if ( ! empty( $org ) ) {
+		$byline['org'] = $org;
+	}
+
+	if ( ! empty( $authors ) ) {
+		$byline['contributors'] = array_map( __NAMESPACE__ . '\\build_spec_person', $authors );
+	}
+
+	return $byline;
+}
+
+/**
  * Filter a JSON Feed item to add Byline author and perspective data.
  *
  * Used when hooking into an existing JSON Feed plugin's pipeline.
@@ -167,6 +309,11 @@ function filter_json_feed_item( array $item, \WP_Post $post ): array {
 				return build_json_author( $author, $post );
 			},
 			$authors
+		);
+
+		$item['_byline'] = array_merge(
+			isset( $item['_byline'] ) && is_array( $item['_byline'] ) ? $item['_byline'] : array(),
+			build_item_author_refs( $authors )
 		);
 	}
 
@@ -206,27 +353,13 @@ function filter_json_feed_item( array $item, \WP_Post $post ): array {
 function filter_json_feed_channel( array $channel ): array {
 	global $wp_query;
 
-	$channel['_byline'] = array(
-		'spec_version' => '1.0',
-	);
-
-	$site_name = get_bloginfo( 'name' );
-	$site_url  = get_bloginfo( 'url' );
-
-	if ( $site_name || $site_url ) {
-		$channel['_byline']['org'] = array_filter(
-			array(
-				'name' => $site_name,
-				'url'  => $site_url,
-			)
-		);
-	}
-
 	$feed_posts = array();
 
 	if ( isset( $wp_query->posts ) && is_array( $wp_query->posts ) ) {
 		$feed_posts = $wp_query->posts;
 	}
+
+	$channel['_byline'] = build_feed_byline( collect_feed_authors( $feed_posts ) );
 
 	$rights = get_feed_rights( $feed_posts );
 
@@ -268,9 +401,9 @@ function render_json_feed(): void {
 	 * from having the complete author set at feed level so readers can
 	 * display a "contributors" panel without parsing every item.
 	 */
-	$seen         = array();
-	$feed_authors = array();
-	$post_authors = array(); // Cache for per-item output.
+	$seen           = array();
+	$unique_authors = array();
+	$post_authors   = array(); // Cache for per-item output.
 
 	foreach ( $posts as $post ) {
 		$authors                   = byline_feed_get_authors( $post );
@@ -279,10 +412,17 @@ function render_json_feed(): void {
 		foreach ( $authors as $author ) {
 			if ( ! isset( $seen[ $author->id ] ) ) {
 				$seen[ $author->id ] = true;
-				$feed_authors[]      = build_json_author( $author );
+				$unique_authors[]    = $author;
 			}
 		}
 	}
+
+	$feed_authors = array_map(
+		function ( $author ) {
+			return build_json_author( $author );
+		},
+		$unique_authors
+	);
 
 	$items = array();
 	foreach ( $posts as $post ) {
@@ -304,6 +444,8 @@ function render_json_feed(): void {
 				},
 				$authors
 			);
+
+			$item['_byline'] = build_item_author_refs( $authors );
 		}
 
 		$perspective = byline_feed_get_perspective( $post );
@@ -345,15 +487,7 @@ function render_json_feed(): void {
 		'description'   => get_bloginfo( 'description' ),
 		'language'      => get_bloginfo( 'language' ),
 		'authors'       => $feed_authors,
-		'_byline'       => array(
-			'spec_version' => '1.0',
-			'org'          => array_filter(
-				array(
-					'name' => get_bloginfo( 'name' ),
-					'url'  => get_bloginfo( 'url' ),
-				)
-			),
-		),
+		'_byline'       => build_feed_byline( $unique_authors ),
 		'items'         => $items,
 	);
 

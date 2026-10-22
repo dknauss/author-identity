@@ -10,6 +10,7 @@ namespace Byline_Feed\Tests;
 use WP_Post;
 use WP_UnitTestCase;
 use function Byline_Feed\byline_feed_get_author_mode;
+use function Byline_Feed\Fediverse\filter_jetpack_open_graph_tags;
 use function Byline_Feed\Fediverse\get_handles_for_post;
 use function Byline_Feed\Head_Meta\get_meta_tags_for_post;
 use function Byline_Feed\Head_Meta\render_meta_tags;
@@ -201,6 +202,42 @@ class Test_Author_Mode extends WP_UnitTestCase {
 		$this->use_organization_mode();
 
 		$this->assertSame( array(), get_handles_for_post( $post ) );
+	}
+
+	public function test_jetpack_fediverse_creator_is_removed_in_organization_mode(): void {
+		$post_id = $this->post_with_authors( array( $this->dan() ) );
+		$this->use_organization_mode();
+		$this->go_to( get_permalink( $post_id ) );
+
+		$tags = filter_jetpack_open_graph_tags(
+			array(
+				'og:title'          => 'Judge a tool by what it does',
+				'fediverse:creator' => '@dan_kn@mastodon.social',
+			)
+		);
+
+		$this->assertArrayNotHasKey( 'fediverse:creator', $tags );
+		$this->assertSame( 'Judge a tool by what it does', $tags['og:title'] );
+	}
+
+	public function test_jetpack_fediverse_creator_gives_way_to_byline_feed_handles(): void {
+		$post_id = $this->post_with_authors( array( $this->dan() ) );
+		$this->go_to( get_permalink( $post_id ) );
+
+		$tags = filter_jetpack_open_graph_tags( array( 'fediverse:creator' => '@site@mastodon.social' ) );
+
+		$this->assertArrayNotHasKey( 'fediverse:creator', $tags );
+	}
+
+	public function test_jetpack_fediverse_creator_stays_when_byline_feed_has_no_handle(): void {
+		$author            = $this->dan();
+		$author->fediverse = '';
+		$post_id           = $this->post_with_authors( array( $author ) );
+		$this->go_to( get_permalink( $post_id ) );
+
+		$tags = filter_jetpack_open_graph_tags( array( 'fediverse:creator' => '@dan_kn@mastodon.social' ) );
+
+		$this->assertSame( '@dan_kn@mastodon.social', $tags['fediverse:creator'] );
 	}
 
 	// ────────────────────────────────────────────────────────────

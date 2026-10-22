@@ -94,7 +94,29 @@ Co-Authors Plus, PublishPress Authors, and HM Authorship are supported directly.
 
 Content Perspective is an editorial field that communicates the intent behind a piece of content, such as reporting, analysis, opinion, or satire. Feed consumers can use it to distinguish content types more clearly.
 
+== Upgrade Notice ==
+
+= 0.1.0 =
+First stable release. JSON Feed gains spec-shaped Byline keys alongside the existing ones; JSON-LD output is hardened against markup in author names.
+
 == Changelog ==
+
+= 0.1.0 =
+* First stable release. Everything from the release candidates, plus the changes below.
+* JSON Feed now also follows the Byline spec's model: a feed-level `_byline.contributors` list with the spec's person fields, `_byline.version`, and an item-level `_byline.author` reference (with `_byline.role` on single-author posts). Existing keys are unchanged.
+* Security hardening: author names can no longer close the JSON-LD `<script>` element, because `<` and `>` are now escaped inside it.
+* Co-Authors Plus integration tests now run against the real plugin (they were being skipped), including byline order and guest authors.
+* Multisite is now part of the automated test run.
+
+= 0.1.0-rc5 =
+* Fifth release candidate.
+* Jetpack Social's `fediverse:creator` tag no longer credits a person on posts attributed to the site, and gives way to Byline Feed's own handles where it prints them.
+
+= 0.1.0-rc4 =
+* Fourth release candidate.
+* New Attribution setting (block editor sidebar and classic-editor metabox): credit a post to its authors or to the site. With "the site", JSON-LD names the publisher as author and no personal author tags or `fediverse:creator` are printed. Other plugins can suggest the choice through the `byline_feed_author_mode` filter; a choice made by hand always wins.
+* Author meta tags on singular views (`author`, `og:author`, `article:author`), so link previews that skip JSON-LD articles, such as Mastodon's, credit the right people.
+* Stable JSON-LD `@id`s for the article and the publisher.
 
 = 0.1.0-rc3 =
 * Third release candidate.

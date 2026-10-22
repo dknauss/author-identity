@@ -24,8 +24,10 @@ class Test_Integration_CAP extends WP_UnitTestCase {
 	public function set_up(): void {
 		parent::set_up();
 
-		if ( ! function_exists( 'get_coauthors' ) || ! function_exists( 'add_coauthors' ) ) {
-			$this->markTestSkipped( 'Co-Authors Plus assignment API is not active.' );
+		global $coauthors_plus;
+
+		if ( ! function_exists( 'get_coauthors' ) || ! isset( $coauthors_plus ) || ! method_exists( $coauthors_plus, 'add_coauthors' ) ) {
+			\byline_feed_tests_require_integration( $this, 'BYLINE_CAP_PLUGIN', 'Co-Authors Plus assignment API is not active.' );
 		}
 	}
 
@@ -56,7 +58,7 @@ class Test_Integration_CAP extends WP_UnitTestCase {
 		);
 
 		// Add the user as a co-author using CAP's own API.
-		\add_coauthors( $post_id, array( 'cap-integration-author' ) );
+		$this->add_coauthors( $post_id, array( 'cap-integration-author' ) );
 
 		$post    = get_post( $post_id );
 		$authors = byline_feed_get_authors( $post );
@@ -76,19 +78,14 @@ class Test_Integration_CAP extends WP_UnitTestCase {
 	}
 
 	public function test_get_authors_returns_normalized_object_for_guest_author(): void {
-		// CAP guest authors are created as custom post type entries.
-		// We create one using CAP's API if available, otherwise skip.
-		if ( ! function_exists( 'coauthors_plus' ) && ! class_exists( 'CoAuthors_Plus' ) ) {
-			$this->markTestSkipped( 'CAP guest author API not available in this version.' );
-		}
-
+		// CAP guest authors are `guest-author` posts created through $coauthors_plus->guest_authors.
 		global $coauthors_plus;
 
-		if ( ! isset( $coauthors_plus ) || ! method_exists( $coauthors_plus, 'create_guest_author' ) ) {
-			$this->markTestSkipped( 'CAP guest author creation API not available.' );
+		if ( empty( $coauthors_plus->guest_authors ) || ! method_exists( $coauthors_plus->guest_authors, 'create' ) ) {
+			\byline_feed_tests_require_integration( $this, 'BYLINE_CAP_PLUGIN', 'CAP guest author creation API not available.' );
 		}
 
-		$guest_id = $coauthors_plus->create_guest_author(
+		$guest_id = $coauthors_plus->guest_authors->create(
 			array(
 				'display_name' => 'CAP Guest Writer',
 				'user_login'   => 'cap-guest-writer',
@@ -96,11 +93,11 @@ class Test_Integration_CAP extends WP_UnitTestCase {
 		);
 
 		if ( is_wp_error( $guest_id ) ) {
-			$this->markTestSkipped( 'Could not create CAP guest author: ' . $guest_id->get_error_message() );
+			$this->fail( 'Could not create CAP guest author: ' . $guest_id->get_error_message() );
 		}
 
 		$post_id = self::factory()->post->create( array( 'post_status' => 'publish' ) );
-		\add_coauthors( $post_id, array( 'cap-guest-writer' ) );
+		$this->add_coauthors( $post_id, array( 'cap-guest-writer' ), 'user_login' );
 
 		$post    = get_post( $post_id );
 		$authors = byline_feed_get_authors( $post );
@@ -137,15 +134,62 @@ class Test_Integration_CAP extends WP_UnitTestCase {
 			)
 		);
 
-		\add_coauthors( $post_id, array( 'cap-author-one', 'cap-author-two' ) );
+		$this->add_coauthors( $post_id, array( 'cap-author-one', 'cap-author-two' ) );
 
 		$post    = get_post( $post_id );
 		$authors = byline_feed_get_authors( $post );
 		$ids     = array_column( $authors, 'id' );
 
-		$this->assertContains( 'cap-author-one', $ids );
-		$this->assertContains( 'cap-author-two', $ids );
-		$this->assertCount( 2, $authors );
+		$this->assertSame( array( 'cap-author-one', 'cap-author-two' ), $ids );
+	}
+
+	public function test_coauthor_order_follows_cap_assignment_not_user_id(): void {
+		$first_created = self::factory()->user->create(
+			array(
+				'display_name'  => 'CAP Order Alpha',
+				'user_nicename' => 'cap-order-alpha',
+			)
+		);
+
+		self::factory()->user->create(
+			array(
+				'display_name'  => 'CAP Order Beta',
+				'user_nicename' => 'cap-order-beta',
+			)
+		);
+
+		self::factory()->user->create(
+			array(
+				'display_name'  => 'CAP Order Gamma',
+				'user_nicename' => 'cap-order-gamma',
+			)
+		);
+
+		$post_id = self::factory()->post->create(
+			array(
+				'post_author' => $first_created,
+				'post_status' => 'publish',
+			)
+		);
+
+		// Assign in the reverse of creation order; the byline must follow CAP's order.
+		$this->add_coauthors( $post_id, array( 'cap-order-gamma', 'cap-order-beta', 'cap-order-alpha' ) );
+
+		$expected = array_map(
+			static function ( $coauthor ) {
+				return $coauthor->user_nicename;
+			},
+			\get_coauthors( $post_id )
+		);
+
+		$authors = byline_feed_get_authors( get_post( $post_id ) );
+
+		$this->assertSame( array( 'cap-order-gamma', 'cap-order-beta', 'cap-order-alpha' ), $expected );
+		$this->assertSame( $expected, array_column( $authors, 'id' ) );
+		$this->assertSame(
+			array( 'CAP Order Gamma', 'CAP Order Beta', 'CAP Order Alpha' ),
+			array_column( $authors, 'display_name' )
+		);
 	}
 
 	public function test_author_object_shape_matches_contract(): void {
@@ -165,7 +209,7 @@ class Test_Integration_CAP extends WP_UnitTestCase {
 			)
 		);
 
-		\add_coauthors( $post_id, array( 'cap-contract-author' ) );
+		$this->add_coauthors( $post_id, array( 'cap-contract-author' ) );
 
 		$post    = get_post( $post_id );
 		$authors = byline_feed_get_authors( $post );
@@ -188,5 +232,23 @@ class Test_Integration_CAP extends WP_UnitTestCase {
 		$this->assertIsString( $author->uses_url );
 		$this->assertIsString( $author->fediverse );
 		$this->assertIsString( $author->ai_consent );
+	}
+
+	/**
+	 * Assign co-authors through CAP's own API.
+	 *
+	 * CAP exposes assignment as a method on the global `$coauthors_plus`, not
+	 * as a template function. Its return value is not checked: it returns
+	 * false when no assigned co-author is a WordPress user (a guest-only
+	 * byline) even though the byline terms were written.
+	 *
+	 * @param int      $post_id   Post ID.
+	 * @param string[] $names      Co-author identifiers, in byline order.
+	 * @param string   $query_type Field CAP looks the identifiers up by.
+	 */
+	private function add_coauthors( int $post_id, array $names, string $query_type = 'user_nicename' ): void {
+		global $coauthors_plus;
+
+		$coauthors_plus->add_coauthors( $post_id, $names, false, $query_type );
 	}
 }

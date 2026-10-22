@@ -182,9 +182,11 @@ function render_schema_script(): void {
 	}
 
 	echo "<script type=\"application/ld+json\">\n";
+	// JSON_HEX_TAG encodes < and > as \u003C and \u003E, so no author or post
+	// text can close this script element or open an HTML comment inside it.
 	echo wp_json_encode(
 		$schema,
-		JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE
+		JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG
 	);
 	echo "\n</script>\n";
 }

@@ -144,12 +144,13 @@ Refresh the published public demo assets with:
 playground/bin/publish-output-demo.sh
 ```
 
-The public `Try in Playground` CTA targets the blueprint at `playground/output-demo.blueprint.json` on `main`. It installs the `byline-feed` plugin from the pinned `v0.1.0-rc3` release ZIP through the WordPress Playground CORS proxy, then writes the demo mu-plugin inline for deterministic fixtures. Installing from a release asset (rather than an in-browser `git:directory` clone) is what keeps the live demo working. Local snapshot ZIPs remain useful for offline sharing, archived demos, and reproducible local inspection.
+The public `Try in Playground` CTA targets the blueprint at `playground/output-demo.blueprint.json` on `main`. It installs the `byline-feed` plugin from the pinned `v0.1.0` release ZIP through the WordPress Playground CORS proxy, then writes the demo mu-plugin inline for deterministic fixtures. Installing from a release asset (rather than an in-browser `git:directory` clone) is what keeps the live demo working. Local snapshot ZIPs remain useful for offline sharing, archived demos, and reproducible local inspection.
 
-## Current RC
+## Current release
 
-- Pre-release: [Byline Feed 0.1.0-rc3](https://github.com/dknauss/author-identity/releases/tag/v0.1.0-rc3)
-- Feedback and stabilization: [issue #17](https://github.com/dknauss/author-identity/issues/17)
+- Stable: [Byline Feed 0.1.0](https://github.com/dknauss/author-identity/releases/tag/v0.1.0)
+- Spec alignment decisions: [docs/planning/spec-alignment-0.1.0.md](docs/planning/spec-alignment-0.1.0.md)
+- Feedback: [issues](https://github.com/dknauss/author-identity/issues)
 
 ## Governance
 

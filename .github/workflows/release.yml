@@ -1,0 +1,88 @@
+name: Release
+
+# Publishes a GitHub release for the version in byline-feed/byline-feed.php
+# (BYLINE_FEED_VERSION) when no release for it exists yet. It runs when:
+#   - a tag like v0.1.0-rc4 is pushed (the tag must match the version);
+#   - main changes the plugin's main file or this workflow, so merging a
+#     version bump releases it;
+#   - it is run by hand (workflow_dispatch).
+# It builds the ZIP with byline-feed/bin/build-plugin-zip.sh and attaches the
+# ZIP and its checksum. The body is that version's "## Draft: <version>"
+# section from RELEASE_NOTES.md. Versions containing "-" (rc, beta) are
+# marked as pre-releases. An existing release is never changed.
+
+on:
+  push:
+    tags:
+      - 'v*'
+    branches:
+      - main
+    paths:
+      - 'byline-feed/byline-feed.php'
+      - '.github/workflows/release.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Build and publish release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Read the plugin version
+        id: version
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          version="$(sed -n "s/^define( 'BYLINE_FEED_VERSION', '\(.*\)' );$/\1/p" byline-feed/byline-feed.php)"
+          if [ -z "$version" ]; then
+            echo "Could not read BYLINE_FEED_VERSION" >&2
+            exit 1
+          fi
+          if [ "$GITHUB_REF_TYPE" = "tag" ] && [ "v${version}" != "$GITHUB_REF_NAME" ]; then
+            echo "Tag ${GITHUB_REF_NAME} does not match BYLINE_FEED_VERSION ${version}" >&2
+            exit 1
+          fi
+          echo "version=${version}" >> "$GITHUB_OUTPUT"
+          if gh release view "v${version}" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "Release v${version} already exists; nothing to do."
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Build plugin ZIP
+        if: steps.version.outputs.exists != 'true'
+        run: bash byline-feed/bin/build-plugin-zip.sh
+
+      - name: Extract release notes
+        if: steps.version.outputs.exists != 'true'
+        run: |
+          version="${{ steps.version.outputs.version }}"
+          awk -v head="## Draft: ${version}" '
+            $0 == head { found = 1; next }
+            found && /^## / { exit }
+            found { print }
+          ' RELEASE_NOTES.md > release-notes.md
+          if [ ! -s release-notes.md ]; then
+            echo "RELEASE_NOTES.md has no '## Draft: ${version}' section" >&2
+            exit 1
+          fi
+
+      - name: Publish release
+        if: steps.version.outputs.exists != 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          version="${{ steps.version.outputs.version }}"
+          prerelease=""
+          case "$version" in *-*) prerelease="--prerelease" ;; esac
+          gh release create "v${version}" \
+            --target "$GITHUB_SHA" \
+            "byline-feed/dist/byline-feed-${version}.zip" \
+            "byline-feed/dist/byline-feed-${version}.zip.sha256" \
+            --title "Byline Feed ${version}" \
+            --notes-file release-notes.md \
+            $prerelease

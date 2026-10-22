@@ -274,6 +274,50 @@ class Test_Schema extends WP_UnitTestCase {
 		$this->assertArrayNotHasKey( 'url', $schema['author'][1] );
 	}
 
+	public function test_special_characters_in_author_fields_stay_inside_the_json_ld_script(): void {
+		$post_id = self::factory()->post->create(
+			array(
+				'post_status' => 'publish',
+				'post_title'  => 'Schema Special Characters',
+			)
+		);
+
+		// Adapters pass display names through as stored; a guest author's name is not always run through sanitize_text_field().
+		$name        = 'Zoë O\'Brien & "Ana" </script><script>alert(1)</script><!--';
+		$description = 'Bio with <em>markup</em> & "quotes"';
+
+		add_filter(
+			'byline_feed_authors',
+			static function ( array $authors, WP_Post $post ) use ( $post_id, $name, $description ): array {
+				if ( $post_id !== $post->ID ) {
+					return $authors;
+				}
+
+				return array(
+					(object) array(
+						'id'           => 'special-author',
+						'display_name' => $name,
+						'description'  => $description,
+					),
+				);
+			},
+			10,
+			2
+		);
+
+		$output = $this->capture_schema_output( get_permalink( $post_id ) );
+
+		// One script element only: author text must not close it or open another.
+		$this->assertSame( 1, substr_count( strtolower( $output ), '</script' ) );
+		$this->assertSame( 1, substr_count( strtolower( $output ), '<script' ) );
+		$this->assertStringNotContainsString( '<!--', $output );
+
+		$schema = $this->decode_schema_output( $output );
+
+		$this->assertSame( $name, $schema['author'][0]['name'] );
+		$this->assertSame( 'Bio with markup & "quotes"', $schema['author'][0]['description'] );
+	}
+
 	public function test_standalone_schema_is_omitted_when_no_authors_resolve(): void {
 		$post_id = self::factory()->post->create(
 			array(
