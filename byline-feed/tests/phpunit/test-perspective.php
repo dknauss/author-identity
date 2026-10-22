@@ -87,7 +87,7 @@ class Test_Perspective extends WP_UnitTestCase {
 	}
 
 	public function test_editor_assets_enqueue_expected_built_script(): void {
-		if ( ! file_exists( BYLINE_FEED_PLUGIN_DIR . 'build/perspective-panel.tsx.asset.php' ) ) {
+		if ( ! file_exists( BYLINE_FEED_PLUGIN_DIR . 'build/perspective-panel.asset.php' ) ) {
 			$this->markTestSkipped( 'Built perspective assets are not present in this PHPUnit environment.' );
 		}
 
@@ -98,6 +98,6 @@ class Test_Perspective extends WP_UnitTestCase {
 
 		$this->assertNotNull( $handle );
 		$this->assertContains( 'byline-feed-perspective-panel', wp_scripts()->queue );
-		$this->assertStringEndsWith( 'build/perspective-panel.tsx.js', $handle->src );
+		$this->assertStringEndsWith( 'build/perspective-panel.js', $handle->src );
 	}
 }

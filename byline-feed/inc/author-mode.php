@@ -174,7 +174,7 @@ function save_metabox( int $post_id ): void {
  * Enqueue the block editor sidebar panel script.
  */
 function enqueue_editor_assets(): void {
-	$asset_file = BYLINE_FEED_PLUGIN_DIR . 'build/author-mode-panel.tsx.asset.php';
+	$asset_file = BYLINE_FEED_PLUGIN_DIR . 'build/author-mode-panel.asset.php';
 
 	if ( ! file_exists( $asset_file ) ) {
 		return;
@@ -184,7 +184,7 @@ function enqueue_editor_assets(): void {
 
 	wp_enqueue_script(
 		'byline-feed-author-mode-panel',
-		BYLINE_FEED_PLUGIN_URL . 'build/author-mode-panel.tsx.js',
+		BYLINE_FEED_PLUGIN_URL . 'build/author-mode-panel.js',
 		$asset['dependencies'] ?? array(),
 		$asset['version'] ?? BYLINE_FEED_VERSION,
 		true

@@ -1052,7 +1052,7 @@ function is_ai_txt_request(): bool {
  * Enqueue the block editor sidebar panel script for AI consent.
  */
 function enqueue_editor_assets(): void {
-	$asset_file = BYLINE_FEED_PLUGIN_DIR . 'build/ai-consent-panel.tsx.asset.php';
+	$asset_file = BYLINE_FEED_PLUGIN_DIR . 'build/ai-consent-panel.asset.php';
 
 	if ( ! file_exists( $asset_file ) ) {
 		return;
@@ -1062,7 +1062,7 @@ function enqueue_editor_assets(): void {
 
 	wp_enqueue_script(
 		'byline-feed-ai-consent-panel',
-		BYLINE_FEED_PLUGIN_URL . 'build/ai-consent-panel.tsx.js',
+		BYLINE_FEED_PLUGIN_URL . 'build/ai-consent-panel.js',
 		$asset['dependencies'] ?? array(),
 		$asset['version'] ?? BYLINE_FEED_VERSION,
 		true

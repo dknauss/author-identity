@@ -58,10 +58,10 @@ byline-feed/
 |   |-- run-phpunit-local.sh
 |   `-- setup-e2e.sh
 |-- build/
-|   |-- ai-consent-panel.tsx.asset.php
-|   |-- ai-consent-panel.tsx.js
-|   |-- perspective-panel.tsx.asset.php
-|   `-- perspective-panel.tsx.js
+|   |-- ai-consent-panel.asset.php
+|   |-- ai-consent-panel.js
+|   |-- perspective-panel.asset.php
+|   `-- perspective-panel.js
 |-- docs/
 |   `-- output-reference.md
 |-- inc/
