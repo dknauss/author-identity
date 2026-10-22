@@ -23,7 +23,7 @@ npx @wp-playground/cli@latest server --blueprint=playground/output-demo.blueprin
 
 ## Demo routes
 
-Each demo post ends with a list of clickable links to these routes, because full-screen Playground hides the address bar.
+Each demo post explains what it shows and ends with a guide to every route below: a clickable link plus what to look for. Links are built from `home_url()` and `get_feed_link()` so they stay inside Playground's scoped site URL. The routes can also be typed into the address bar in the Playground toolbar.
 
 Allowed multi-author singular page:
 - `/?p=1`
