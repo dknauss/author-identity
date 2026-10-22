@@ -651,7 +651,7 @@ class Test_Rights extends WP_UnitTestCase {
 	}
 
 	public function test_enqueue_editor_assets_registers_script_when_asset_file_exists(): void {
-		$asset_file = BYLINE_FEED_PLUGIN_DIR . 'build/ai-consent-panel.tsx.asset.php';
+		$asset_file = BYLINE_FEED_PLUGIN_DIR . 'build/ai-consent-panel.asset.php';
 
 		if ( ! file_exists( $asset_file ) ) {
 			$this->markTestSkipped( 'Build assets not present.' );

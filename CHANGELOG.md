@@ -19,7 +19,8 @@ When cutting a release:
 
 ## Unreleased
 
-No unreleased entries yet.
+- Build: `@wordpress/scripts` 36.1.0. Editor panel bundles are now `build/<panel>.js` and `build/<panel>.asset.php` (previously `<panel>.tsx.js`); the plugin enqueues the new names.
+- CI runs on every pull request to `main`, so required checks always report.
 
 ## 0.1.0 - 2026-10-22
 
