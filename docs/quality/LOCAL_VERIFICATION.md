@@ -49,9 +49,9 @@ silently, which hid the fact that the Co-Authors Plus suite never ran in CI.
 
 ## When to re-verify
 
-CI runs on every push and pull request to `main` that touches `byline-feed/**`
-or `.github/workflows/**`. Changes elsewhere (docs, planning) do not affect the
-shipped plugin and do not trigger it.
+CI runs on every pull request to `main`, because `main`'s ruleset requires its
+checks. Pushes to `main` run it only when they touch `byline-feed/**` or
+`.github/workflows/**`.
 
 Run CI by hand (Actions → CI → Run workflow) before a release when:
 
