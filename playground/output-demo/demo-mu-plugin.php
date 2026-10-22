@@ -76,12 +76,45 @@ function byline_feed_playground_demo_authors( WP_Post $post ): array {
 }
 
 /**
+ * Return clickable links to every demo route.
+ *
+ * Playground runs the site under a scoped path and full-screen mode hides
+ * the address bar, so the links are built from home_url() on each request.
+ *
+ * @return string Paragraph and list block markup.
+ */
+function byline_feed_playground_demo_links(): string {
+	$routes = array(
+		array( home_url( '/?p=1' ), 'Allowed multi-author post (view frame source for fediverse:creator and JSON-LD)' ),
+		array( get_feed_link( 'rss2' ), 'RSS2 feed' ),
+		array( get_feed_link( 'atom' ), 'Atom feed' ),
+		array( get_feed_link( 'json' ), 'JSON Feed' ),
+		array( home_url( '/?p=101' ), 'Denied by author consent (Jane allows, Sam denies)' ),
+		array( home_url( '/?p=102' ), 'Denied by post override' ),
+		array( home_url( '/ai.txt' ), 'ai.txt rights policy' ),
+	);
+
+	$items = '';
+	foreach ( $routes as $route ) {
+		$items .= sprintf(
+			"<!-- wp:list-item -->\n<li><a href=\"%s\">%s</a></li>\n<!-- /wp:list-item -->\n",
+			esc_url( $route[0] ),
+			esc_html( $route[1] )
+		);
+	}
+
+	return "<!-- wp:paragraph -->\n<p>Demo routes:</p>\n<!-- /wp:paragraph -->\n\n<!-- wp:list -->\n<ul class=\"wp-block-list\">\n" . $items . "</ul>\n<!-- /wp:list -->";
+}
+
+/**
  * Ensure deterministic demo posts exist.
  */
 function byline_feed_playground_seed_demo_content(): void {
 	if ( ! function_exists( 'wp_insert_post' ) ) {
 		return;
 	}
+
+	$links = byline_feed_playground_demo_links();
 
 	$allowed_post = get_post( BYLINE_FEED_PLAYGROUND_ALLOWED_POST_ID );
 	if ( $allowed_post instanceof WP_Post && 'post' === $allowed_post->post_type ) {
@@ -92,7 +125,7 @@ function byline_feed_playground_seed_demo_content(): void {
 				'post_name'    => 'allowed-multi-author-demo',
 				'post_status'  => 'publish',
 				'post_excerpt' => 'Inspect this singular page for fediverse:creator and JSON-LD output, then inspect the feeds for multi-author Byline output.',
-				'post_content' => "This is the primary allowed multi-author Playground demo post.\n\nInspect /?p=1 for fediverse:creator meta tags and JSON-LD Article + Person output.\nInspect /feed/, /feed/atom/, and /feed/json/ for multi-author feed output.",
+				'post_content' => "This is the primary allowed multi-author Playground demo post.\n\nInspect /?p=1 for fediverse:creator meta tags and JSON-LD Article + Person output.\nInspect /feed/, /feed/atom/, and /feed/json/ for multi-author feed output.\n\n" . $links,
 			)
 		);
 	}
@@ -102,14 +135,14 @@ function byline_feed_playground_seed_demo_content(): void {
 			'post_title'   => 'Per-Author Rights Demo',
 			'post_name'    => 'per-author-rights-demo',
 			'post_excerpt' => 'This post is denied by author consent: Jane allows, Sam denies.',
-			'post_content' => "Inspect /?p=101 for denied-page rights signaling.\n\nExpected: robots meta noai/noimageai, TDMRep header, and ai.txt remains site-level.",
+			'post_content' => "Inspect /?p=101 for denied-page rights signaling.\n\nExpected: robots meta noai/noimageai, TDMRep header, and ai.txt remains site-level.\n\n" . $links,
 			'post_meta'    => array(),
 		),
 		BYLINE_FEED_PLAYGROUND_POST_DENY_POST_ID => array(
 			'post_title'   => 'Per-Post Rights Demo',
 			'post_name'    => 'per-post-rights-demo',
 			'post_excerpt' => 'This post is denied by explicit post override.',
-			'post_content' => "Inspect /?p=102 for denied-page rights signaling driven by a post-level override.\n\nExpected: robots meta noai/noimageai, TDMRep header, and ai.txt remains site-level.",
+			'post_content' => "Inspect /?p=102 for denied-page rights signaling driven by a post-level override.\n\nExpected: robots meta noai/noimageai, TDMRep header, and ai.txt remains site-level.\n\n" . $links,
 			'post_meta'    => array(
 				'_byline_ai_consent' => 'deny',
 			),

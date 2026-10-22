@@ -23,6 +23,8 @@ npx @wp-playground/cli@latest server --blueprint=playground/output-demo.blueprin
 
 ## Demo routes
 
+Each demo post ends with a list of clickable links to these routes, because full-screen Playground hides the address bar.
+
 Allowed multi-author singular page:
 - `/?p=1`
   - inspect HTML source for:
