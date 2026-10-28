@@ -147,6 +147,59 @@ class Test_Author_Mode extends WP_UnitTestCase {
 		$this->assertSame( '', $registered['_byline_author_mode']['default'] );
 	}
 
+	/**
+	 * Render the side meta boxes for a post on a classic or block editor screen.
+	 *
+	 * @param bool $block_editor Whether the screen is the block editor.
+	 * @return string Rendered meta box HTML.
+	 */
+	private function render_side_meta_boxes( bool $block_editor ): string {
+		global $wp_meta_boxes;
+
+		require_once ABSPATH . 'wp-admin/includes/template.php';
+		require_once ABSPATH . 'wp-admin/includes/screen.php';
+
+		$wp_meta_boxes = array();
+		$post          = self::factory()->post->create_and_get();
+
+		set_current_screen( 'post' );
+		get_current_screen()->is_block_editor( $block_editor );
+
+		\Byline_Feed\Author_Mode\register_metabox();
+
+		ob_start();
+		do_meta_boxes( 'post', 'side', $post );
+		$html = (string) ob_get_clean();
+
+		$wp_meta_boxes = array();
+		set_current_screen( 'front' );
+
+		return $html;
+	}
+
+	public function test_attribution_metabox_renders_in_the_classic_editor(): void {
+		$this->assertStringContainsString( 'byline_feed_author_mode_nonce', $this->render_side_meta_boxes( false ) );
+	}
+
+	/**
+	 * The block editor has its own Attribution panel. If the classic box also
+	 * rendered there, its stale form would be posted after the REST save and
+	 * overwrite the sidebar choice.
+	 */
+	public function test_attribution_metabox_does_not_render_in_the_block_editor(): void {
+		$this->assertStringNotContainsString( 'byline_feed_author_mode_nonce', $this->render_side_meta_boxes( true ) );
+	}
+
+	public function test_saving_without_the_classic_form_keeps_the_stored_choice(): void {
+		$post_id = self::factory()->post->create();
+		update_post_meta( $post_id, '_byline_author_mode', 'organization' );
+
+		unset( $_POST['byline_feed_author_mode_nonce'], $_POST['byline_feed_author_mode'] );
+		\Byline_Feed\Author_Mode\save_metabox( $post_id );
+
+		$this->assertSame( 'organization', get_post_meta( $post_id, '_byline_author_mode', true ) );
+	}
+
 	// ────────────────────────────────────────────────────────────
 	// Standalone JSON-LD
 	// ────────────────────────────────────────────────────────────
