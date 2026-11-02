@@ -343,7 +343,7 @@ byline-feed CI tests against WordPress 6.0 through latest, plus a WordPress trun
 
 Authorship requires PHP 7.2+. Tooling (PHPCS, PHPStan) is pinned to PHP 7.4 and does not run on PHP 8.5 without deprecation suppression.
 
-byline-feed CI tests across PHP 7.4–8.3.
+byline-feed requires PHP 8.1+; CI tests across PHP 8.1–8.3.
 
 ### Multisite
 

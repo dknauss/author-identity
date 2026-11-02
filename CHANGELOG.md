@@ -19,6 +19,7 @@ When cutting a release:
 
 ## Unreleased
 
+- Changed: byline-feed now requires PHP 8.1 or newer (was 7.4). PHP 7.4 and 8.0 are end-of-life, and CI no longer tests them.
 - Fixed: in the block editor, the Attribution choice made in the sidebar no longer reverts on save. The classic Attribution box is now classic-editor only; the block editor was posting its stale value after the REST save.
 - Build: `@wordpress/scripts` 36.1.0. Editor panel bundles are now `build/<panel>.js` and `build/<panel>.asset.php` (previously `<panel>.tsx.js`); the plugin enqueues the new names.
 - CI runs on every pull request to `main`, so required checks always report.

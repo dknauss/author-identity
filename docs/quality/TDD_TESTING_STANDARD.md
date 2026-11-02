@@ -84,7 +84,7 @@ Adopt a test-driven workflow where every behavior change is introduced through f
 
 ## Quality gates
 
-- CI matrix validates against PHP 7.4, 8.0, 8.1, 8.2, 8.3 and WP 6.0, 6.4, latest.
+- CI matrix validates against PHP 8.1, 8.2, 8.3 and WP 6.4, latest, plus WordPress trunk.
 - PHPCS and PHPUnit must pass before merge.
 - Fail build on warnings and risky tests (`failOnRisky`, `failOnWarning` in `phpunit.xml.dist`).
 - Keep tests deterministic: no sleep-based timing, no remote network dependencies, no reliance on specific post IDs.
