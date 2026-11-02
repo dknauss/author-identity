@@ -40,7 +40,7 @@ Repository docs already identify the most relevant next work: remaining coverage
 
 ## Constraints
 
-- **Compatibility**: WordPress 6.0+ and PHP 7.4+ — plugin headers and tooling target this support floor
+- **Compatibility**: WordPress 6.4+ and PHP 8.1+ — plugin headers and tooling target this support floor
 - **Architecture**: All output channels must consume the same normalized author contract — this is the core design rule across the repo
 - **Scope**: Output is additive and adapter-based — the plugin must not replace standard feed elements or require upstream multi-author plugins as hard dependencies
 - **Release discipline**: Any release cut must reconcile source, tests, packaged zip, changelog, and release notes — the repo already has explicit governance docs for this

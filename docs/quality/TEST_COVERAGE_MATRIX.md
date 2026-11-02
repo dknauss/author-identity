@@ -13,7 +13,7 @@
 | --- | --- | --- |
 | PHPUnit configuration | **Covered** | `phpunit.xml.dist` exists with `failOnRisky` and `failOnWarning` enabled. |
 | WordPress test harness | **Covered** | `bin/install-wp-tests.sh` and `tests/phpunit/bootstrap.php` created. |
-| CI pipeline | **Covered** | `.github/workflows/ci.yml` — PHPUnit matrix (PHP 7.4–8.3 × WP 6.0–latest), a multisite lane, real-plugin integration jobs, PHPCS, Node build, Playwright E2E. Runs by hand via `workflow_dispatch`. |
+| CI pipeline | **Covered** | `.github/workflows/ci.yml` — PHPUnit matrix (PHP 8.1–8.3 × WP 6.4–latest), a multisite lane, real-plugin integration jobs, PHPCS, Node build, Playwright E2E. Runs by hand via `workflow_dispatch`. |
 | Local verification contract | **Covered** | [`LOCAL_VERIFICATION.md`](LOCAL_VERIFICATION.md) maps each local command to its CI job. |
 | Node build | **Covered** | CI job runs `npm run build` and the local build command is defined. |
 | PHPCS automation | **Covered** | `composer lint` configured with correct excludes. CI job runs PHPCS with `cs2pr` formatter. |

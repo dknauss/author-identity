@@ -7,7 +7,7 @@ command stands in for. All commands run from `byline-feed/` unless noted.
 
 | Need | Used by | Notes |
 |------|---------|-------|
-| PHP 7.4+ with `mysqli` | PHPUnit, PHPCS | CI runs PHP 7.4–8.3. |
+| PHP 8.1+ with `mysqli` | PHPUnit, PHPCS | CI runs PHP 8.1–8.3. |
 | Composer | PHPUnit, PHPCS | `composer install` |
 | MySQL or MariaDB | PHPUnit | Or Docker, via `bin/run-phpunit-local.sh`. |
 | WordPress test suite | PHPUnit | `bin/install-wp-tests.sh wordpress_test root root 127.0.0.1 latest` (needs Subversion and access to wordpress.org). Without wordpress.org access, a `wordpress-develop` checkout from GitHub works: point `WP_TESTS_DIR` at its `tests/phpunit` and write a `wp-tests-config.php` beside `src/`. |
