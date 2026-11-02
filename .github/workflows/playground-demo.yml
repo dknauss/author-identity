@@ -50,14 +50,21 @@ jobs:
           node-version: '24'
           check-latest: true
 
+      - name: Add a diagnostics mu-plugin (temporary, issue #88)
+        run: |
+          jq --rawfile php playground/bin/diag-mu-plugin.php \
+            '.steps += [{"step":"writeFile","path":"/wordpress/wp-content/mu-plugins/zz-diag.php","data":$php}]' \
+            playground/output-demo.blueprint.json > diag.blueprint.json
+
       - name: Start Playground with the output-demo blueprint
         run: |
           npx --yes "$PLAYGROUND_CLI" server \
-            --blueprint=playground/output-demo.blueprint.json \
+            --blueprint=diag.blueprint.json \
             --port="$PLAYGROUND_PORT" > playground-server.log 2>&1 &
           for attempt in $(seq 1 90); do
             if curl --silent --fail --output /dev/null "http://127.0.0.1:${PLAYGROUND_PORT}/"; then
               echo "Playground is up after ${attempt} checks."
+              grep -c 'Ready!' playground-server.log || echo "Ready not logged yet"
               exit 0
             fi
             sleep 2
@@ -66,15 +73,16 @@ jobs:
           cat playground-server.log
           exit 1
 
-      # Each Playground worker's first page view of post 1 comes back without
-      # Byline Feed's head tags (fediverse:creator, author meta); later views
-      # have them. Until that is root-caused (issue #88), warm each
-      # of the CLI's three workers so the checks test the plugin's output.
-      - name: Warm up the Playground workers
+      - name: Diagnose first views (temporary, issue #88)
         run: |
-          for i in 1 2 3; do
-            curl --silent --location --output /dev/null "http://127.0.0.1:${PLAYGROUND_PORT}/?p=1"
+          grep -v EBADENGINE playground-server.log || true
+          for n in 1 2 3 4 5 6; do
+            curl --silent --location --dump-header "h$n.txt" "http://127.0.0.1:${PLAYGROUND_PORT}/?p=1" > "b$n.html"
+            echo "== request $n: $(grep -oE '<title>[^<]*' b$n.html | head -1)"
+            grep -oE '<!-- diag[^>]*>' "b$n.html" || echo "(no diag comment)"
+            grep -cE 'meta name="fediverse:creator"' "b$n.html" || true
           done
+          echo "== full first body head"; sed -n '1,/<\/head>/p' b1.html | head -120
 
       - name: Check every demo route
         run: playground/bin/smoke-test-output-demo.sh "http://127.0.0.1:${PLAYGROUND_PORT}"
