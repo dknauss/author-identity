@@ -80,27 +80,20 @@ Admin-only audit log:
 ## Public demo URLs
 
 Primary singular page:
-- [/?p=1](https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2Fdknauss%2Fauthor-identity%2Fcodex%2Fplayground-assets%2Fplayground%2Fpublic%2Foutput-demo.blueprint.json&url=%2F%3Fp%3D1&mode=browser-full-screen&login=no)
+- [/?p=1](https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2Fdknauss%2Fauthor-identity%2Fmain%2Fplayground%2Foutput-demo.blueprint.json&url=%2F%3Fp%3D1&mode=browser-full-screen&login=no)
 
 Feed routes:
-- [/feed/](https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2Fdknauss%2Fauthor-identity%2Fcodex%2Fplayground-assets%2Fplayground%2Fpublic%2Foutput-demo.blueprint.json&url=%2Ffeed%2F&mode=browser-full-screen&login=no)
-- [/feed/atom/](https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2Fdknauss%2Fauthor-identity%2Fcodex%2Fplayground-assets%2Fplayground%2Fpublic%2Foutput-demo.blueprint.json&url=%2Ffeed%2Fatom%2F&mode=browser-full-screen&login=no)
-- [/feed/json/](https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2Fdknauss%2Fauthor-identity%2Fcodex%2Fplayground-assets%2Fplayground%2Fpublic%2Foutput-demo.blueprint.json&url=%2Ffeed%2Fjson%2F&mode=browser-full-screen&login=no)
+- [/feed/](https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2Fdknauss%2Fauthor-identity%2Fmain%2Fplayground%2Foutput-demo.blueprint.json&url=%2Ffeed%2F&mode=browser-full-screen&login=no)
+- [/feed/atom/](https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2Fdknauss%2Fauthor-identity%2Fmain%2Fplayground%2Foutput-demo.blueprint.json&url=%2Ffeed%2Fatom%2F&mode=browser-full-screen&login=no)
+- [/feed/json/](https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2Fdknauss%2Fauthor-identity%2Fmain%2Fplayground%2Foutput-demo.blueprint.json&url=%2Ffeed%2Fjson%2F&mode=browser-full-screen&login=no)
 
 Denied rights demos:
-- [/?p=101](https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2Fdknauss%2Fauthor-identity%2Fcodex%2Fplayground-assets%2Fplayground%2Fpublic%2Foutput-demo.blueprint.json&url=%2F%3Fp%3D101&mode=browser-full-screen&login=no)
-- [/?p=102](https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2Fdknauss%2Fauthor-identity%2Fcodex%2Fplayground-assets%2Fplayground%2Fpublic%2Foutput-demo.blueprint.json&url=%2F%3Fp%3D102&mode=browser-full-screen&login=no)
-- [/ai.txt](https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2Fdknauss%2Fauthor-identity%2Fcodex%2Fplayground-assets%2Fplayground%2Fpublic%2Foutput-demo.blueprint.json&url=%2Fai.txt&mode=browser-full-screen&login=no)
+- [/?p=101](https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2Fdknauss%2Fauthor-identity%2Fmain%2Fplayground%2Foutput-demo.blueprint.json&url=%2F%3Fp%3D101&mode=browser-full-screen&login=no)
+- [/?p=102](https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2Fdknauss%2Fauthor-identity%2Fmain%2Fplayground%2Foutput-demo.blueprint.json&url=%2F%3Fp%3D102&mode=browser-full-screen&login=no)
+- [/ai.txt](https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2Fdknauss%2Fauthor-identity%2Fmain%2Fplayground%2Foutput-demo.blueprint.json&url=%2Fai.txt&mode=browser-full-screen&login=no)
 
 Notes:
 - This is the source-of-truth bundle for the public Playground demo.
-- The public CTA points to the stable `codex/playground-assets` blueprint URL.
-- Each refresh republishes that stable blueprint while pinning plugin installation to a fresh immutable source tag for the current commit.
+- The public CTA and the links above load `playground/output-demo.blueprint.json` from `main`, which installs the plugin from the pinned release ZIP. Updating the demo means editing that blueprint and bumping its release URL; no separate publish step is needed.
 - Local snapshot ZIPs built from this bundle are still useful for offline sharing and local archival demos.
 - A separate adapter-demo blueprint for Co-Authors Plus and PublishPress Authors is intentionally deferred.
-
-Public refresh command:
-
-```bash
-playground/bin/publish-output-demo.sh
-```
