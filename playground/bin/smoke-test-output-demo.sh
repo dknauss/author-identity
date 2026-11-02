@@ -30,6 +30,8 @@ check() {
 		echo "ok    ${label}: found '${needle}'"
 	else
 		echo "FAIL  ${label}: '${needle}' not found at ${path}"
+		echo "      <meta> and <link> tags in that response, for diagnosis:"
+		grep -oE '<(meta|link)[^>]*>' <<<"$body" | head -n 40 | sed 's/^/        /' || true
 		failures=$((failures + 1))
 	fi
 }
