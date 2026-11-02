@@ -11,7 +11,7 @@ Purpose:
 - keep the admin-only AI consent audit trail out of public output while documenting where to inspect it locally
 
 What it installs:
-- `byline-feed` from the `main` branch of this repository via `git:directory`
+- `byline-feed` from the pinned release ZIP (currently v0.1.0), fetched through the Playground CORS proxy
 - a small mu-plugin that injects deterministic authors and rights fixtures
 - no third-party multi-author plugin dependencies
 
@@ -20,6 +20,8 @@ Local usage:
 ```bash
 npx @wp-playground/cli@latest server --blueprint=playground/output-demo.blueprint.json
 ```
+
+Open the site after the CLI prints `Ready!`. The CLI starts answering requests while the blueprint is still running, so a page loaded earlier shows the stock "Hello world!" post without Byline Feed's output.
 
 ## Demo routes
 
