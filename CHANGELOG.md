@@ -19,6 +19,7 @@ When cutting a release:
 
 ## Unreleased
 
+- Fixed: in the block editor, the Attribution choice made in the sidebar no longer reverts on save. The classic Attribution box is now classic-editor only; the block editor was posting its stale value after the REST save.
 - Build: `@wordpress/scripts` 36.1.0. Editor panel bundles are now `build/<panel>.js` and `build/<panel>.asset.php` (previously `<panel>.tsx.js`); the plugin enqueues the new names.
 - CI runs on every pull request to `main`, so required checks always report.
 - Dev: `@wordpress/env` 12.0.0 (brings `simple-git` 4.0.2, a security update). The postinstall patch still applies.
