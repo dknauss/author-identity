@@ -10,8 +10,7 @@ This directory holds reproducible WordPress Playground assets for `byline-feed`.
     - RSS2, Atom, and JSON Feed output
     - `fediverse:creator` and JSON-LD on a singular page
     - denied rights signaling via `robots` meta, `TDMRep`, and `ai.txt`
-  - now backs the public `Try in Playground` CTA through an immutable published blueprint
-  - refreshed with `playground/bin/publish-output-demo.sh`
+  - backs the public `Try in Playground` CTA through `output-demo.blueprint.json` on `main`, which pins the plugin to a release ZIP
 
 ## Later target
 

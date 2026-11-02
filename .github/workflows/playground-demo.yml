@@ -1,0 +1,84 @@
+name: Playground demo
+
+# Boots the public output-demo blueprint in WordPress Playground CLI and checks
+# every demo route. The blueprint installs the pinned release ZIP through the
+# Playground CORS proxy, exactly as the public "Try in Playground" link does,
+# so this also catches a moved release asset or a broken proxy path.
+# Not a required check: it depends on external services.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'playground/**'
+      - '.github/workflows/playground-demo.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'playground/**'
+      - '.github/workflows/playground-demo.yml'
+  schedule:
+    # Weekly, Monday 06:30 UTC: the demo depends on Playground and the proxy.
+    - cron: '30 6 * * 1'
+  workflow_dispatch:
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+  PLAYGROUND_CLI: '@wp-playground/cli@3.1.60'
+  PLAYGROUND_PORT: '9400'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  smoke:
+    name: Output demo smoke test
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: '24'
+          check-latest: true
+
+      - name: Start Playground with the output-demo blueprint
+        run: |
+          npx --yes "$PLAYGROUND_CLI" server \
+            --blueprint=playground/output-demo.blueprint.json \
+            --port="$PLAYGROUND_PORT" > playground-server.log 2>&1 &
+          for attempt in $(seq 1 90); do
+            if curl --silent --fail --output /dev/null "http://127.0.0.1:${PLAYGROUND_PORT}/"; then
+              echo "Playground is up after ${attempt} checks."
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "Playground did not start within 3 minutes."
+          cat playground-server.log
+          exit 1
+
+      # Each Playground worker's first page view of post 1 comes back without
+      # Byline Feed's head tags (fediverse:creator, author meta); later views
+      # have them. Until that is root-caused (issue #88), warm each
+      # of the CLI's three workers so the checks test the plugin's output.
+      - name: Warm up the Playground workers
+        run: |
+          for i in 1 2 3; do
+            curl --silent --location --output /dev/null "http://127.0.0.1:${PLAYGROUND_PORT}/?p=1"
+          done
+
+      - name: Check every demo route
+        run: playground/bin/smoke-test-output-demo.sh "http://127.0.0.1:${PLAYGROUND_PORT}"
+
+      - name: Show the Playground log
+        if: failure()
+        run: cat playground-server.log

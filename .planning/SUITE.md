@@ -58,6 +58,11 @@ Authorship (data: who is attributed)          Byline spec (vocabulary)
 
 ## Status log
 
+- 2026-11-02: author-identity#80 kept the classic Attribution box out of the
+  block editor. Counterparts: none needed. Authorship has no classic meta box
+  and saves authors only through its REST field; Byline is spec-only.
+  author-identity#87 cleared the high-severity npm advisories and fixed the
+  dead Playground deep links. The Playground demo still needs a browser check.
 - 2026-10-22: Byline Feed 0.1.0 released
   ([v0.1.0](https://github.com/dknauss/author-identity/releases/tag/v0.1.0),
   zip plus SHA-256). Issues #69–#72 closed. Still to do: open the Playground

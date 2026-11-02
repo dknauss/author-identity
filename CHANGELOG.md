@@ -23,6 +23,10 @@ When cutting a release:
 - Build: `@wordpress/scripts` 36.1.0. Editor panel bundles are now `build/<panel>.js` and `build/<panel>.asset.php` (previously `<panel>.tsx.js`); the plugin enqueues the new names.
 - CI runs on every pull request to `main`, so required checks always report.
 - Dev: `@wordpress/env` 12.0.0 (brings `simple-git` 4.0.2, a security update). The postinstall patch still applies.
+- Docs: the Playground deep links in `playground/output-demo/README.md` pointed at the `codex/playground-assets` branch, which no longer exists, so all seven returned a 404 blueprint. They now load `output-demo.blueprint.json` from `main`, like the README CTA. Removed `playground/bin/publish-output-demo.sh`, which only published to that branch.
+- CI: a new `Playground demo` workflow boots the public output-demo blueprint and checks each route for its Byline output (fediverse:creator, JSON-LD, the three feeds, both denial demos, `ai.txt`). It runs on `playground/` changes and weekly. It warms Playground's workers first, because a worker's first view of post 1 is missing the fediverse and author meta tags (#88).
+- Dev: scoped the `brace-expansion` override to the 2.x line and dropped the `markdownlint-cli` → `minimatch` 3.x override. Both forced old versions onto packages that need newer ones, which crashed `wp-scripts lint-js` and `markdownlint`.
+- Security (dev dependencies): npm overrides raised to patched releases of `adm-zip`, `body-parser`, `brace-expansion`, `js-yaml`, `katex`, `markdown-it`, `qs`, `serialize-javascript` and `smol-toml`, which clears every high-severity `npm audit` finding. `smol-toml` is forced past the `~1.7.0` pin that `@wordpress/scripts` 37 carries through `markdownlint-cli`. Still open, with no patched release in the majors in use: `deepmerge` (low), `glob` and `minimatch` (moderate).
 
 ## 0.1.0 - 2026-10-22
 
