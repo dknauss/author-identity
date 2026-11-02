@@ -23,6 +23,7 @@ When cutting a release:
 - Build: `@wordpress/scripts` 36.1.0. Editor panel bundles are now `build/<panel>.js` and `build/<panel>.asset.php` (previously `<panel>.tsx.js`); the plugin enqueues the new names.
 - CI runs on every pull request to `main`, so required checks always report.
 - Dev: `@wordpress/env` 12.0.0 (brings `simple-git` 4.0.2, a security update). The postinstall patch still applies.
+- Security (dev dependencies): npm overrides raised to patched releases of `adm-zip`, `body-parser`, `brace-expansion`, `js-yaml`, `katex`, `markdown-it`, `qs`, `serialize-javascript` and `smol-toml`, which clears every high-severity `npm audit` finding. `smol-toml` is forced past the `~1.7.0` pin that `@wordpress/scripts` 37 carries through `markdownlint-cli`. Still open, with no patched release in the majors in use: `deepmerge` (low), `glob` and `minimatch` (moderate).
 
 ## 0.1.0 - 2026-10-22
 

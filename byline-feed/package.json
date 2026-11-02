@@ -22,7 +22,7 @@
 	},
 	"overrides": {
 		"copy-webpack-plugin": {
-			"serialize-javascript": "7.0.5"
+			"serialize-javascript": "7.1.4"
 		},
 		"@sentry/node": {
 			"minimatch": "9.0.7"
@@ -37,12 +37,15 @@
 			"yauzl": "3.2.1"
 		},
 		"webpack-dev-server": "5.2.6",
-		"adm-zip": "0.6.0",
-		"brace-expansion": "2.1.4",
-		"js-yaml": "4.3.1",
+		"adm-zip": "0.6.1",
+		"brace-expansion": "2.1.7",
+		"js-yaml": "4.3.2",
 		"linkify-it": "5.0.2",
-		"markdown-it": "14.2.0",
+		"markdown-it": "14.3.3",
 		"uuid": "11.1.1",
-		"body-parser": "1.20.6"
+		"body-parser": "1.20.9",
+		"katex": "0.18.11",
+		"qs": "6.17.1",
+		"smol-toml": "1.9.1"
 	}
 }
