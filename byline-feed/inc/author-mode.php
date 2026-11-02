@@ -84,6 +84,11 @@ function get_stored_author_mode( \WP_Post $post ): string {
 
 /**
  * Register the classic editor metabox.
+ *
+ * The block editor has its own Attribution panel, which saves through the
+ * REST API. The box is marked classic-only so the block editor never renders
+ * it: if it did, the block editor would post the box's form after the REST
+ * save, and the box's stale value would overwrite the sidebar choice.
  */
 function register_metabox(): void {
 	foreach ( get_post_types( array( 'public' => true ) ) as $post_type ) {
@@ -93,7 +98,8 @@ function register_metabox(): void {
 			__NAMESPACE__ . '\\render_metabox',
 			$post_type,
 			'side',
-			'default'
+			'default',
+			array( '__back_compat_meta_box' => true )
 		);
 	}
 }
