@@ -30,15 +30,11 @@
 		"@typescript-eslint/typescript-estree": {
 			"minimatch": "9.0.7"
 		},
-		"markdownlint-cli": {
-			"minimatch": "3.1.5"
-		},
 		"extract-zip": {
 			"yauzl": "3.2.1"
 		},
 		"webpack-dev-server": "5.2.6",
 		"adm-zip": "0.6.1",
-		"brace-expansion": "2.1.7",
 		"js-yaml": "4.3.2",
 		"linkify-it": "5.0.2",
 		"markdown-it": "14.3.3",
@@ -46,6 +42,7 @@
 		"body-parser": "1.20.9",
 		"katex": "0.18.11",
 		"qs": "6.17.1",
-		"smol-toml": "1.9.1"
+		"smol-toml": "1.9.1",
+		"brace-expansion@^2.0.0": "2.1.7"
 	}
 }

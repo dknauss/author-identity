@@ -95,5 +95,6 @@ Denied rights demos:
 Notes:
 - This is the source-of-truth bundle for the public Playground demo.
 - The public CTA and the links above load `playground/output-demo.blueprint.json` from `main`, which installs the plugin from the pinned release ZIP. Updating the demo means editing that blueprint and bumping its release URL; no separate publish step is needed.
+- The `Playground demo` workflow boots this blueprint in Playground CLI and runs `playground/bin/smoke-test-output-demo.sh` against every route. It runs on pull requests that touch `playground/`, on pushes to `main`, and weekly. Run the script yourself against any running demo: `playground/bin/smoke-test-output-demo.sh http://127.0.0.1:9400`.
 - Local snapshot ZIPs built from this bundle are still useful for offline sharing and local archival demos.
 - A separate adapter-demo blueprint for Co-Authors Plus and PublishPress Authors is intentionally deferred.
