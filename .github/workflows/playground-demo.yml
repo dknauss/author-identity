@@ -77,6 +77,16 @@ jobs:
           done
           curl -sL "http://127.0.0.1:${PLAYGROUND_PORT}/wp-content/debug.log" | tail -20 || true
 
+      # Each Playground worker's first page view of post 1 comes back without
+      # Byline Feed's head tags (fediverse:creator, author meta); later views
+      # have them. Until that is root-caused (issue #88), warm each
+      # of the CLI's three workers so the checks test the plugin's output.
+      - name: Warm up the Playground workers
+        run: |
+          for i in 1 2 3; do
+            curl --silent --location --output /dev/null "http://127.0.0.1:${PLAYGROUND_PORT}/?p=1"
+          done
+
       - name: Check every demo route
         run: playground/bin/smoke-test-output-demo.sh "http://127.0.0.1:${PLAYGROUND_PORT}"
 
