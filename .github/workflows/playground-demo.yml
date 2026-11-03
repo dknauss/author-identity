@@ -50,31 +50,25 @@ jobs:
           node-version: '24'
           check-latest: true
 
+      # Wait for the CLI's "Ready!" line, not just for "/" to answer. The CLI
+      # can serve requests while the blueprint is still running, so a page
+      # fetched then comes from a site without the plugin and demo fixtures
+      # (issue #88). The CLI prints "Ready!" after the last blueprint step.
       - name: Start Playground with the output-demo blueprint
         run: |
           npx --yes "$PLAYGROUND_CLI" server \
             --blueprint=playground/output-demo.blueprint.json \
             --port="$PLAYGROUND_PORT" > playground-server.log 2>&1 &
           for attempt in $(seq 1 90); do
-            if curl --silent --fail --output /dev/null "http://127.0.0.1:${PLAYGROUND_PORT}/"; then
-              echo "Playground is up after ${attempt} checks."
+            if grep -q 'Ready!' playground-server.log; then
+              echo "Playground finished the blueprint after ${attempt} checks."
               exit 0
             fi
             sleep 2
           done
-          echo "Playground did not start within 3 minutes."
+          echo "Playground did not finish the blueprint within 3 minutes."
           cat playground-server.log
           exit 1
-
-      # Each Playground worker's first page view of post 1 comes back without
-      # Byline Feed's head tags (fediverse:creator, author meta); later views
-      # have them. Until that is root-caused (issue #88), warm each
-      # of the CLI's three workers so the checks test the plugin's output.
-      - name: Warm up the Playground workers
-        run: |
-          for i in 1 2 3; do
-            curl --silent --location --output /dev/null "http://127.0.0.1:${PLAYGROUND_PORT}/?p=1"
-          done
 
       - name: Check every demo route
         run: playground/bin/smoke-test-output-demo.sh "http://127.0.0.1:${PLAYGROUND_PORT}"

@@ -7,6 +7,10 @@
 #   npx @wp-playground/cli@3.1.60 server \
 #     --blueprint=playground/output-demo.blueprint.json --port=9400
 #
+# Wait until the CLI prints "Ready!". It answers requests while the blueprint
+# is still running, and a page fetched before then comes from a site without
+# the plugin or the demo fixtures.
+#
 # Usage: playground/bin/smoke-test-output-demo.sh [base-url]
 # The base URL defaults to http://127.0.0.1:9400.
 
