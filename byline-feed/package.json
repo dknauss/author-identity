@@ -43,6 +43,8 @@
 		"katex": "0.18.11",
 		"qs": "6.17.1",
 		"smol-toml": "1.9.1",
-		"brace-expansion@^2.0.0": "2.1.7"
+		"brace-expansion@^2.0.0": "2.1.7",
+		"fast-xml-parser": "5.12.1",
+		"isomorphic-git": "1.44.15"
 	}
 }
