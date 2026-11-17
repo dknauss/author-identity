@@ -58,6 +58,13 @@ Authorship (data: who is attributed)          Byline spec (vocabulary)
 
 ## Status log
 
+- 2026-11-17: author-identity#92 credits every co-author in fediverse
+  previews: Byline Feed's per-author `fediverse:creator` tags now replace
+  TSF's and ActivityPub's single-author tag, handles fall back to TSF's field
+  or the local ActivityPub actor, and CAP/PPA guest authors get a handle
+  field. Counterparts: none needed. Authorship guest authors are WordPress
+  users and use the profile field; Byline's `profile rel="mastodon"` is
+  unchanged.
 - 2026-11-02: author-identity#80 kept the classic Attribution box out of the
   block editor. Counterparts: none needed. Authorship has no classic meta box
   and saves authors only through its REST field; Byline is spec-only.
