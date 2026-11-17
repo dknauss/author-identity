@@ -35,7 +35,8 @@ This matters most in WP-05 (JSON-LD Person objects indexed by Google). A Gravata
 
 - Guest authors (`is_guest: true`) MUST return empty string — no domain-anchored AP identity.
 - Adapter resolution: check user meta for AP plugin's stored actor URL; construct it if AP plugin is active and meta is absent.
-- This plugin may surface `ap_actor_url` as supporting identity data for WP-04 and WP-05, but `fediverse:creator` tags are driven by the authored `fediverse` handle. Do not substitute one for the other.
+- This plugin may surface `ap_actor_url` as supporting identity data for WP-04 and WP-05, but `fediverse:creator` tags are driven by the `fediverse` handle. Do not substitute one for the other.
+- `fediverse` is composite: the typed handle wins; with none typed and source `auto`, a derived handle comes from TSF's `fediverse_page` field or the local ActivityPub actor's webfinger (only when ActivityPub lists this site as an attribution domain). Never derive a handle from `profiles` or `ap_actor_url`. Guests use a handle stored on their guest record and have no derived sources.
 
 ## did:web: — reserved future work, not in the current contract
 
@@ -49,7 +50,7 @@ Hard boundary. Do not cross it.
 
 | Signal | Owner |
 |---|---|
-| `fediverse:creator` meta tags (per author) | This plugin (it removes Jetpack Social's tag in organization mode, and when it prints its own) |
+| `fediverse:creator` meta tags (per author) | This plugin (it removes Jetpack Social's, TSF's and ActivityPub's tags in organization mode, and when it prints its own) |
 | `ap_actor_url` in JSON-LD `sameAs` | This plugin |
 | `attributedTo` on federated AP object | ActivityPub plugin |
 | HTTP Signatures, WebFinger, actor JSON | ActivityPub plugin |

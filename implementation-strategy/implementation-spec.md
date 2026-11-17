@@ -124,7 +124,7 @@ The gates below prevent broader scope from diluting MVP execution while recogniz
 
 **Identity-boundary note.** `ap_actor_url` is now part of the active WP-04/WP-05 design boundary because it distinguishes cryptographically meaningful ActivityPub identity from ordinary declared profile links. `did:web:` remains vision-level future work rather than an official work package. It should not be added to the normalized contract or roadmap until the current post-MVP outputs ship and there is a concrete consumer for DID-based identity.
 
-**Future fediverse-identity note.** The current release intentionally keeps `fediverse` (explicit handle) separate from `ap_actor_url` (derived ActivityPub identity). A later maintenance tranche should move fediverse attribution to a source-based model that can default to local ActivityPub identity when confidently resolvable, while still allowing manual override and explicit opt-out. See [docs/planning/fediverse-identity-design.md](../docs/planning/fediverse-identity-design.md).
+**Fediverse-identity note.** `fediverse` (the handle) stays separate from `ap_actor_url` (derived ActivityPub identity). Since November 2026 the handle follows a source-based model: a typed handle wins; otherwise, with the source on `auto`, it comes from The SEO Framework's per-user Fediverse field or the local ActivityPub actor when that actor can be credited. Authors can limit it to the typed handle or opt out. See [docs/planning/fediverse-identity-design.md](../docs/planning/fediverse-identity-design.md).
 
 ## Release gates
 

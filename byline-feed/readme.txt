@@ -80,7 +80,7 @@ RSS2, Atom, and JSON Feed are supported now.
 
 = Does this support Mastodon author attribution? =
 
-Yes. If an author has a fediverse handle configured in their WordPress profile, Byline Feed outputs `<meta name="fediverse:creator">` tags on singular content so compatible fediverse consumers can attribute shared links.
+Yes. Byline Feed outputs one `<meta name="fediverse:creator">` tag per author on singular content, in byline order. An author's handle comes from their profile, or, when they leave it empty, from The SEO Framework's Fediverse profile field or their ActivityPub profile on this site. Guest authors in Co-Authors Plus and PublishPress Authors get a handle field of their own. Jetpack's, The SEO Framework's and ActivityPub's single-author tags give way to Byline Feed's. Mastodon currently shows the first author only, and only if that author lists your site under Verification, Author attribution.
 
 = Where can I see the exact XML this plugin emits? =
 

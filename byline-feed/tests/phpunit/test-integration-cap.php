@@ -112,6 +112,40 @@ class Test_Integration_CAP extends WP_UnitTestCase {
 		$this->assertSame( 0, $guest->user_id );
 	}
 
+	public function test_guest_author_fediverse_handle_is_read_from_guest_record(): void {
+		global $coauthors_plus;
+
+		if ( empty( $coauthors_plus->guest_authors ) || ! method_exists( $coauthors_plus->guest_authors, 'create' ) ) {
+			\byline_feed_tests_require_integration( $this, 'BYLINE_CAP_PLUGIN', 'CAP guest author creation API not available.' );
+		}
+
+		$keys = array_column( $coauthors_plus->guest_authors->get_guest_author_fields(), 'key' );
+		$this->assertContains( 'byline_feed_fediverse', $keys, 'Guest author screen should offer a fediverse handle field.' );
+
+		$guest_id = $coauthors_plus->guest_authors->create(
+			array(
+				'display_name' => 'CAP Fedi Guest',
+				'user_login'   => 'cap-fedi-guest',
+			)
+		);
+
+		if ( is_wp_error( $guest_id ) ) {
+			$this->fail( 'Could not create CAP guest author: ' . $guest_id->get_error_message() );
+		}
+
+		update_post_meta( $guest_id, $coauthors_plus->guest_authors->get_post_meta_key( 'byline_feed_fediverse' ), '@capguest@example.social' );
+		$coauthors_plus->guest_authors->delete_guest_author_cache( $guest_id );
+
+		$post_id = self::factory()->post->create( array( 'post_status' => 'publish' ) );
+		$this->add_coauthors( $post_id, array( 'cap-fedi-guest' ), 'user_login' );
+
+		$authors = byline_feed_get_authors( get_post( $post_id ) );
+		$ids     = array_column( $authors, 'id' );
+		$guest   = $authors[ array_search( 'cap-fedi-guest', $ids, true ) ];
+
+		$this->assertSame( '@capguest@example.social', $guest->fediverse );
+	}
+
 	public function test_multi_author_post_returns_all_coauthors_in_order(): void {
 		$user_one = self::factory()->user->create(
 			array(
