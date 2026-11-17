@@ -20,6 +20,87 @@ defined( 'ABSPATH' ) || exit;
 function register_hooks(): void {
 	add_action( 'wp_head', __NAMESPACE__ . '\\render_meta_tags' );
 	add_filter( 'jetpack_open_graph_tags', __NAMESPACE__ . '\\filter_jetpack_open_graph_tags', 20 );
+	add_filter( 'the_seo_framework_meta_render_data', __NAMESPACE__ . '\\filter_tsf_meta_render_data', 20 );
+	add_filter( 'opengraph_metadata', __NAMESPACE__ . '\\filter_activitypub_opengraph_metadata', 20 );
+}
+
+/**
+ * Decide whether another plugin's `fediverse:creator` tag should go.
+ *
+ * Mastodon reads only the first `fediverse:creator` tag on a page, and other
+ * plugins credit one person at most (the post author, or a site-wide
+ * fallback). Their tag goes on singular posts:
+ *   - in `organization` mode, where no personal creator is credited;
+ *   - when this plugin prints its own handles, which name every author.
+ * Otherwise it stays.
+ *
+ * @return bool
+ */
+function should_remove_foreign_creator(): bool {
+	if ( ! is_singular() ) {
+		return false;
+	}
+
+	$post = get_queried_object();
+
+	if ( ! $post instanceof WP_Post ) {
+		return false;
+	}
+
+	return 'organization' === byline_feed_get_author_mode( $post )
+		|| array() !== get_handles_for_post( $post );
+}
+
+/**
+ * Remove The SEO Framework's `fediverse:creator` tag where this plugin decides.
+ *
+ * TSF (5.2+) prints one tag at `wp_head` priority 1, before ours, so Mastodon
+ * would credit TSF's single author. Its `rel=me` links are left alone.
+ *
+ * @param array $tags TSF render data, keyed by tag ID.
+ * @return array
+ */
+function filter_tsf_meta_render_data( $tags ) {
+	if ( ! is_array( $tags ) || ! isset( $tags['fediverse:creator'] ) || ! should_remove_foreign_creator() ) {
+		return $tags;
+	}
+
+	unset( $tags['fediverse:creator'] );
+
+	return $tags;
+}
+
+/**
+ * Remove the ActivityPub plugin's `fediverse:creator` tag where this plugin decides.
+ *
+ * ActivityPub adds the post author's local handle through the
+ * `opengraph_metadata` filter. Its "OpenGraph" setting should stay on: it
+ * also lists this site as allowed to credit the site's actors. In
+ * single-user (blog) mode its tag names the site's own actor, which is the
+ * right credit for a post in `organization` mode, so it stays there.
+ *
+ * @param array $metadata Open Graph metadata.
+ * @return array
+ */
+function filter_activitypub_opengraph_metadata( $metadata ) {
+	if ( ! is_array( $metadata ) || ! isset( $metadata['fediverse:creator'] ) || ! should_remove_foreign_creator() ) {
+		return $metadata;
+	}
+
+	$post = get_queried_object();
+
+	if (
+		$post instanceof WP_Post
+		&& 'organization' === byline_feed_get_author_mode( $post )
+		&& function_exists( '\\Activitypub\\is_single_user' )
+		&& \Activitypub\is_single_user()
+	) {
+		return $metadata;
+	}
+
+	unset( $metadata['fediverse:creator'] );
+
+	return $metadata;
 }
 
 /**
@@ -38,22 +119,11 @@ function register_hooks(): void {
  * @return array
  */
 function filter_jetpack_open_graph_tags( $tags ) {
-	if ( ! is_array( $tags ) || ! isset( $tags['fediverse:creator'] ) || ! is_singular() ) {
+	if ( ! is_array( $tags ) || ! isset( $tags['fediverse:creator'] ) || ! should_remove_foreign_creator() ) {
 		return $tags;
 	}
 
-	$post = get_queried_object();
-
-	if ( ! $post instanceof WP_Post ) {
-		return $tags;
-	}
-
-	if (
-		'organization' === byline_feed_get_author_mode( $post )
-		|| array() !== get_handles_for_post( $post )
-	) {
-		unset( $tags['fediverse:creator'] );
-	}
+	unset( $tags['fediverse:creator'] );
 
 	return $tags;
 }

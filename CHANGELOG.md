@@ -19,6 +19,11 @@ When cutting a release:
 
 ## Unreleased
 
+- Added: co-authors now reach Mastodon even alongside The SEO Framework or the ActivityPub plugin. Both print one `fediverse:creator` tag for the post author or a site fallback, and Mastodon reads only the first tag on a page. TSF prints before Byline Feed, so its single author won. Byline Feed now removes their tag, as it already did Jetpack's, in `organization` mode and whenever it prints handles of its own. TSF's `rel=me` links stay.
+- Added: fediverse handles for authors who typed none in Byline Feed. With the new "Credit on shared links" setting on Automatic (the default), Byline Feed uses the handle from The SEO Framework's "Fediverse profile" field, or else the author's local ActivityPub handle when the ActivityPub plugin lets this site credit it. A typed handle still wins. "Only the handle above" and "Do not credit me" opt out (`byline_feed_fediverse_source`; filter `byline_feed_derived_fediverse_handle`).
+- Added: a "Fediverse handle" field for guest authors with no user account, on Co-Authors Plus guest authors and PublishPress Authors guest authors.
+- CI: a new integration lane runs the suite against The SEO Framework.
+
 - Changed: byline-feed now requires PHP 8.1 or newer (was 7.4) and WordPress 6.4 or newer (was 6.0). PHP 7.4 and 8.0 are end-of-life, and CI no longer tests them or WordPress 6.0.
 - Fixed: in the block editor, the Attribution choice made in the sidebar no longer reverts on save. The classic Attribution box is now classic-editor only; the block editor was posting its stale value after the REST save.
 - Build: `@wordpress/scripts` 36.1.0. Editor panel bundles are now `build/<panel>.js` and `build/<panel>.asset.php` (previously `<panel>.tsx.js`); the plugin enqueues the new names.

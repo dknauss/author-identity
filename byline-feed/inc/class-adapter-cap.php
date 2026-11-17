@@ -64,6 +64,11 @@ class Adapter_CAP implements Adapter {
 		$ap_actor_url = '';
 		$ai_consent   = '';
 
+		if ( $is_guest ) {
+			// Authored on the guest record; guests have no derived sources.
+			$fediverse = normalize_byline_feed_fediverse( $coauthor->byline_feed_fediverse ?? '' );
+		}
+
 		if ( $user_id ) {
 			$fediverse       = get_byline_feed_fediverse_for_user( $user_id );
 			$ap_actor_url    = get_byline_feed_ap_actor_url_for_user( $user_id );

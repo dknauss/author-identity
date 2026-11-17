@@ -322,6 +322,61 @@ jobs:
           WP_TESTS_DIR: /tmp/wordpress-tests-lib
           BYLINE_ACTIVITYPUB_PLUGIN: /tmp/plugins/activitypub/activitypub.php
 
+  integration-tsf:
+    name: Integration — The SEO Framework
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: byline-feed
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: wordpress_test
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up PHP 8.2
+        uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # v2
+        with:
+          php-version: '8.2'
+          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, mysql, mysqli, pdo_mysql, bcmath, soap, intl, gd, exif, iconv
+          coverage: none
+
+      - name: Install Composer dependencies
+        run: composer install --prefer-dist --no-progress
+
+      - name: Install Subversion
+        run: sudo apt-get update && sudo apt-get install -y subversion
+
+      - name: Install WordPress test suite
+        run: bash bin/install-wp-tests.sh wordpress_test root root 127.0.0.1 latest true
+        env:
+          WP_TESTS_DIR: /tmp/wordpress-tests-lib
+          WP_CORE_DIR: /tmp/wordpress
+
+      - name: Download The SEO Framework
+        run: |
+          curl -sL https://downloads.wordpress.org/plugin/autodescription.latest-stable.zip -o /tmp/autodescription.zip
+          unzip -q /tmp/autodescription.zip -d /tmp/plugins
+
+      - name: Run PHPUnit with The SEO Framework
+        run: vendor/bin/phpunit
+        env:
+          WP_TESTS_DIR: /tmp/wordpress-tests-lib
+          BYLINE_TSF_PLUGIN: /tmp/plugins/autodescription/autodescription.php
+
   phpcs:
     name: PHPCS
     runs-on: ubuntu-latest

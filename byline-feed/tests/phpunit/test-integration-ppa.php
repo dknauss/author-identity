@@ -137,6 +137,15 @@ class Test_Integration_PPA extends WP_UnitTestCase {
 		$this->assertSame( 'https://cdn.example.com/ppa-guest-writer.jpg', $authors[0]->avatar_url );
 		$this->assertSame( '', $authors[0]->fediverse );
 		$this->assertSame( '', $authors[0]->ai_consent );
+
+		update_term_meta( $guest_author->term_id, 'byline_feed_fediverse', '@ppaguest@example.social' );
+
+		$this->assertSame( '@ppaguest@example.social', byline_feed_get_authors( $post )[0]->fediverse );
+		$this->assertArrayHasKey(
+			'byline_feed_fediverse',
+			\MultipleAuthors\Classes\Author_Editor::get_fields( $guest_author ),
+			'Guest author editor should offer a fediverse handle field.'
+		);
 	}
 
 	public function test_multi_author_post_returns_all_ppa_authors_in_order(): void {

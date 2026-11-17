@@ -1,5 +1,7 @@
 # Fediverse Identity Source Design
 
+> **Status (November 2026): implemented.** The source model below shipped with two refinements. The derived chain reads The SEO Framework's per-user "Fediverse profile" field before the local ActivityPub actor, because TSF's field is typed by the user. And the local ActivityPub handle is derived only when the ActivityPub plugin lists this site among the actor's attribution domains, so Mastodon will show the credit. An unset source means `auto`, with a typed handle still winning, which covers the existing-user migration rule without a migration. See `byline-feed/docs/output-reference.md § Fediverse handle sources`.
+
 ## Purpose
 
 This document records the recommended long-term design for how Byline Feed should source and emit `fediverse:creator` handles for linked WordPress users.

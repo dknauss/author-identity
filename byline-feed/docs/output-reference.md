@@ -57,14 +57,14 @@ Optional fields:
 | `profiles` | array | `[]` | Emitted as `byline:profile` when valid entries are present |
 | `now_url` | string | `''` | Emitted as `byline:now` when non-empty |
 | `uses_url` | string | `''` | Emitted as `byline:uses` when non-empty |
-| `fediverse` | string | `''` | Emitted as `fediverse:creator` in HTML head when non-empty |
+| `fediverse` | string | `''` | Composite. Emitted as `fediverse:creator` in HTML head when non-empty. See [Fediverse handle sources](#fediverse-handle-sources) |
 | `ap_actor_url` | string | `''` | Extends JSON-LD `sameAs` when confidently resolved; never substitutes for `fediverse` |
 | `ai_consent` | string | `''` | Used in consent resolution and rights signaling |
 
 Important current limitation:
 
 - canonical plugin-owned storage now exists for linked WordPress users
-- guest-author profile mapping in upstream multi-author plugins is not yet implemented unless a site injects values through filters
+- guest authors without a user account get a fediverse handle field on their own record (Co-Authors Plus and PublishPress Authors); other guest-author profile fields are not yet mapped unless a site injects values through filters
 
 ## HTML head output
 
@@ -85,10 +85,44 @@ Behavior:
 - `profiles[]` and `ap_actor_url` do not substitute for the `fediverse` handle
 - per-author handle output can be overridden with `byline_feed_fediverse_handle`
 - omitted for posts in `organization` author mode
+- tags follow byline order. Mastodon (checked November 2026) reads only the first `fediverse:creator` tag on a page, so the lead author gets the credit; the other tags are ready for consumers that read them all
+- Mastodon shows the credit only when the author's account lists the site's domain under Verification, Author attribution
 
-Jetpack (13.8 and later) adds its own `fediverse:creator` tag from a Jetpack Social Mastodon connection: the post author's, or else a site-wide one. Jetpack does not know who a post is attributed to, so the plugin removes that tag (through `jetpack_open_graph_tags`, priority 20) in `organization` mode, and also whenever it prints handles of its own, so the page never carries a duplicate or a different handle. When the plugin has no handle for a `person`-mode post, Jetpack's tag stays.
+### Fediverse handle sources
 
-The ActivityPub plugin's own Open Graph integration (`activitypub_use_opengraph`) is outside this plugin's jurisdiction; Jetpack already stands down when it is on.
+For a linked WordPress user, the `fediverse` field is resolved in this order:
+
+1. **The handle typed into Byline Feed** on the user's profile (`byline_feed_fediverse`, authored).
+2. **A handle found on the site** (derived), used only when nothing is typed:
+   - The SEO Framework's per-user "Fediverse profile" field (TSF 5.2+, `fediverse_page`);
+   - the user's local ActivityPub actor (`user@site`), when the ActivityPub plugin resolves one and lists this site among the actor's attribution domains. Without that, Mastodon would not show the credit, so no handle is derived.
+
+The derived handle can be changed with `byline_feed_derived_fediverse_handle( $handle, $user_id )`. It is never inferred from `profiles[]` links or from `ap_actor_url`.
+
+Each user picks a source on their profile, stored as `byline_feed_fediverse_source` (registered for REST):
+
+| Value | Meaning |
+| --- | --- |
+| `auto` (default, also when unset) | Typed handle, else a found one |
+| `manual` | Typed handle only |
+| `none` | Never credited |
+
+Guest authors without a user account have no derived sources. Their handle is a field on the guest record:
+
+- Co-Authors Plus: "Fediverse handle" in the guest author's contact info, stored as `cap-byline_feed_fediverse` post meta;
+- PublishPress Authors: "Fediverse handle" on authors without a linked user, stored as `byline_feed_fediverse` term meta.
+
+HM Authorship guest authors are WordPress users, so they use the profile field.
+
+### Other plugins' `fediverse:creator` tags
+
+Jetpack, The SEO Framework and the ActivityPub plugin each print one `fediverse:creator` tag at most: the post author's, or a site-wide fallback. They do not know who a post is attributed to, and TSF prints before this plugin, so Mastodon would credit TSF's single author. On singular views this plugin removes their tag in `organization` mode, and whenever it prints handles of its own, so the page never carries a duplicate or a different handle. When it has no handle for a `person`-mode post, their tag stays.
+
+| Plugin | Removed through | Notes |
+| --- | --- | --- |
+| Jetpack 13.8+ (Jetpack Social Mastodon connection) | `jetpack_open_graph_tags`, priority 20 | |
+| The SEO Framework 5.2+ | `the_seo_framework_meta_render_data`, priority 20 | TSF's `rel=me` links stay |
+| ActivityPub | `opengraph_metadata`, priority 20 | In single-user (blog) mode its tag names the site's own actor, so it stays in `organization` mode. Keep its OpenGraph setting on: it also lists this site as allowed to credit the site's actors |
 
 ### Author meta tags
 

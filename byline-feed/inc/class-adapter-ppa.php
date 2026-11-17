@@ -96,6 +96,11 @@ class Adapter_PPA implements Adapter {
 		$ap_actor_url = '';
 		$ai_consent   = '';
 
+		if ( ! $user_id && $term_id ) {
+			// Authored on the guest author term; guests have no derived sources.
+			$fediverse = normalize_byline_feed_fediverse( get_term_meta( $term_id, 'byline_feed_fediverse', true ) );
+		}
+
 		if ( $user_id ) {
 			$fediverse       = get_byline_feed_fediverse_for_user( (int) $user_id );
 			$ap_actor_url    = get_byline_feed_ap_actor_url_for_user( (int) $user_id );
